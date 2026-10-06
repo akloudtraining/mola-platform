@@ -1,0 +1,135 @@
+/* Mola-only identity; other organizations retain the neutral workspace design. */
+:root[data-workspace-brand="mola"] {
+  --mola-gold: #c5a05a;
+  --mola-gold-light: #efdbac;
+  --mola-forest: #204a35;
+  --mola-ink: #202e25;
+  --mola-muted: #596b5e;
+  --background: #f4f6f3;
+  --foreground: var(--mola-ink);
+  --card: #fff;
+  --card-foreground: var(--mola-ink);
+  --popover: #fff;
+  --popover-foreground: var(--mola-ink);
+  --primary: var(--mola-forest);
+  --primary-foreground: #fff;
+  --secondary: #edf1eb;
+  --secondary-foreground: #324c3b;
+  --muted: #edf1eb;
+  --muted-foreground: var(--mola-muted);
+  --accent: #eef3eb;
+  --accent-foreground: #284e36;
+  --destructive: #ad3932;
+  --border: #dbe2d8;
+  --input: #cbd5c9;
+  --ring: #6b8558;
+  --sidebar: #101711;
+  --sidebar-foreground: #e0e6da;
+  --sidebar-primary: var(--mola-gold-light);
+  --sidebar-primary-foreground: #18261b;
+  --sidebar-accent: #243323;
+  --sidebar-accent-foreground: var(--mola-gold-light);
+  --sidebar-border: #303a2c;
+  --sidebar-ring: var(--mola-gold);
+  --radius: .875rem;
+}
+:root[data-workspace-brand="mola"] body { color: var(--mola-ink); background: var(--background); }
+:root[data-workspace-brand="mola"] button:focus-visible, :root[data-workspace-brand="mola"] a:focus-visible, :root[data-workspace-brand="mola"] summary:focus-visible { outline-color: #8b723d; }
+:root[data-workspace-brand="mola"] .nav-header { padding: 18px 24px 20px !important; background: #080b08; border-bottom: 1px solid #303a2c; }
+:root[data-workspace-brand="mola"] .mola-brand { display: flex; flex-direction: column; align-items: center; gap: 10px; text-decoration: none; min-width: 0; }
+:root[data-workspace-brand="mola"] .mola-brand img { display: block; width: 164px; height: auto; max-width: 100%; aspect-ratio: 1; object-fit: contain; }
+:root[data-workspace-brand="mola"] .mola-brand span { color: #c9cbb9; font-size: .875rem; line-height: 1.5; letter-spacing: .035em; }
+:root[data-workspace-brand="mola"] .nav-label { color: #a3ad98; font-size: .75rem; }
+:root[data-workspace-brand="mola"] .nav-button { color: #c4cebd; border-radius: 9px !important; }
+:root[data-workspace-brand="mola"] .nav-button:hover { background: #222f22 !important; color: #fff !important; }
+:root[data-workspace-brand="mola"] .nav-button[data-active=true] { background: #283626 !important; color: var(--mola-gold-light) !important; box-shadow: inset 3px 0 var(--mola-gold); }
+:root[data-workspace-brand="mola"] .nav-button[data-active=true] svg { color: #ddbc78; }
+:root[data-workspace-brand="mola"] .nav-scope { border-color: #35412f; color: #b7c3ac; background: #172219; border-radius: 12px; }
+:root[data-workspace-brand="mola"] .nav-scope strong { color: #efdfb7; }
+:root[data-workspace-brand="mola"] .nav-scope p { color: #b7c3ac; font-size: .875rem; }
+:root[data-workspace-brand="mola"] .nav-footer { border-top: 1px solid #303a2c; }
+:root[data-workspace-brand="mola"] .nav-footer>a { color: #d1d8c9; }
+:root[data-workspace-brand="mola"] .nav-footer>div { border-color: #303a2c; }
+:root[data-workspace-brand="mola"] .nav-footer small { color: #b0bca5; }
+:root[data-workspace-brand="mola"] .nav-unread { color: #18271b; background: #e1c285; }
+:root[data-workspace-brand="mola"] .avatar { background: #33452d; color: #f2dfb6; }
+:root[data-workspace-brand="mola"] .avatar.light { background: #ecf1e8; color: #3c573d; }
+:root[data-workspace-brand="mola"] .topbar { background: #fff; height: 72px; border-bottom-color: #d7dece; }
+:root[data-workspace-brand="mola"] .top-left>.choice { background: #f6f8f3; border-color: #dfe5d8; }
+:root[data-workspace-brand="mola"] .breadcrumb { color: #63745e; }
+:root[data-workspace-brand="mola"] .setup-pill { border-color: #e4d4a7; background: #fbf4e2; color: #745626; }
+:root[data-workspace-brand="mola"] .icon-button, :root[data-workspace-brand="mola"] .notification-button { color: #4f654e; }
+:root[data-workspace-brand="mola"] .icon-button:hover, :root[data-workspace-brand="mola"] .notification-button:hover { background: #edf2e8; }
+:root[data-workspace-brand="mola"] .notification-button span { background: var(--mola-forest); }
+:root[data-workspace-brand="mola"] main { padding-top: 32px; }
+:root[data-workspace-brand="mola"] .page-heading { padding-bottom: 24px; border-bottom: 1px solid #dbe2d8; }
+:root[data-workspace-brand="mola"] .eyebrow { color: #60704f; font-size: .75rem; letter-spacing: .12em; }
+:root[data-workspace-brand="mola"] h1 { font-family: Georgia, Cambria, "Times New Roman", serif; font-weight: 400; font-size: clamp(2rem, 3vw, 2.65rem); letter-spacing: -.035em; line-height: 1.2; }
+:root[data-workspace-brand="mola"] .page-heading p { color: var(--mola-muted); }
+:root[data-workspace-brand="mola"] .primary { background: var(--mola-forest); border-color: var(--mola-forest); border-radius: 10px; box-shadow: 0 2px 3px #19372312; }
+:root[data-workspace-brand="mola"] .primary:hover { background: #183d2a; border-color: #183d2a; }
+:root[data-workspace-brand="mola"] .secondary { border-radius: 10px; border-color: #ccd7c7; color: #3b513b; }
+:root[data-workspace-brand="mola"] .secondary:hover { background: #f3f6ee; border-color: #a5b699; }
+:root[data-workspace-brand="mola"] .text-button, :root[data-workspace-brand="mola"] .auth-link { color: #315b37; }
+:root[data-workspace-brand="mola"] .balance-card, :root[data-workspace-brand="mola"] .metric-card { padding: 26px; border-radius: 16px; }
+:root[data-workspace-brand="mola"] .balance-card { background: linear-gradient(135deg, #15201a, #203b2a); border-color: #354c32; border-top: 3px solid var(--mola-gold); }
+:root[data-workspace-brand="mola"] .balance-top { color: #ddc48d; font-size: .8125rem; }
+:root[data-workspace-brand="mola"] .balance-card h2 { color: #f2e2b7; font-family: Georgia, Cambria, serif; font-size: clamp(1.8rem, 2.4vw, 2.3rem); font-weight: 400; line-height: 1.25; }
+:root[data-workspace-brand="mola"] .balance-card p, :root[data-workspace-brand="mola"] .balance-bottom { color: #c5d2bf; }
+:root[data-workspace-brand="mola"] .balance-bottom { border-color: #4c6044; }
+:root[data-workspace-brand="mola"] .balance-bottom button { color: #f0dfb1; }
+:root[data-workspace-brand="mola"] .metric-card { border-color: var(--border); border-top: 3px solid #b8c4a9; box-shadow: 0 6px 20px #18261b05; }
+:root[data-workspace-brand="mola"] .metric-label { color: #53664e; }
+:root[data-workspace-brand="mola"] .metric-card strong { color: #233c28; font-size: clamp(2rem, 3vw, 2.6rem); font-variant-numeric: tabular-nums; }
+:root[data-workspace-brand="mola"] .metric-card p, :root[data-workspace-brand="mola"] .metric-card strong span { color: var(--mola-muted); }
+:root[data-workspace-brand="mola"] .panel { border-color: var(--border); border-radius: 16px; box-shadow: 0 5px 20px #1d291b04; }
+:root[data-workspace-brand="mola"] .panel-header { border-color: #e4e9de; background: #fcfdfa; }
+:root[data-workspace-brand="mola"] .panel-header h2 { color: #2c3e2c; }
+:root[data-workspace-brand="mola"] .empty, :root[data-workspace-brand="mola"] .empty p, :root[data-workspace-brand="mola"] .muted, :root[data-workspace-brand="mola"] .panel-header .muted { color: var(--mola-muted); }
+:root[data-workspace-brand="mola"] .empty h3 { color: #31422f; }
+:root[data-workspace-brand="mola"] .empty-icon, :root[data-workspace-brand="mola"] .project-icon { background: #edf3e8; color: #41623b; }
+:root[data-workspace-brand="mola"] .pending { background: #fbf0d6; color: #785818; }
+:root[data-workspace-brand="mola"] .badge { font-size: .875rem; line-height: 1.45; }
+:root[data-workspace-brand="mola"] .neutral { background: #edf1e9; color: #54664d; }
+:root[data-workspace-brand="mola"] .green { background: #e5f3e8; color: #235e36; }
+:root[data-workspace-brand="mola"] .setup-row { border-color: #e5ebdf; color: #3e5339; }
+:root[data-workspace-brand="mola"] .setup-row:hover, :root[data-workspace-brand="mola"] .request-row:hover, :root[data-workspace-brand="mola"] .note-row:hover, :root[data-workspace-brand="mola"] .funding-row:hover { background: #f7faf4; }
+:root[data-workspace-brand="mola"] .setup-row small, :root[data-workspace-brand="mola"] .setup-caption { color: #61725a; }
+:root[data-workspace-brand="mola"] .setup-circle { border-color: #b5c5a7; }
+:root[data-workspace-brand="mola"] .project-strip { border-color: var(--border); border-left-color: var(--mola-gold); border-radius: 16px; }
+:root[data-workspace-brand="mola"] .project-strip h3, :root[data-workspace-brand="mola"] .project-body>h2 { color: #2e422e; }
+:root[data-workspace-brand="mola"] .project-strip p, :root[data-workspace-brand="mola"] .project-body>p, :root[data-workspace-brand="mola"] .project-facts span { color: var(--mola-muted); }
+:root[data-workspace-brand="mola"] .project-facts { border-color: #e3e8da; }
+:root[data-workspace-brand="mola"] .notice { background: #f2f6ed; border-color: #d9e4ce; color: #4f6547; }
+:root[data-workspace-brand="mola"] .table-wrap th { background: #f5f7f0; color: #56654b; border-color: #e1e7d9; font-size: .875rem; }
+:root[data-workspace-brand="mola"] .table-wrap td { color: #3f5039; border-color: #e5ebdf; font-size: 1rem; }
+:root[data-workspace-brand="mola"] .table-wrap strong { color: #2d422b; }
+:root[data-workspace-brand="mola"] .table-wrap small, :root[data-workspace-brand="mola"] .currency { color: #64745a; }
+:root[data-workspace-brand="mola"] .table-wrap tbody tr:hover { background: #f8faf4; }
+:root[data-workspace-brand="mola"] .field { color: #40543a; }
+:root[data-workspace-brand="mola"] .field input, :root[data-workspace-brand="mola"] .field textarea, :root[data-workspace-brand="mola"] .field .choice { color: #2f422d; border-color: #cbd7c2; border-radius: 10px; }
+:root[data-workspace-brand="mola"] .field input:focus, :root[data-workspace-brand="mola"] .field textarea:focus { outline-color: #788f5f; border-color: #6b8355; }
+:root[data-workspace-brand="mola"] .editor { color: #2b3e29; border-color: #d9e0d0; border-radius: 18px; }
+:root[data-workspace-brand="mola"] .editor [data-slot=dialog-title] { color: #2c3e2b; }
+:root[data-workspace-brand="mola"] .editor [data-slot=dialog-description] { color: var(--mola-muted); }
+:root[data-workspace-brand="mola"] .form-actions { border-color: #dfe7d6; }
+:root[data-workspace-brand="mola"] .form-note { background: #f2f5ec; color: #52644a; }
+:root[data-workspace-brand="mola"] .form-error { background: #fff0ec; color: #a03c31; }
+:root[data-workspace-brand="mola"] .account p, :root[data-workspace-brand="mola"] .option p, :root[data-workspace-brand="mola"] .account dt, :root[data-workspace-brand="mola"] .detail dt, :root[data-workspace-brand="mola"] .agreement-body p, :root[data-workspace-brand="mola"] .prewrap { color: var(--mola-muted); }
+:root[data-workspace-brand="mola"] .account dd, :root[data-workspace-brand="mola"] .detail dd { color: #32472f; }
+:root[data-workspace-brand="mola"] .standing-totals>div, :root[data-workspace-brand="mola"] .funding-summary { background: #f0f5e9; border-color: #dbe5ce; color: #3d5933; border-radius: 12px; }
+:root[data-workspace-brand="mola"] .review-event { background: #f5f7ee; border-color: #a7904a; }
+:root[data-workspace-brand="mola"] .activity-event.unread { background: #f5f7ed; border-left-color: var(--mola-gold); }
+:root[data-workspace-brand="mola"] .activity-symbol { color: #6a804d; }
+:root[data-workspace-brand="mola"] .register-summary>div, :root[data-workspace-brand="mola"] .review-payment-summary, :root[data-workspace-brand="mola"] .agreement-document, :root[data-workspace-brand="mola"] .owner-founder-email { background: #f6f8f1; border-color: #dce5d3; }
+:root[data-workspace-brand="mola"] .register-summary p, :root[data-workspace-brand="mola"] .register-caption, :root[data-workspace-brand="mola"] .register-result span, :root[data-workspace-brand="mola"] .statement-caption, :root[data-workspace-brand="mola"] .statement-review small { color: var(--mola-muted); }
+:root[data-workspace-brand="mola"] .review-impact, :root[data-workspace-brand="mola"] .owner-founder-link { background: #f2f6eb; border-color: #d4e2c4; }
+:root[data-workspace-brand="mola"] .review-impact-row { border-color: #d4e2c4; }
+:root[data-workspace-brand="mola"] .review-payment-summary dt, :root[data-workspace-brand="mola"] .review-impact-row dt, :root[data-workspace-brand="mola"] .review-impact .review-preview-caption { color: #627154; }
+:root[data-workspace-brand="mola"] footer { color: #69775e; border-color: var(--border); }
+@media(max-width:600px) {
+  :root[data-workspace-brand="mola"] .mola-brand img { width: 140px; }
+  :root[data-workspace-brand="mola"] .topbar { height: auto; min-height: 64px; }
+  :root[data-workspace-brand="mola"] .balance-card, :root[data-workspace-brand="mola"] .metric-card { padding: 22px; }
+  :root[data-workspace-brand="mola"] .page-heading { padding-bottom: 20px; }
+}

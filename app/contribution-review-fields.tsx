@@ -1,0 +1,26 @@
+'use client';
+import ReceiptAttachment from './receipt-attachment';
+import {money} from '@/lib/model';
+import SimilarReceipts from './similar-receipts';
+import {creditOutcomes,reviewOutcomes,reviewImpact,reviewObligations,suggestedReviewCredit,type ReviewDraft} from '@/lib/contribution-review';
+import {Select,SelectTrigger,SelectValue,SelectContent,SelectItem} from '@/components/ui/select';
+
+export default function ContributionReviewFields({draft,onChange}:{draft:ReviewDraft;onChange:(next:ReviewDraft)=>void}){
+ const payment=draft.reviewSnapshot.payment,impact=reviewImpact(draft),credited=creditOutcomes.includes(draft.outcome);
+ return <div className="contribution-review-fields"><section className="notice"><div><strong>Reviewing as {draft.reviewerName||'current account'}</strong><p>{draft.verificationNote}</p>{!draft.independent&&<p>Owner reconciled is provisional and does not mean independently verified.</p>}</div></section>
+  <section className="review-payment-summary" aria-label="Payment being reviewed"><strong>{draft.reviewSnapshot.memberName}</strong><p>{payment.title}</p><dl><div><dt>Reported payment</dt><dd>{money(payment.amountMinor,payment.currency)} {payment.currency}</dd></div><div><dt>Current status</dt><dd>{payment.status}</dd></div><div><dt>Payment date</dt><dd>{payment.date}</dd></div><div><dt>Payment reference</dt><dd>{payment.reference||'Not supplied'}</dd></div></dl></section>
+  <p className="form-note">{draft.independent?'Check the receiving-account evidence before recording receipt.':'Owner reconciliation is provisional; a different authorized member must verify receipt.'} A correction replaces the previous credit and keeps its history.</p>
+  {payment.hasReceipt&&<ReceiptAttachment entry={payment}/>}
+  {credited&&draft.bankReceiptEnabled&&<><label className="field">Receiving-bank deposit reference{payment.method==='Zelle (external)'?' (required for Zelle)':' (optional)'}<input maxLength={180} value={draft.bankReference||''} onChange={e=>onChange({...draft,bankReference:e.target.value,bankConfirmed:false})}/></label>{(payment.method==='Zelle (external)'||draft.bankReference)&&<label className="check-field"><input type="checkbox" checked={draft.bankConfirmed===true} onChange={e=>onChange({...draft,bankConfirmed:e.target.checked})}/>I checked the receiving account and matched the full reported amount, currency and sender to this posted deposit. This is a human confirmation, not an automatic bank check.</label>}</>}
+  <SimilarReceipts matches={draft.similarReceipts||[]} captured/>
+  <label className="field">Review outcome<Select value={draft.outcome} onValueChange={value=>onChange({...draft,outcome:value})}><SelectTrigger className="choice" aria-label="Review outcome"><SelectValue/></SelectTrigger><SelectContent>{reviewOutcomes(draft).map(value=><SelectItem key={value} value={value}>{value}</SelectItem>)}</SelectContent></Select></label>
+  <label className="field">Evidence reference / correction reason<textarea required minLength={5} maxLength={2000} rows={3} value={draft.evidence} onChange={event=>onChange({...draft,evidence:event.target.value})}/></label>
+  {credited&&<><label className="field">Assign credit to an obligation<Select value={draft.obligationId||'none'} onValueChange={id=>onChange({...draft,obligationId:id==='none'?'':id,credit:id==='none'?'':suggestedReviewCredit(draft,id)})}><SelectTrigger className="choice" aria-label="Assign credit to an obligation"><SelectValue/></SelectTrigger><SelectContent><SelectItem value="none">No obligation credit · unallocated capital</SelectItem>{reviewObligations(draft).map(due=><SelectItem key={due.id} value={due.id}>{due.title} · {due.date} · {money(due.amountMinor,due.currency)}</SelectItem>)}</SelectContent></Select></label>
+   {draft.obligationId&&<label className="field">Amount to credit in {draft.currency}<input required inputMode={draft.currency==='XAF'?'numeric':'decimal'} maxLength={32} value={draft.credit} onChange={event=>onChange({...draft,credit:event.target.value})}/></label>}</>}
+  <section className="review-impact" aria-labelledby="review-impact-title"><h3 id="review-impact-title">Effect on recorded dues</h3><p className="review-preview-caption">Estimate from the records captured when this form opened.</p>
+   {impact.error?<p className="form-error" role="alert">{impact.error}</p>:<>{impact.warning&&<p className="form-error" role="alert">{impact.warning}</p>}<p>{credited?`Assigned credit: ${money(impact.creditMinor,draft.currency)} ${draft.currency}`:'This outcome assigns no obligation credit.'}</p>{impact.unallocatedMinor!==undefined&&<p>Unallocated amount: <strong>{money(impact.unallocatedMinor,draft.currency)} {draft.currency}</strong></p>}
+    {impact.rows.map(row=><article className="review-impact-row" key={row.id}><h4>{row.title}</h4><p>{row.date} · {row.currency}</p><dl><div><dt>Remaining before</dt><dd>{money(row.beforeRemaining,row.currency)}</dd></div><div><dt>Remaining after</dt><dd>{money(row.afterRemaining,row.currency)}</dd></div></dl>{row.afterExcess>0&&<p className="form-error">Excess assigned credit: {money(row.afterExcess,row.currency)} {row.currency}. It does not cover a future obligation.</p>}</article>)}
+    {!impact.rows.length&&<p>No recorded obligation balance changes.</p>}</>}
+  </section>
+ </div>;
+}

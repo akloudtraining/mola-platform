@@ -1,0 +1,22 @@
+const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm'),assert=require('node:assert/strict'),ts=require('typescript');
+const cache=new Map();
+function load(file){if(cache.has(file))return cache.get(file).exports;const module={exports:{}};cache.set(file,module);const req=name=>{
+ if(name==='react/jsx-runtime')return {jsx:(type,props)=>({type,props}),jsxs:(type,props)=>({type,props})};
+ if(name==='./record-time')return {DeadlineTime:'DeadlineTime'};
+ return load(name.startsWith('@/')?name.slice(2)+'.ts':path.join(path.dirname(file),name+'.ts'));
+ };const code=ts.transpileModule(fs.readFileSync(file,'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022,jsx:ts.JsxEmit.ReactJSX}}).outputText;vm.runInThisContext('(function(require,module,exports){'+code+'\n})')(req,module,module.exports);return module.exports;}
+function all(node,predicate,out=[]){if(Array.isArray(node)){for(const n of node)all(n,predicate,out);}else if(node&&typeof node==='object'){if(predicate(node))out.push(node);all(node.props?.children,predicate,out);}return out;}
+const text=node=>typeof node==='string'||typeof node==='number'?String(node):Array.isArray(node)?node.map(text).join(''):node?.props?text(node.props.children):'';
+const {dueContribution,canReportForDue,pendingForDue}=load('lib/due-contribution.ts'),Component=load('app/contribution-context.tsx').default;
+const org={id:'owner:mola',mode:'Shared ownership',permissions:{memberId:'a',canManage:false},members:[{id:'a',name:'Alex'},{id:'b',name:'Blair'}]};
+const due={id:'due-a',orgId:org.id,type:'obligation',memberId:'a',title:'Weekly due',amountMinor:10000,currency:'USD',date:'2026-10-01',created:'2026-09-30T00:00:00Z'};
+const paid={id:'paid',orgId:org.id,type:'contribution',memberId:'a',amountMinor:2500,currency:'USD',status:'Verified',reviews:[{outcome:'Verified',obligationId:due.id,creditMinor:2500}]};
+const pending={...paid,id:'pending',amountMinor:5000,status:'Awaiting verification',submissionObligationId:due.id,reviews:[]};
+const rows=[due,paid,pending];let draft=dueContribution(org,due,rows,'retry-id','2026-10-05');assert.equal(draft.method,'Zelle (external)');assert.equal(draft.amount,'75.00');assert.equal(draft.memberId,'a');assert.equal(draft.currency,'USD');assert.equal(draft.submissionObligationId,due.id);assert.equal(draft.submissionId,'retry-id');assert.equal(draft.reference,'');assert.equal(draft.date,'2026-10-05');
+const owner={...org,permissions:{canManage:true,memberId:''}};assert(canReportForDue(owner,due));assert(!canReportForDue(org,{...due,memberId:'b'}));assert(!canReportForDue(org,{...due,orgId:'other'}));assert(!canReportForDue(owner,{...due,memberId:'orphan'}));assert(!canReportForDue({...org,mode:'Individual land allocations'},due));assert.throws(()=>dueContribution(org,{...due,memberId:'b'},rows,'id'),/allowed/);
+assert.throws(()=>dueContribution(org,due,[{...paid,amountMinor:10000,reviews:[{outcome:'Verified',obligationId:due.id,creditMinor:10000}]}],'id'),/already covered/);
+assert.equal(dueContribution(org,{...due,title:'x'.repeat(180)},[],'id').title.length,180);assert.equal(dueContribution(org,{...due,currency:'XAF',amountMinor:323149},[],'id').amount,'323149');assert.equal(dueContribution(org,{...due,currency:'CAD'},[],'id').amount,'100.00');
+assert.equal(dueContribution(org,due,[{...paid,status:'Owner reconciled',reviews:[{outcome:'Owner reconciled',obligationId:due.id,creditMinor:2500}]}],'id').amount,'75.00');
+const contaminants=[{...pending,orgId:'other'},{...pending,memberId:'b'},{...pending,currency:'CAD'},{...pending,submissionObligationId:'other due'},{...pending,status:'Verified'}];assert.equal(pendingForDue(org,[pending,...contaminants],due.id,'a','USD').length,1);
+const props={org,entries:[...rows,...contaminants],memberId:'a',currency:'USD',obligationId:due.id};const tree=Component(props);assert(text(tree).includes('$75.00'));assert(text(tree).includes('1 existing report is'));assert(text(tree).includes('$50.00'));assert(text(tree).includes('does not transfer money'));assert.equal(Component({...props,obligationId:''}),null);assert(text(Component({...props,currency:'CAD'})).includes('no longer available'));
+console.log('DUE CONTRIBUTION PASS: correct partial/provisional amount, own-member/organization boundaries, covered dues rejection, currency precision, bounded title, stable ID and isolated pending-payment warning.');

@@ -1,0 +1,30 @@
+const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm'),assert=require('node:assert/strict'),ts=require('typescript');
+function harness({owner=true,status='Authorized',rejectReload=false}={}){
+ let states=[],cursor=0,resolve,reject;const latch={current:false},calls=[],busy=[],saved=[];let reloads=0;
+ const cache=new Map();function load(file){if(cache.has(file))return cache.get(file).exports;const module={exports:{}};cache.set(file,module);const req=name=>{
+  if(name==='react')return {useRef:()=>latch,useState:initial=>{const i=cursor++;if(states[i]===undefined)states[i]=initial;return [states[i],v=>states[i]=typeof v==='function'?v(states[i]):v];}};
+  if(name==='react/jsx-runtime')return {jsx:(type,props)=>({type,props}),jsxs:(type,props)=>({type,props})};
+  if(name==='@/lib/workspace-save')return {saveWorkspaceRecord:body=>{calls.push(body);return new Promise((yes,no)=>{resolve=yes;reject=no;});}};
+  if(name==='./record-time')return {RecordTime:'RecordTime'};
+  return load(name.startsWith('@/')?name.slice(2)+'.ts':path.join(path.dirname(file),name+'.ts'));
+ };const code=ts.transpileModule(fs.readFileSync(file,'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022,jsx:ts.JsxEmit.ReactJSX}}).outputText;vm.runInThisContext('(function(require,module,exports){'+code+'\n})')(req,module,module.exports);return module.exports;}
+ const Component=load('app/external-payouts.tsx').default;
+ const props={org:{id:'mola',permissions:{isOwner:owner}},request:{id:'request',requestRevision:1,amountMinor:100000,currency:'USD',reference:'Fictional recipient',funding:{status,token:'approval-snapshot'},payouts:[]},onBusy:b=>busy.push(b),onSaved:entry=>{saved.push(entry);props.request=entry;},reload:async()=>{reloads++;if(rejectReload)throw Error('offline');}};
+ return {render:()=>{cursor=0;return Component(props);},calls,busy,saved,states,latch,props,resolve:value=>resolve(value),reject:()=>reject(Error('The save could not be confirmed.')),reloads:()=>reloads};
+}
+function all(node,predicate,out=[]){if(Array.isArray(node))for(const n of node)all(n,predicate,out);else if(node&&typeof node==='object'){if(predicate(node))out.push(node);all(node.props?.children,predicate,out);}return out;}
+const text=n=>typeof n==='string'||typeof n==='number'?String(n):Array.isArray(n)?n.map(text).join(''):n?.props?text(n.props.children):'';
+const button=(tree,label)=>all(tree,n=>n.type==='button'&&text(n)===label)[0];const tick=()=>new Promise(r=>setImmediate(r));
+function setField(h,label,value){const node=all(h.render(),n=>n.type==='label'&&text(n).startsWith(label))[0];assert(node,label);const input=all(node,n=>['input','textarea'].includes(n.type))[0];input.props.onChange({target:{value,checked:value}});}
+function fill(h){button(h.render(),'Record external payment').props.onClick();setField(h,'Amount paid','600');setField(h,'Fees charged','5');setField(h,'Name of person','Alex Example');setField(h,'Unique transfer','Receipt test 100');setField(h,'Evidence reference','Fictional evidence reference');setField(h,'I confirm',true);}
+(async()=>{
+ assert(!button(harness({owner:false}).render(),'Record external payment'));assert(!button(harness({status:'Draft'}).render(),'Record external payment'));
+ let h=harness();fill(h);let tree=h.render();assert(text(tree).includes('$605.00'));assert(text(tree).includes('$395.00'));
+ const submit=all(tree,n=>n.type==='form')[0].props.onSubmit;submit({preventDefault(){}});submit({preventDefault(){}});assert.equal(h.calls.length,1);assert.deepEqual(h.busy,[true]);assert.equal(h.calls[0].token,'approval-snapshot');assert.equal(h.calls[0].orgId,'mola');const firstId=h.calls[0].submissionId;assert(firstId);
+ button(tree,'Cancel').props.onClick();assert(h.states[0]);assert.equal(all(h.render(),n=>n.type==='fieldset')[0].props.disabled,true);h.reject();await tick();assert(h.states[0]);assert(text(h.render()).includes('could not be confirmed'));assert.deepEqual(h.busy,[true,false]);
+ all(h.render(),n=>n.type==='form')[0].props.onSubmit({preventDefault(){}});assert.equal(h.calls[1].submissionId,firstId,'Retry retains intent ID');h.resolve({entry:{...h.props.request,payouts:[]}});await tick();assert.equal(h.saved.length,1);assert.equal(h.states[0],null);assert.equal(h.reloads(),1);
+ h=harness({rejectReload:true});fill(h);all(h.render(),n=>n.type==='form')[0].props.onSubmit({preventDefault(){}});h.resolve({entry:h.props.request});await tick();assert(text(h.render()).includes('report was saved'));assert.equal(h.states[0],null);assert.equal(h.latch.current,false);
+ const p={id:'p1',amountMinor:60000,feeMinor:500,currency:'USD',date:'2026-10-05',reference:'receipt-1',method:'Bank transfer',evidence:'Receipt test',sentBy:'Alex',recordedName:'Owner',recordedAt:'2026-10-05T00:00:00Z',authorization:{revision:1,recipient:'Fictional recipient',purpose:'Test purpose',required:3,approvals:[]}};
+ h=harness();h.props.request.payouts=[p];tree=h.render();assert(text(tree).includes('Active reports lock revisions'));button(tree,'Correct reporting error').props.onClick();tree=h.render();assert(text(tree).includes('does not reverse a bank payment'));setField(h,'Correction reason','Wrong receipt entered');const correct=all(h.render(),n=>n.type==='form')[0];correct.props.onSubmit({preventDefault(){}});correct.props.onSubmit({preventDefault(){}});assert.equal(h.calls.length,1);assert.equal(h.calls[0].action,'voidPayout');assert.equal(h.calls[0].payoutId,'p1');h.resolve({entry:{...h.props.request,payouts:[{...p,void:{at:'2026-10-05T01:00:00Z',actorName:'Owner',reason:'Wrong receipt entered'}}]}});await tick();assert(text(h.render()).includes('Voided report'));assert(text(h.render()).includes('$1,000.00'));assert(!button(h.render(),'Correct reporting error'));
+ console.log('EXTERNAL PAYOUT UI PASS: report visibility, fee preview, confirmation, duplicate suppression, retained retry ID, guarded cancel, success/refresh failure and void history.');
+})().catch(e=>{console.error(e);process.exitCode=1;});
