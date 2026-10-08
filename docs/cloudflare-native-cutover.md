@@ -22,18 +22,20 @@ The resource bindings are represented in `vite.config.ts` and `.openai/hosting.j
 
 ## Safe preview and verification
 
-1. Confirm the Cloudflare D1 binding and database ID in the preview Worker configuration.
-2. Apply pending D1 migrations to the preview database only; first inspect the migration list so the existing foundation is not applied twice.
-3. Create/bind the private R2 bucket and configure the email sender, auth secret, owner email, and preview origin.
+1. Confirm the Cloudflare D1 binding and database ID in the Worker configuration.
+2. Check the remote migration list before applying anything. The current account D1 has all checked-in migrations applied.
+3. Enable R2, create/bind the private receipt bucket, and configure the email sender, auth secret, owner email, and production origin.
 4. Sign up as the configured owner, verify email, sign in, and initialize Mola. Check that eight founder slots appear and that weekly minimum and group expectation can be changed.
 5. Create a disposable test workspace. Exercise founder access, contributions, independent review, receipt upload/view, approval rules, agreement flow, schedule/cutoffs, exports, and activity. Delete the test workspace and confirm its R2 receipt objects are removed.
 6. Verify a normal reload preserves organization setup and the regular workspace does not contain test records.
-7. Only after preview acceptance should the same reviewed configuration and pending migrations be applied to production.
+7. Only after preview acceptance should the reviewed Worker configuration be deployed to production.
 
 ## Cutover status
 
-The Cloudflare-native implementation is pushed to the GitHub branch `feat/cloudflare-native-backend`. The local production build, TypeScript check, deployment-config contract, Cloudflare storage/auth contract, and all 41 pilot behavioral suites pass. The local Worker integration check cannot run in this sandbox because it cannot bind its localhost port. The GitHub branch is not yet deployed.
+The Cloudflare-native implementation is on the GitHub branch `feat/cloudflare-native-backend` (latest migration-fix commit `c99f25254c831f9399f46ea0916eafb41c33865f`). The production build, deployment-config contract, and Cloudflare auth-action tests pass. The generated Wrangler config now omits the removed `legacy_env` field and resolves D1 migrations from the generated config directory.
 
-The live private Site still has the previous Supabase runtime variables. Its D1 overview does not show the Better Auth `user`, `account`, `session`, `verification`, or `auth_identity_links` tables. The production Site also has no configured `MOLA_AUTH_SECRET`, `MOLA_APP_URL`, or `MOLA_EMAIL_FROM` yet. The Cloudflare Email sender must be an address on a domain onboarded with Cloudflare Email Service.
+The D1 database in the user's Cloudflare account has all six migrations applied. The Better Auth `user`, `account`, `session`, `verification`, and `auth_identity_links` tables are present. Two live organization records and the installation-owner record were copied into that database; the original private Site database was left unchanged. Test-workspace data was not copied because it contains ephemeral sessions and incomplete test records.
 
-Do not switch production auth or remove the old Supabase runtime variables until the production source has been synchronized, the two pending auth migrations have been applied and verified, and the auth secret, production origin, and verified sender are configured. Keep the connected Supabase project untouched until the Cloudflare cutover is accepted and the group separately decides whether to retain or close it.
+The updated source was also pushed to the private Site source repository and saved as version 78, but that version is not deployed. The Cloudflare account has no R2 service enabled yet, so the required private receipt bucket cannot be created. The Cloudflare Email sender is not configured, and no production Worker has been deployed with `MOLA_AUTH_SECRET`, `MOLA_APP_URL`, or `MOLA_EMAIL_FROM`.
+
+The user's Cloudflare dashboard currently has `MOLA_OWNER_EMAIL` as its only configured variable. The private Site's runtime settings are separate and still report the old Supabase keys; do not remove those from the active Site until that Site is retired or its replacement is deployed and verified. The connected Supabase project and the original Site D1 remain available as rollback sources.
