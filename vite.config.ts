@@ -10,6 +10,15 @@ const SITE_CREATOR_PLACEHOLDER_DATABASE_ID =
 
 const { d1, r2 } = hostingConfig;
 
+// The Cloudflare project can provide production variables to the build
+// environment, but the custom Wrangler deploy must explicitly carry them
+// into the generated Worker configuration.
+const deploymentVars = Object.fromEntries(
+  ["SUPABASE_URL", "SUPABASE_PUBLISHABLE_KEY", "MOLA_OWNER_EMAIL"]
+    .filter((key) => process.env[key])
+    .map((key) => [key, process.env[key] as string]),
+);
+
 // macOS Seatbelt blocks FSEvents, so Codex previews need polling for HMR.
 const isCodexSeatbeltSandbox = process.env.CODEX_SANDBOX === "seatbelt";
 const managedLinux = readExecutionProfile() === "managed-linux";
@@ -17,6 +26,7 @@ const managedLinux = readExecutionProfile() === "managed-linux";
 const localBindingConfig = {
   main: "vinext/server/fetch-handler",
   compatibility_flags: ["nodejs_compat"],
+  vars: deploymentVars,
   d1_databases: d1
     ? [
         {
