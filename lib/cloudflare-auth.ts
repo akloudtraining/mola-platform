@@ -5,7 +5,6 @@ import {env} from 'cloudflare:workers';
 import * as schema from '@/db/schema';
 import type {Identity} from './access';
 
-const APP_ORIGIN='https://mola-platform.armand-kounchou.workers.dev';
 const runtime=():Record<string,string|undefined>=>typeof process!=='undefined'?(process.env as Record<string,string|undefined>):{};
 function value(name:'MOLA_AUTH_SECRET'|'MOLA_APP_URL'|'MOLA_EMAIL_FROM'){
  const cloudflareValue=name==='MOLA_AUTH_SECRET'?env.MOLA_AUTH_SECRET:name==='MOLA_APP_URL'?env.MOLA_APP_URL:env.MOLA_EMAIL_FROM;
@@ -17,7 +16,7 @@ export function createCloudflareAuth(request:Request){
  const secret=value('MOLA_AUTH_SECRET');
  if(!db)throw new Error('Cloudflare D1 is not configured for authentication.');
  if(secret.length<32)throw new Error('MOLA_AUTH_SECRET must be set to a random value of at least 32 characters.');
- const origin=value('MOLA_APP_URL')||new URL(request.url).origin||APP_ORIGIN;
+ const origin=value('MOLA_APP_URL')||new URL(request.url).origin;
  const sender=value('MOLA_EMAIL_FROM');
  const emailBinding=env.EMAIL;
  const send=async(to:string,subject:string,text:string,html:string)=>{
