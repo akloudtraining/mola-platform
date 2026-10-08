@@ -10,8 +10,9 @@ type SupabaseUser={id:string;email?:string;user_metadata?:Record<string,unknown>
 type AuthTokens={access_token?:string;refresh_token?:string;expires_in?:number;user?:SupabaseUser|null};
 
 function config(){
- const url=String((env as any).SUPABASE_URL||'').trim().replace(/\/$/,'');
- const key=String((env as any).SUPABASE_PUBLISHABLE_KEY||'').trim();
+ const runtime=typeof process!=='undefined'?(process.env||{}):{};
+ const url=String((env as any).SUPABASE_URL||runtime.SUPABASE_URL||runtime.NEXT_PUBLIC_SUPABASE_URL||'').trim().replace(/\/$/,'');
+ const key=String((env as any).SUPABASE_PUBLISHABLE_KEY||runtime.SUPABASE_PUBLISHABLE_KEY||runtime.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY||runtime.NEXT_PUBLIC_SUPABASE_ANON_KEY||'').trim();
  return url&&key?{url,key}:null;
 }
 
