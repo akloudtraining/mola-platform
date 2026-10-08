@@ -26,7 +26,10 @@ const managedLinux = readExecutionProfile() === "managed-linux";
 const localBindingConfig = {
   main: "vinext/server/fetch-handler",
   compatibility_flags: ["nodejs_compat"],
-  vars: deploymentVars,
+  // Do not emit an empty vars block. Cloudflare production variables are
+  // managed in the Worker settings; an empty generated block can replace or
+  // mask those runtime bindings during a custom Wrangler deploy.
+  ...(Object.keys(deploymentVars).length ? { vars: deploymentVars } : {}),
   d1_databases: d1
     ? [
         {
