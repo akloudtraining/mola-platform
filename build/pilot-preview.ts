@@ -12,7 +12,7 @@ export function pilotPreview({enabled}:{enabled:boolean}):Plugin{
    const setHeader=response.setHeader.bind(response);
    response.setHeader=(name,value)=>{
     if(name.toLowerCase()!=='set-cookie')return setHeader(name,value);
-    const rewrite=(cookie:string)=>/^mola_(?:access|refresh)_token=/.test(cookie)?cookie.replace(/;\s*Secure(?=;|$)/ig,''):cookie;
+    const rewrite=(cookie:string)=>/^(?:__Secure-)?better-auth[.-](?:session_token|session_data)=/.test(cookie)?cookie.replace(/^__Secure-/,'').replace(/;\s*Secure(?=;|$)/ig,''):cookie;
     return setHeader(name,Array.isArray(value)?value.map(rewrite):typeof value==='string'?rewrite(value):value);
    };
    next();
@@ -22,5 +22,5 @@ export function pilotPreview({enabled}:{enabled:boolean}):Plugin{
 
 export function pilotPreviewVars(values:Record<string,string>,serve:boolean){
  if(!serve)return {};
- return Object.fromEntries(['SUPABASE_URL','SUPABASE_PUBLISHABLE_KEY','MOLA_OWNER_EMAIL'].filter(key=>!!values[key]).map(key=>[key,values[key]]));
+ return Object.fromEntries(['MOLA_OWNER_EMAIL'].filter(key=>!!values[key]).map(key=>[key,values[key]]));
 }

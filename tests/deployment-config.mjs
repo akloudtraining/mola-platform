@@ -3,7 +3,7 @@ import {readFileSync} from 'node:fs';
 
 const config = JSON.parse(readFileSync('dist/server/wrangler.json', 'utf8'));
 // Test the artifact Wrangler actually deploys, not just source text.
-for (const name of ['SUPABASE_URL', 'SUPABASE_PUBLISHABLE_KEY', 'MOLA_OWNER_EMAIL']) {
+for (const name of ['MOLA_OWNER_EMAIL']) {
   if (process.env[name]) {
     // Never include configuration values in assertion output.
     assert.ok(config.vars?.[name] === process.env[name], `${name} was lost during the production build`);
@@ -11,5 +11,7 @@ for (const name of ['SUPABASE_URL', 'SUPABASE_PUBLISHABLE_KEY', 'MOLA_OWNER_EMAI
 }
 assert.equal(config.keep_vars, true, 'Dashboard variables must survive Wrangler deployments');
 assert.ok(config.d1_databases?.some(binding => binding.binding === 'DB'), 'D1 binding must remain intact');
-assert.equal(config.r2_buckets?.length ?? 0, 0, 'Deployment must not require R2');
-console.log('Deployment config PASS: supplied auth variables retained, dashboard variables preserved, D1 retained, no R2.');
+assert.ok(config.r2_buckets?.some(binding => binding.binding === 'BUCKET'), 'Private receipts require the Mola R2 bucket binding');
+assert.equal(config.d1_databases?.find(binding => binding.binding === 'DB')?.migrations_dir, 'drizzle', 'D1 migrations must use the checked-in Drizzle migration files');
+assert.ok(config.send_email?.some(binding => binding.name === 'EMAIL'), 'Email verification and password recovery require Cloudflare Email Service');
+console.log('Deployment config PASS: owner setting retained, dashboard variables preserved, D1, R2 and email bindings configured.');

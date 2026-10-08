@@ -1,13 +1,12 @@
 export type AuthMode='login'|'signup'|'recover'|'reset'|'confirm';
 
-// Callback tokens are used only for recovery. Confirmation links still require
-// password sign-in, which verifies the identity before issuing session cookies.
+// Password reset tokens are passed to the server for one-time redemption.
 export function authCallback(url:URL){
  const params=url.searchParams;
  const hash=new URLSearchParams(url.hash.replace(/^#/,''));
  const requested=params.get('mode');
  const type=hash.get('type')||params.get('type')||'';
- const token=hash.get('access_token')||'';
+ const token=hash.get('access_token')||params.get('token')||'';
  const recovery=type==='recovery'||(!type&&requested==='reset');
  const failed=['error','error_code','error_description'].some(key=>hash.has(key)||params.has(key));
  const callback=!!token||!!type||failed||['access_token','refresh_token','token_hash','code'].some(key=>hash.has(key)||params.has(key));
@@ -23,7 +22,7 @@ export function authCallback(url:URL){
   mode='login';
   message='Your email link has opened. Sign in with your password to continue.';
  }else if(requested==='confirmed'){
-  message='Sign in with your password after confirming your email.';
+  message='Your email is verified. Sign in with your password to continue.';
  }
  const cleanPath=callback||requested==='reset'?url.pathname+(mode==='reset'?'?mode=reset':mode==='recover'?'?mode=recover':mode==='confirm'?'?mode=confirm':''):null;
  return {mode,recoveryToken,message,error,cleanPath};

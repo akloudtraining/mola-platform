@@ -11,7 +11,7 @@ function harness(){
  const cache=new Map();
  function load(file){file=path.resolve(file);if(cache.has(file))return cache.get(file).exports;const m={exports:{}};cache.set(file,m);
   const code=ts.transpileModule(fs.readFileSync(file,'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText;
-  const req=name=>{if(name==='cloudflare:workers')return {env};if(name==='@/lib/supabase-session')return {requestIdentity:async()=>identity};if(name==='@/app/chatgpt-auth')return {getChatGPTUser:async()=>legacyIdentity};if(name==='@/lib/database')return {database:()=>db};if(name.startsWith('@/'))return load(path.join(root,name.slice(2)+'.ts'));if(name.startsWith('.'))return load(path.resolve(path.dirname(file),name+'.ts'));return require(name);};
+  const req=name=>{if(name==='cloudflare:workers')return {env};if(name==='@/lib/cloudflare-auth')return {cloudflareUser:async()=>identity?{...identity,emailVerified:true}:null};if(name==='@/lib/database')return {database:()=>db};if(name.startsWith('@/'))return load(path.join(root,name.slice(2)+'.ts'));if(name.startsWith('.'))return load(path.resolve(path.dirname(file),name+'.ts'));return require(name);};
   vm.runInThisContext('(function(require,module,exports){'+code+'\n})',{filename:file})(req,m,m.exports);return m.exports;
  }
  const {GET,POST}=load(path.join(root,'app/api/workspace/route.ts'));
@@ -39,7 +39,7 @@ function harness(){
   await legacy.get(null,'',401,cookie);await legacy.deniedMutation(cookie);
   assert.equal(legacy.snapshot(),before,'Expired email identity must not fall back to the legacy owner for reads or writes');
  }
- await legacy.get(null);assert.equal(legacy.snapshot(),before,'Legacy-only requests retain access');
+ await legacy.get(null,'',401);assert.equal(legacy.snapshot(),before,'A legacy Site identity cannot bypass Cloudflare email authentication');
  legacy.sql.close();
- console.log('BOOTSTRAP BEHAVIOR PASS: unauthenticated, wrong-email and unconfigured first users denied; configured initialization is idempotent; matching email cannot take ownership; legacy records and read state survive the retired reset flag.');
+ console.log('BOOTSTRAP BEHAVIOR PASS: unauthenticated, wrong-email and unconfigured first users denied; configured initialization is idempotent; matching email cannot take ownership; legacy records survive and old Site auth cannot bypass the Cloudflare session.');
 })().catch(error=>{console.error(error);process.exitCode=1;});

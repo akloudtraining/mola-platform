@@ -3,7 +3,7 @@ import {fundingState,eligibleOfficer} from './funding';
 import {publicAgreement} from './agreements';
 import {publicPayout} from './payouts';
 import {publicCollectionInstructions} from './collection-instructions';
-export type Identity={userId:string;email:string;displayName:string};
+export type Identity={userId:string;email:string;displayName:string;emailVerified?:boolean};
 export const normalizeEmail=(s:string)=>s.trim().toLowerCase();
 export function accessFor(org:Org,owner:string,user:Identity){
  const member=org.members.find(m=>m.access?.enabled&&m.access.userId===user.userId);

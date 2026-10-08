@@ -18,23 +18,34 @@ const fail=(error:string,status:number)=>Response.json({error},{status});
 export function workspaceHandlers(currentUser=workspaceIdentity,database=liveDatabase,initialize=true){
 async function GET(req:Request){try{
  const user=await currentUser(req);if(!user)return fail('Sign in to open your workspace.',401);const db=database();
- // Opening a workspace never clears records or transfers installation ownership.
+ // Opening a workspace never clears records. Legacy Supabase IDs are only
+ // relinked after Better Auth confirms the same email address.
  if(initialize){
- const previousInstallation=await db.prepare("SELECT owner FROM installation WHERE id='primary'").first<{owner:string}>();
- if(!previousInstallation&&user.userId.startsWith('supabase:')){
+ const configured=normalizeEmail(String((env as any).MOLA_OWNER_EMAIL||''));
+ let previousInstallation=await db.prepare("SELECT owner FROM installation WHERE id='primary'").first<{owner:string}>();
+ if(!previousInstallation){
   const existing=await db.prepare('SELECT owner FROM organizations ORDER BY id LIMIT 1').first<{owner:string}>();
-  const configured=normalizeEmail(String((env as any).MOLA_OWNER_EMAIL||''));
-  if(!existing&&(!configured||normalizeEmail(user.email)!==configured))return fail('Workspace setup is awaiting the configured owner. Existing records have not been changed.',403);
+  if(!existing&&(!user.emailVerified||!configured||normalizeEmail(user.email)!==configured))return fail('Workspace setup is awaiting the verified configured owner. Existing records have not been changed.',403);
+  await db.prepare("INSERT OR IGNORE INTO installation (id,owner) SELECT 'primary', COALESCE((SELECT owner FROM organizations ORDER BY id LIMIT 1),?)").bind(user.userId).run();
+  previousInstallation=await db.prepare("SELECT owner FROM installation WHERE id='primary'").first<{owner:string}>();
  }
- // First initialization happens while the Site is owner-private. Existing organization ownership wins.
- await db.prepare("INSERT OR IGNORE INTO installation (id,owner) SELECT 'primary', COALESCE((SELECT owner FROM organizations ORDER BY id LIMIT 1),?)").bind(user.userId).run();
+ if(previousInstallation?.owner.startsWith('supabase:')&&user.emailVerified&&configured&&normalizeEmail(user.email)===configured){
+  const legacyOwner=previousInstallation.owner;
+  await db.prepare("INSERT OR IGNORE INTO auth_identity_links (id,legacy_user_id,auth_user_id,email,linked_at,purpose) VALUES (?,?,?,?,?,'owner')").bind(legacyOwner,legacyOwner,user.userId,normalizeEmail(user.email),new Date().toISOString()).run();
+  const link=await db.prepare('SELECT auth_user_id FROM auth_identity_links WHERE legacy_user_id=?').bind(legacyOwner).first<{auth_user_id:string}>();
+  if(link?.auth_user_id!==user.userId)return fail('This verified account does not match the saved owner link. Ask the workspace administrator to review the identity migration.',403);
+  await db.batch([
+   db.prepare("UPDATE installation SET owner=? WHERE id='primary' AND owner=?").bind(user.userId,legacyOwner),
+   db.prepare('UPDATE organizations SET owner=? WHERE owner=?').bind(user.userId,legacyOwner),
+  ]);
+ }
  const install=await db.prepare("SELECT owner FROM installation WHERE id='primary'").first<{owner:string}>();
  if(install?.owner===user.userId)await db.batch(templates.map(o=>{const org={...o,id:user.userId+':'+o.id};return db.prepare('INSERT OR IGNORE INTO organizations (id,owner,data,version) VALUES (?,?,?,1)').bind(org.id,user.userId,JSON.stringify(org));}));
  }
- const candidates=await db.prepare("SELECT id,owner,data,version FROM organizations WHERE owner=? OR EXISTS (SELECT 1 FROM json_each(organizations.data,'$.members') m WHERE json_extract(m.value,'$.access.enabled')=1 AND (json_extract(m.value,'$.access.userId')=? OR (json_extract(m.value,'$.access.userId') IS NULL AND json_extract(m.value,'$.access.email')=?))) ORDER BY id DESC").bind(user.userId,user.userId,normalizeEmail(user.email)).all<{id:string;owner:string;data:string;version:number}>();
+ const candidates=await db.prepare("SELECT id,owner,data,version FROM organizations WHERE owner=? OR EXISTS (SELECT 1 FROM json_each(organizations.data,'$.members') m WHERE json_extract(m.value,'$.access.enabled')=1 AND (json_extract(m.value,'$.access.userId')=? OR (json_extract(m.value,'$.access.email')=? AND (json_extract(m.value,'$.access.userId') IS NULL OR (?=1 AND json_extract(m.value,'$.access.userId') LIKE 'supabase:%'))))) ORDER BY id DESC").bind(user.userId,user.userId,normalizeEmail(user.email),user.emailVerified?1:0).all<{id:string;owner:string;data:string;version:number}>();
  const organizations:Org[]=[],entries:Entry[]=[],activity:ActivityEvent[]=[];const activityAsOf=new Date().toISOString();
- for(const row of candidates.results){let org:Org={...JSON.parse(row.data),version:row.version};const claim=org.members.find(m=>m.access?.enabled&&!m.access.userId&&m.access.email===normalizeEmail(user.email));
- if(claim){if(org.members.some(m=>m.access?.userId===user.userId&&m.id!==claim.id))return fail('This account is already linked to another member.',409);const next={...org,version:row.version+1,members:org.members.map(m=>m.id===claim.id?{...m,access:{...m.access!,userId:user.userId}}:m),accessHistory:[...(org.accessHistory||[]),{at:new Date().toISOString(),actor:user.userId,memberId:claim.id,summary:'Member signed in and linked their account'}]};const changed=await db.prepare('UPDATE organizations SET data=?,version=? WHERE id=? AND version=?').bind(JSON.stringify(next),next.version,org.id,row.version).run();if(!changed.meta.changes)return fail('Member setup changed. Please refresh.',409);org=next;}
+ for(const row of candidates.results){let org:Org={...JSON.parse(row.data),version:row.version};const claim=org.members.find(m=>m.access?.enabled&&m.access.email===normalizeEmail(user.email)&&(!m.access.userId||(user.emailVerified===true&&m.access.userId.startsWith('supabase:'))));
+ if(claim){if(!user.emailVerified)return fail('Verify your email before linking it to a founding member record.',403);if(org.members.some(m=>m.access?.userId===user.userId&&m.id!==claim.id))return fail('This account is already linked to another member.',409);const legacyUserId=claim.access?.userId;if(legacyUserId?.startsWith('supabase:')){await db.prepare("INSERT OR IGNORE INTO auth_identity_links (id,legacy_user_id,auth_user_id,email,linked_at,purpose) VALUES (?,?,?,?,?,'member')").bind(legacyUserId,legacyUserId,user.userId,normalizeEmail(user.email),new Date().toISOString()).run();const link=await db.prepare('SELECT auth_user_id FROM auth_identity_links WHERE legacy_user_id=?').bind(legacyUserId).first<{auth_user_id:string}>();if(link?.auth_user_id!==user.userId)return fail('This verified email is already linked to a different account. Ask the workspace administrator to review the identity migration.',409);}const next={...org,version:row.version+1,members:org.members.map(m=>m.id===claim.id?{...m,access:{...m.access!,userId:user.userId}}:m),accessHistory:[...(org.accessHistory||[]),{at:new Date().toISOString(),actor:user.userId,memberId:claim.id,summary:legacyUserId?.startsWith('supabase:')?'Verified email linked this account to its existing member record':'Member signed in and linked their account'}]};const changed=await db.prepare('UPDATE organizations SET data=?,version=? WHERE id=? AND version=?').bind(JSON.stringify(next),next.version,org.id,row.version).run();if(!changed.meta.changes)return fail('Member setup changed. Please refresh.',409);org=next;}
  const permissions=accessFor(org,row.owner,user);if(!permissions.isOwner&&!permissions.memberId)continue;organizations.push(publicOrg(org,row.owner,user));const rows=await db.prepare('SELECT data FROM entries WHERE org_id=? ORDER BY created DESC').bind(org.id).all<{data:string}>();const own=rows.results.map(r=>publicEntry(JSON.parse(r.data),org,row.owner,user));entries.push(...own);if(org.mode==='Shared ownership'){const readRows=await db.prepare('SELECT event_id FROM notification_reads WHERE user_id=? AND org_id=?').bind(user.userId,org.id).all<{event_id:string}>();const read=new Set(readRows.results.map(r=>r.event_id));activity.push(...activityFor(org,own,activityAsOf).map(e=>({...e,read:read.has(e.id)})));}}
  if(!organizations.length)return fail('Your account has no active membership. Ask the workspace owner to configure your sign-in email and site access.',403);
  return Response.json({organizations,entries,activity,activityAsOf,name:user.displayName,email:user.email},{headers:{'Cache-Control':'no-store'}});

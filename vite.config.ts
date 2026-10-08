@@ -14,7 +14,7 @@ const { d1, r2 } = hostingConfig;
 // environment, but the custom Wrangler deploy must explicitly carry them
 // into the generated Worker configuration.
 const deploymentVars = Object.fromEntries(
-  ["SUPABASE_URL", "SUPABASE_PUBLISHABLE_KEY", "MOLA_OWNER_EMAIL"]
+  ["MOLA_OWNER_EMAIL"]
     .filter((key) => process.env[key])
     .map((key) => [key, process.env[key] as string]),
 );
@@ -35,6 +35,7 @@ const localBindingConfig = {
           binding: d1,
           database_name: "site-creator-d1",
           database_id: SITE_CREATOR_PLACEHOLDER_DATABASE_ID,
+          migrations_dir: "drizzle",
         },
       ]
     : [],
@@ -42,10 +43,11 @@ const localBindingConfig = {
     ? [
         {
           binding: r2,
-          bucket_name: "site-creator-r2",
+          bucket_name: "mola-receipts",
         },
       ]
     : [],
+  send_email: [{ name: "EMAIL" }],
 };
 
 export default defineConfig(async ({command,mode}) => {

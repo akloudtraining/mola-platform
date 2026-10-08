@@ -1,9 +1,10 @@
-import {authAction,supabaseUser} from '@/lib/supabase-session';
+import {authAction} from '@/lib/auth-actions';
+import {cloudflareUser} from '@/lib/cloudflare-auth';
 
 export const dynamic='force-dynamic';
 
 export async function GET(req:Request){
- try{return Response.json({user:await supabaseUser(req)},{headers:{'Cache-Control':'no-store'}});}
+ try{return Response.json({user:await cloudflareUser(req)},{headers:{'Cache-Control':'no-store'}});}
  catch(e){console.error(e);return Response.json({user:null},{headers:{'Cache-Control':'no-store'}});}
 }
 

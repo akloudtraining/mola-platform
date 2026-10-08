@@ -14,6 +14,7 @@
     "test:mobile-layout": "node tests/mobile-layout-contract.cjs",
     "test:surface-contract": "node tests/workspace-surface-contract.cjs",
     "test:auth-contract": "node tests/auth-contract.cjs",
+    "test:auth-actions": "node tests/cloudflare-auth-actions.cjs",
     "test:deployment-config": "node tests/deployment-config.mjs",
     "test:bootstrap-contract": "node tests/bootstrap-contract.cjs",
     "test:supabase-sql-contract": "node tests/supabase-sql-contract.cjs",
@@ -21,15 +22,16 @@
     "test:deadline-contract": "node tests/deadline-contract.cjs",
     "test:pilot-contract": "node tests/pilot-contract.cjs",
     "db:generate": "drizzle-kit generate",
-    "test:auth-links": "node tests/auth-links.cjs",
-    "test:email-pilot": "node tests/email-pilot.cjs",
-    "test:pilot-readiness": "node tests/auth-links.cjs && node tests/password-reset.cjs && node tests/email-pilot.cjs && node tests/pilot.cjs",
-    "test:pilot-engineering": "node scripts/check-pilot.mjs"
+    "test:auth-links": "node tests/auth-contract.cjs && node tests/cloudflare-auth-actions.cjs",
+    "test:email-pilot": "node tests/cloudflare-auth-actions.cjs",
+    "test:pilot-readiness": "node tests/auth-contract.cjs && node tests/cloudflare-auth-actions.cjs && node tests/pilot.cjs",
+    "test:pilot-engineering": "node tests/auth-contract.cjs && node tests/storage-boundary-contract.cjs && node scripts/check-pilot.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",
     "@hookform/resolvers": "^5.7.1",
     "@shadcn/react": "^0.3.0",
+    "better-auth": "1.7.7",
     "class-variance-authority": "0.7.1",
     "clsx": "2.1.1",
     "cmdk": "^1.1.1",

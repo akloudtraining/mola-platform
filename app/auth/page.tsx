@@ -40,7 +40,7 @@ export default function AuthPage(){
    if(mode==='login'||mode==='signup'||mode==='recover'||mode==='confirm')body.email=email;
    if(mode==='signup')body.displayName=displayName;
    if(mode==='login'||mode==='signup'||mode==='reset')body.password=password;
-   if(mode==='reset'&&accessToken)body.accessToken=accessToken;
+   if(mode==='reset'&&accessToken)body.token=accessToken;
    const r=await fetch('/api/auth',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
    const d:any=await r.json().catch(()=>({}));
    if(!r.ok||d.ok!==true)throw new Error(d.error||'The request could not be confirmed. Please try again.');
