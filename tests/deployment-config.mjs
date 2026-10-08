@@ -10,6 +10,7 @@ for (const name of ['MOLA_OWNER_EMAIL']) {
   }
 }
 assert.equal(config.keep_vars, true, 'Dashboard variables must survive Wrangler deployments');
+assert.equal(config.name, 'mola-platform', 'The deployed Worker must use the Mola service name');
 assert.equal(config.legacy_env, undefined, 'Generated config must not contain Wrangler’s removed legacy_env field');
 assert.ok(config.d1_databases?.some(binding => binding.binding === 'DB'), 'D1 binding must remain intact');
 assert.ok(config.r2_buckets?.some(binding => binding.binding === 'BUCKET'), 'Private receipts require the Mola R2 bucket binding');
