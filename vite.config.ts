@@ -6,7 +6,7 @@ import { sites } from "./build/sites-vite-plugin";
 import { pilotPreview, pilotPreviewVars } from "./build/pilot-preview";
 
 const SITE_CREATOR_PLACEHOLDER_DATABASE_ID =
-  "00000000-0000-4000-8000-000000000000";
+  "91637e1b-0a13-49f7-a9d4-49887a69c69b";
 
 const { d1, r2 } = hostingConfig;
 
