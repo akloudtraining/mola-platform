@@ -3,6 +3,10 @@ import {readFile, writeFile} from 'node:fs/promises';
 const path = 'dist/server/wrangler.json';
 const config = JSON.parse(await readFile(path, 'utf8'));
 
+// This is the first deployment in the user's account; do not expose the
+// starter-template Worker name as the public Mola endpoint.
+config.name = 'mola-platform';
+
 // Wrangler 4.119 rejects this legacy compatibility field. Environments
 // default to the legacy deployment naming model now, so removing it keeps
 // deployment behavior unchanged while allowing current Wrangler releases.
