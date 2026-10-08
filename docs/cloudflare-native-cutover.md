@@ -30,6 +30,10 @@ The resource bindings are represented in `vite.config.ts` and `.openai/hosting.j
 6. Verify a normal reload preserves organization setup and the regular workspace does not contain test records.
 7. Only after preview acceptance should the same reviewed configuration and pending migrations be applied to production.
 
-## Current branch limits
+## Cutover status
 
-The local feature branch contains Cloudflare-native auth and D1 migrations, and local build, type, lint, and pilot suites have passed. It has not been pushed or deployed, and no Cloudflare remote resource, secret, or database has been changed in this work. The connected Supabase project is outside this local cutover and should remain untouched until the Cloudflare preview is accepted and the group separately decides whether to retain or close it.
+The Cloudflare-native implementation is pushed to the GitHub branch `feat/cloudflare-native-backend`. The local production build, TypeScript check, deployment-config contract, Cloudflare storage/auth contract, and all 41 pilot behavioral suites pass. The local Worker integration check cannot run in this sandbox because it cannot bind its localhost port. The GitHub branch is not yet deployed.
+
+The live private Site still has the previous Supabase runtime variables. Its D1 overview does not show the Better Auth `user`, `account`, `session`, `verification`, or `auth_identity_links` tables. The production Site also has no configured `MOLA_AUTH_SECRET`, `MOLA_APP_URL`, or `MOLA_EMAIL_FROM` yet. The Cloudflare Email sender must be an address on a domain onboarded with Cloudflare Email Service.
+
+Do not switch production auth or remove the old Supabase runtime variables until the production source has been synchronized, the two pending auth migrations have been applied and verified, and the auth secret, production origin, and verified sender are configured. Keep the connected Supabase project untouched until the Cloudflare cutover is accepted and the group separately decides whether to retain or close it.
