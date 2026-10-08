@@ -26,10 +26,9 @@ const managedLinux = readExecutionProfile() === "managed-linux";
 const localBindingConfig = {
   main: "vinext/server/fetch-handler",
   compatibility_flags: ["nodejs_compat"],
-  // Do not emit an empty vars block. Cloudflare production variables are
-  // managed in the Worker settings; an empty generated block can replace or
-  // mask those runtime bindings during a custom Wrangler deploy.
-  ...(Object.keys(deploymentVars).length ? { vars: deploymentVars } : {}),
+  // Dashboard runtime variables must survive deploys even when they are
+  // not also available as build-time environment variables.
+  keep_vars: true,
   d1_databases: d1
     ? [
         {
@@ -77,7 +76,14 @@ export default defineConfig(async ({command,mode}) => {
       cloudflare({
         viteEnvironment: { name: "rsc", childEnvironments: ["ssr"] },
         inspectorPort: false,
-        config: {...localBindingConfig,vars:pilotPreviewVars(previewEnvironment,command==='serve')},
+        config: {
+          ...localBindingConfig,
+          // The preview helper returns {} during builds. Never let that
+          // replace production values supplied by the build environment.
+          vars: command === 'serve'
+            ? pilotPreviewVars(previewEnvironment, true)
+            : deploymentVars,
+        },
       }),
     ],
   };
