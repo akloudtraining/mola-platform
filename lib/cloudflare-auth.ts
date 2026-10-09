@@ -11,12 +11,16 @@ function value(name:'MOLA_AUTH_SECRET'|'MOLA_APP_URL'|'MOLA_EMAIL_FROM'|'RESEND_
  return String(cloudflareValue||runtime()[name]||'').trim();
 }
 
+function normalizeAppUrl(raw:string){
+ return raw.trim().replace(/^(https?:\\/\\/)\\s+/, '$1');
+}
+
 export function createCloudflareAuth(request:Request){
  const db=env.DB;
  const secret=value('MOLA_AUTH_SECRET');
  if(!db)throw new Error('Cloudflare D1 is not configured for authentication.');
  if(secret.length<32)throw new Error('MOLA_AUTH_SECRET must be set to a random value of at least 32 characters.');
- const origin=value('MOLA_APP_URL')||new URL(request.url).origin;
+ const origin=normalizeAppUrl(value('MOLA_APP_URL')||new URL(request.url).origin);
  const sender=value('MOLA_EMAIL_FROM');
  const resendApiKey=value('RESEND_API_KEY');
  const send=async(to:string,subject:string,text:string,html:string)=>{
