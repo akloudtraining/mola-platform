@@ -7,12 +7,8 @@ import type {Identity} from './access';
 
 const runtime=():Record<string,string|undefined>=>typeof process!=='undefined'?(process.env as Record<string,string|undefined>):{};
 function value(name:'MOLA_AUTH_SECRET'|'MOLA_APP_URL'|'MOLA_EMAIL_FROM'|'RESEND_API_KEY'){
- const cloudflareValue=(env as unknown as Record<string,unknown>)[name];
+ const cloudflareValue=name==='MOLA_AUTH_SECRET'?env.MOLA_AUTH_SECRET:name==='MOLA_APP_URL'?env.MOLA_APP_URL:name==='MOLA_EMAIL_FROM'?env.MOLA_EMAIL_FROM:(env as any).RESEND_API_KEY;
  return String(cloudflareValue||runtime()[name]||'').trim();
-}
-
-function normalizeAppUrl(raw:string){
- return raw.trim().replace(/^(https?:\/\/)\s+/, '$1');
 }
 
 export function createCloudflareAuth(request:Request){
@@ -20,21 +16,13 @@ export function createCloudflareAuth(request:Request){
  const secret=value('MOLA_AUTH_SECRET');
  if(!db)throw new Error('Cloudflare D1 is not configured for authentication.');
  if(secret.length<32)throw new Error('MOLA_AUTH_SECRET must be set to a random value of at least 32 characters.');
- const origin=normalizeAppUrl(value('MOLA_APP_URL')||new URL(request.url).origin);
+ const origin=value('MOLA_APP_URL')||new URL(request.url).origin;
  const sender=value('MOLA_EMAIL_FROM');
- const resendApiKey=value('RESEND_API_KEY');
+ const resendKey=value('RESEND_API_KEY');
  const send=async(to:string,subject:string,text:string,html:string)=>{
-  if(!resendApiKey||!sender)throw new Error('Resend email delivery is not configured.');
-  const response=await fetch('https://api.resend.com/emails',{
-   method:'POST',
-   headers:{Authorization:`Bearer ${resendApiKey}`,'Content-Type':'application/json'},
-   body:JSON.stringify({from:sender,to,subject,text,html})
-  });
-  if(!response.ok){
-   const details=await response.text().catch(()=> '');
-   console.error('Resend email delivery failed',{status:response.status,details:details.slice(0,500)});
-   throw new Error('Email delivery is temporarily unavailable.');
-  }
+  if(!resendKey||!sender)throw new Error('Resend email delivery is not configured.');
+  const response=await fetch('https://api.resend.com/emails',{method:'POST',headers:{Authorization:`Bearer ${resendKey}`,'Content-Type':'application/json'},body:JSON.stringify({from:sender,to:[to],subject,text,html})});
+  if(!response.ok){const detail=await response.text().catch(()=> '');throw new Error(`Resend email delivery failed (${response.status}): ${detail.slice(0,500)}`);}
  };
  return betterAuth({
   appName:'Mola Holdings',baseURL:origin,basePath:'/api/auth',secret,
