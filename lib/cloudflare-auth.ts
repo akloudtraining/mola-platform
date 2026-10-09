@@ -37,10 +37,10 @@ export function createCloudflareAuth(request:Request){
   trustedOrigins:[origin,new URL(request.url).origin],
   database:drizzleAdapter(drizzle(db,{schema}),{provider:'sqlite',schema:{user:schema.user,session:schema.session,account:schema.account,verification:schema.verification}}),
   emailAndPassword:{enabled:true,requireEmailVerification:true,autoSignIn:false,revokeSessionsOnPasswordReset:true,
-   sendResetPassword:async({user,url})=>send(user.email,'Reset your Mola sign-in password',`Use this secure link to reset your password. It expires in one hour.\\n\\n${url}\\n\\nIf you did not request a reset, ignore this email.`,`<p>Use this secure link to reset your password. It expires in one hour.</p><p><a href="${url}">Reset password</a></p><p>If you did not request a reset, ignore this email.</p>`)
+   sendResetPassword:async({user,url})=>send(user.email,'Reset your Mola sign-in password',`Use this secure link to reset your password. It expires in one hour.\n\n${url}\n\nIf you did not request a reset, ignore this email.`,`<p>Use this secure link to reset your password. It expires in one hour.</p><p><a href="${url}">Reset password</a></p><p>If you did not request a reset, ignore this email.</p>`)
   },
   emailVerification:{sendOnSignUp:true,sendOnSignIn:false,autoSignInAfterVerification:false,expiresIn:60*60,
-   sendVerificationEmail:async({user,url})=>send(user.email,'Verify your Mola member account',`Verify your email to activate sign-in to Mola Holdings. This link expires in one hour.\\n\\n${url}\\n\\nIf you did not create a Mola account, ignore this email.`, `<p>Verify your email to activate sign-in to Mola Holdings. This link expires in one hour.</p><p><a href="${url}">Verify email</a></p><p>If you did not create a Mola account, ignore this email.</p>`)
+   sendVerificationEmail:async({user,url})=>send(user.email,'Verify your Mola member account',`Verify your email to activate sign-in to Mola Holdings. This link expires in one hour.\n\n${url}\n\nIf you did not create a Mola account, ignore this email.`, `<p>Verify your email to activate sign-in to Mola Holdings. This link expires in one hour.</p><p><a href="${url}">Verify email</a></p><p>If you did not create a Mola account, ignore this email.</p>`)
   },
   session:{expiresIn:60*60*24*14,updateAge:60*60*24},
   advanced:{useSecureCookies:true,defaultCookieAttributes:{httpOnly:true,secure:true,sameSite:'lax',path:'/' }},
