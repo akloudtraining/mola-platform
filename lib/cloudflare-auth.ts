@@ -12,7 +12,7 @@ function value(name:'MOLA_AUTH_SECRET'|'MOLA_APP_URL'|'MOLA_EMAIL_FROM'|'RESEND_
 }
 
 function normalizeAppUrl(raw:string){
- return raw.trim().replace(/^(https?:\\/\\/)\\s+/, '$1');
+ return raw.trim().replace(/^(https?:\/\/)\s+/, '$1');
 }
 
 export function createCloudflareAuth(request:Request){
