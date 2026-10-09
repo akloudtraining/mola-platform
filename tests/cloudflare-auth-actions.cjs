@@ -35,6 +35,8 @@ const call=(body,origin)=>action(request(origin),body);
  assert.equal(result.response.status,403);assert.equal(calls.length,0);
  eligible=false;result=await call({action:'signup',email:'outsider@example.test',password:'password123'});
  assert.equal(result.response.status,403);assert.equal(calls.length,0);
+ result=await call({action:'signup',email:'owner@example.test',password:'password123'});
+ assert.equal(result.response.status,400);assert.equal((await result.response.json()).error,'Enter your full name.');assert.equal(calls.length,0);
  eligible=true;result=await call({action:'signup',email:'owner@example.test',password:'password123',displayName:'Owner'});
  assert.equal(result.response.status,200);assert.equal((await result.response.json()).requiresConfirmation,true);assert.equal(calls.at(-1).path,'sign-up/email');assert.equal(calls.at(-1).body.callbackURL,'https://mola.test/auth?mode=confirmed');
  result=await call({action:'login',email:'user@example.test',password:'password123'});
