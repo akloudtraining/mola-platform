@@ -2,7 +2,7 @@ import {workspaceEndpoint} from './workspace-endpoint';
 // Only read requests may be replayed. Mutations always require an explicit retry.
 let refreshing:Promise<boolean>|null=null;
 let generation=0;
-const readable=new Set(['/api/workspace','/api/workspace/export','/api/storage/reconcile']);
+const readable=new Set(['/api/workspace','/api/workspace/export']);
 const pilotRead=(input:string)=>input==='/api/pilot/readiness'||input.startsWith('/api/pilot/readiness?');
 async function renew(){
  if(!refreshing){

@@ -9,8 +9,7 @@ tables.entries.push({id:'fictional-agreement',org_id:'fictional-org',data:agreem
 const db={prepare(query){assert.match(query,/^SELECT /);return query;},async batch(queries){reads++;return queries.map(q=>{const table=q.match(/FROM (\w+)/)[1];return {results:structuredClone(tables[table])};});}};
 function load(file){const m={exports:{}};const code=ts.transpileModule(fs.readFileSync(file,'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022,esModuleInterop:true}}).outputText;const req=name=>{
  if(name==='cloudflare:workers')return {env};
- if(name==='@/app/chatgpt-auth')return {getChatGPTUser:async()=>legacyUser};
- if(name==='@/lib/supabase-session')return {requestIdentity:async()=>emailUser};
+ if(name==='@/lib/cloudflare-auth')return {cloudflareUser:async()=>emailUser?{...emailUser,emailVerified:true}:null};
  if(name==='@/lib/database')return {database:()=>db};
  if(name==='@/.openai/hosting.json')return {project_id:'fictional-project'};
  if(name==='@/lib/ledger-export')return load(path.join(root,'lib/ledger-export.ts'));
@@ -33,7 +32,7 @@ async function get(expected,headers={}){const r=await GET(new Request('https://t
  const {format,projectId,exportedAt}=data;
  const digest=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(JSON.stringify({format,projectId,exportedAt,tables:data.tables})));
  assert.equal(data.integrity.sha256,Buffer.from(digest).toString('hex'));
- emailUser=null;legacyUser=identity('supabase:owner');await get(200);
+ emailUser=null;legacyUser=identity('supabase:owner');await get(401);
  const readsBeforeExpired=reads;
  await get(401,{cookie:'mola_access_token=expired'});
  await get(401,{cookie:'mola_refresh_token=still-present'});

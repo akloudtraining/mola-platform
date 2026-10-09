@@ -14,7 +14,7 @@ function isMolaWorkspace(organizationId?:string){
 export function WorkspaceLogo({organizationId,organizationName}:WorkspaceIdentity){
   return isMolaWorkspace(organizationId)
     ?<div className="mola-brand"><img src="/mola-logo.png" alt="Mola Holdings" width={1024} height={1024} decoding="async"/><span>Investment workspace</span></div>
-    :<><div className="wordmark workspace-identity"><span className="brand-icon" aria-hidden="true"><Landmark size={24}/></span><span>{organizationName||'Collective'}</span></div><p>Investment workspace</p></>;
+    :<><div className="wordmark workspace-identity"><span className="brand-icon" aria-hidden="true"><Landmark size={24}/></span><span>{organizationName||'Mola Holdings'}</span></div><p>Mola investment workspace</p></>;
 }
 
 export default function WorkspaceBrand({organizationId,organizationName}:WorkspaceIdentity){
@@ -28,7 +28,7 @@ export default function WorkspaceBrand({organizationId,organizationName}:Workspa
 
     if(isMola)root.setAttribute('data-workspace-brand','mola');
     else root.removeAttribute('data-workspace-brand');
-    document.title=organizationName?`${organizationName} — Investment Workspace`:'Collective — Investment Workspace';
+    document.title=organizationName?`${organizationName} — Mola`:'Mola Holdings — Investment Workspace';
     for(const icon of icons){
       icon.setAttribute('href',isMola?'/mola-logo.png':'/favicon.svg');
       icon.setAttribute('type',isMola?'image/png':'image/svg+xml');

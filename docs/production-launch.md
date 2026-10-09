@@ -1,5 +1,7 @@
 # Mola pilot readiness — October 4, 2026
 
+> Historical snapshot. The architecture in this October 4 report has been superseded: Mola is moving to Cloudflare for hosting, authentication, D1 data, R2 receipts, and email. Do not use its Supabase setup steps as current instructions. Follow [Mola Cloudflare pilot setup](./cloudflare-native-cutover.md) for the active plan. The dated product and security decisions below remain useful context, but deployment status must be reverified against the current Cloudflare preview.
+
 The next release is a small, named-member contribution-tracking pilot. Payments remain external and receipt verification requires a different authorized member. Both Sites remain owner-private. D1 remains the writable ledger; Supabase provides email authentication, while the PostgreSQL ledger adapter is staged separately. The selected Supabase project is `ihyujnckcqtcooduoetj` in `us-west-2`.
 
 The owner has deferred browser, phone and real-member testing (DEV-096) and reports successful sign-in. Continue pilot implementation without using those checks as a release blocker; deferred checks are not passing results. The active-ledger gate now includes 41 behavioral suites. Group-agreed details, named Site access and email delivery remain separate setup matters. The audit below is a dated snapshot, not a fresh account check.

@@ -22,9 +22,9 @@ export async function checkEmailProvider(config:{url:string;key:string},request:
 }
 
 export function manualPilotChecks():PilotCheck[]{return [
- {id:'sender',title:'Email sender verified',status:'unverified',detail:'Verify the SMTP sender supports the intended pilot members. An existing confirmed owner account does not prove delivery to other members.'},
- {id:'callbacks',title:'Email return links verified',status:'unverified',detail:'Allow the confirmation and recovery URLs below in the authentication dashboard. Check the email templates, then open the actual delivered links.'},
- {id:'delivery',title:'Confirmation and recovery emails received',status:'unverified',detail:'Test signup, confirmation resend and password recovery with the intended accounts. Record inbox arrival and successful link use in Buildroom.'},
+ {id:'sender',title:'Cloudflare sender domain verified',status:'unverified',detail:'Onboard and verify a domain with Cloudflare Email Service, configure the Worker EMAIL binding, and set MOLA_EMAIL_FROM. A configured sender does not yet prove delivery.'},
+ {id:'callbacks',title:'Email links verified',status:'unverified',detail:'Open the actual confirmation and recovery messages on desktop and phone. Confirm each link returns to the Mola sign-in page and works only once.'},
+ {id:'delivery',title:'Confirmation and recovery emails received',status:'unverified',detail:'Test signup, confirmation resend and password recovery with the intended member accounts. Record inbox arrival and successful link use in Buildroom.'},
  {id:'sharing',title:'Named pilot users allowed through Site sharing',status:'unverified',detail:'Configure the agreed member accounts first, then allow only those named users through Site sharing. App membership and Site access are separate.'},
  {id:'devices',title:'Desktop, phone and separate-member acceptance',status:'unverified',detail:'Use separate contributor and reviewer accounts. Record the contribution, review, balance, correction and refresh results on desktop and phone in Buildroom.'}
 ];}

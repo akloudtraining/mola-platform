@@ -29,6 +29,20 @@
       "when": 1791220818553,
       "tag": "0003_nappy_winter_soldier",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1791494523672,
+      "tag": "0004_cloudflare_auth",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1791494618727,
+      "tag": "0005_auth_identity_links",
+      "breakpoints": true
     }
   ]
 }

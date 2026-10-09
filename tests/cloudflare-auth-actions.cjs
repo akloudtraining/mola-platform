@@ -1,0 +1,53 @@
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const path=require('node:path');
+const vm=require('node:vm');
+const ts=require('typescript');
+const root=path.resolve(__dirname,'..');
+const calls=[];
+let eligible=true;
+const env={MOLA_OWNER_EMAIL:'owner@example.test',DB:{prepare(){return {bind(){return this;},async first(){return eligible?{eligible:1}:null;}};}}};
+const context=vm.createContext({Response,Request,Headers,URL,console});
+const authModule={exports:{}};
+const source=ts.transpileModule(fs.readFileSync(path.join(root,'lib/auth-actions.ts'),'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText;
+const mockAuth=async(_req,path,body)=>{
+ calls.push({path,body});
+ if(path==='sign-in/email'&&body.password==='bad')return Response.json({message:'private provider details'},{status:401});
+ if(path==='sign-in/email')return new Response(JSON.stringify({user:{id:'safe-user'}}),{status:200,headers:{'Set-Cookie':'better-auth.session_token=fake; HttpOnly; Secure; SameSite=Lax','X-Auth':'yes'}});
+ if(path==='get-session')return Response.json({user:{id:'safe-user'}});
+ if(path==='sign-out')return new Response(JSON.stringify({success:true}),{status:200,headers:{'Set-Cookie':'better-auth.session_token=; Max-Age=0; HttpOnly; Secure'}});
+ if(path==='send-verification-email'||path==='request-password-reset')return Response.json({status:true});
+ if(path==='reset-password')return Response.json({status:true});
+ if(path==='sign-up/email')return Response.json({user:{id:'new-user'}});
+ throw new Error('Unexpected auth endpoint '+path);
+};
+function req(name){
+ if(name==='cloudflare:workers')return {env};
+ if(name==='./cloudflare-auth')return {runAuthEndpoint:mockAuth};
+ throw new Error('Unexpected import '+name);
+}
+vm.runInContext('(function(require,module,exports){'+source+'\n})',context)(req,authModule,authModule.exports);
+const action=authModule.exports.authAction;
+const request=(origin='https://mola.test')=>new Request('https://mola.test/api/auth',{method:'POST',headers:{origin,'Content-Type':'application/json'}});
+const call=(body,origin)=>action(request(origin),body);
+(async()=>{
+ let result=await call({action:'login',email:'user@example.test',password:'password123'},'https://evil.test');
+ assert.equal(result.response.status,403);assert.equal(calls.length,0);
+ eligible=false;result=await call({action:'signup',email:'outsider@example.test',password:'password123'});
+ assert.equal(result.response.status,403);assert.equal(calls.length,0);
+ result=await call({action:'signup',email:'owner@example.test',password:'password123'});
+ assert.equal(result.response.status,400);assert.equal((await result.response.json()).error,'Enter your full name.');assert.equal(calls.length,0);
+ eligible=true;result=await call({action:'signup',email:'owner@example.test',password:'password123',displayName:'Owner'});
+ assert.equal(result.response.status,200);assert.equal((await result.response.json()).requiresConfirmation,true);assert.equal(calls.at(-1).path,'sign-up/email');assert.equal(calls.at(-1).body.callbackURL,'https://mola.test/auth?mode=confirmed');
+ result=await call({action:'login',email:'user@example.test',password:'password123'});
+ assert.equal(result.response.status,200);assert.match(result.response.headers.get('set-cookie'),/HttpOnly; Secure/);assert.equal(result.response.headers.get('x-auth'),'yes');
+ result=await call({action:'login',email:'user@example.test',password:'bad'});
+ assert.equal(result.response.status,401);assert.equal((await result.response.json()).error,'Email or password is incorrect.');
+ result=await call({action:'recover',email:'user@example.test'});assert.equal(result.response.status,200);assert.equal(calls.at(-1).path,'request-password-reset');assert.equal(calls.at(-1).body.redirectTo,'https://mola.test/auth?mode=reset');
+ result=await call({action:'resend_confirmation',email:'user@example.test'});assert.equal(result.response.status,200);assert.equal(calls.at(-1).path,'send-verification-email');
+ result=await call({action:'update_password',password:'new-password123',token:'single-use-token'});assert.equal(result.response.status,200);assert.equal(JSON.stringify(calls.at(-1).body),JSON.stringify({newPassword:'new-password123',token:'single-use-token'}));
+ result=await call({action:'refresh'});assert.equal(result.response.status,200);assert.equal((await result.response.json()).ok,true);
+ result=await call({action:'logout'});assert.equal(result.response.status,200);assert.match(result.response.headers.get('set-cookie'),/Max-Age=0/);
+ result=await call({action:'update_password',password:'short',token:'x'});assert.equal(result.response.status,400);
+ console.log('CLOUDFLARE AUTH ACTIONS PASS: origin guard, allowlisted signup, verify-first account creation, session cookies, non-enumerating recovery, token reset, refresh and logout.');
+})().catch(error=>{console.error(error);process.exitCode=1;});

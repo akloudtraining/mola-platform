@@ -2,7 +2,7 @@ import {env} from 'cloudflare:workers';
 import {workspaceIdentity} from '@/lib/workspace-identity';
 import {database} from '@/lib/database';
 import {pilotSetupRows} from '@/lib/pilot-setup';
-import {checkEmailProvider,manualPilotChecks} from '@/lib/pilot-diagnostics';
+import {manualPilotChecks} from '@/lib/pilot-diagnostics';
 import type {Org,Entry} from '@/lib/model';
 
 export const dynamic='force-dynamic';
@@ -19,6 +19,11 @@ export async function GET(req:Request){try{
  org.permissions={isOwner:true,memberId:member?.id||'',canManage:true,canReview:!!member?.access?.canReview,role:member?.role||'Workspace owner'};
  const agreements=await db.prepare("SELECT data FROM entries WHERE org_id=? AND json_extract(data,'$.type')='agreement'").bind(org.id).all<{data:string}>();
  const setup=pilotSetupRows(org,agreements.results.map(row=>JSON.parse(row.data) as Entry));
- const provider=await checkEmailProvider({url:String((env as any).SUPABASE_URL||'').trim(),key:String((env as any).SUPABASE_PUBLISHABLE_KEY||'').trim()});
+ const configured=!!env.DB&&String(env.MOLA_AUTH_SECRET||'').trim().length>=32;
+ const provider=[
+  {id:'email',title:'Cloudflare email/password sign-in',status:configured?'pass':'fail',detail:configured?'Authentication is configured to use Cloudflare D1 and Better Auth.':'Set the D1 binding and a random MOLA_AUTH_SECRET of at least 32 characters.'},
+  {id:'signup',title:'Member signup eligibility',status:'pass',detail:'New accounts can only be created for the configured owner or an enabled member email.'},
+  {id:'confirmation',title:'Verified email required',status:'pass',detail:'Email verification is required before a session can access the workspace.'},
+ ];
  return reply({organizationId:org.id,organizationVersion:org.version,checkedAt:new Date().toISOString(),setup,provider,acceptance:manualPilotChecks(),callbacks:{confirmation:new URL('/auth?mode=confirmed',req.url).toString(),recovery:new URL('/auth?mode=reset',req.url).toString()}});
  }catch{return reply({error:'The pilot checks could not complete. Try again; no setup or acceptance status was changed.'},503);}}
