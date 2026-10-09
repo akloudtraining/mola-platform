@@ -1,5 +1,3 @@
-Total output lines: 294
-
 import {receiptConfirmation} from './bank-receipt';
 import {activityFor,type ActivityEvent} from '@/lib/activity';
 import {fundingState,eligibleOfficer,currentApprovals} from '@/lib/funding';
