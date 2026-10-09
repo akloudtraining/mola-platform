@@ -45,6 +45,7 @@ export async function authAction(req:Request,body:unknown){
     if(!await isEligibleSignup(email))return {response:json({error:'This email is not enabled for a Mola account yet. Ask the workspace owner to add it to the member list.'},403)};
     const password=typeof input.password==='string'?input.password:'';
     const displayName=typeof input.displayName==='string'?input.displayName.trim().slice(0,100):'';
+    if(!displayName)return {response:json({error:'Enter your full name.'},400)};
     if(password.length<8||password.length>128)return {response:json({error:'Use a password between 8 and 128 characters.'},400)};
     const result=await runAuthEndpoint(req,'sign-up/email',{name:displayName||email.split('@')[0],email,password,callbackURL:`${origin}/auth?mode=confirmed`});
     if(!result.ok){const detail=await providerMessage(result);const message=detail.toLowerCase().includes('email')?'Account could not be created or the verification email could not be sent. Please retry later.':'Account could not be created. Check the details and try again.';return {response:json({error:message},result.status>=500?503:result.status)};}
