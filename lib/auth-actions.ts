@@ -26,7 +26,8 @@ export async function authAction(req:Request,body:unknown){
  if(!sameOrigin(req))return {response:json({error:'Invalid request origin.'},403)};
  const input=body&&typeof body==='object'&&!Array.isArray(body)?body as Record<string,unknown>:{};
  const action=typeof input.action==='string'?input.action:'';
- const origin=new URL(req.url).origin;
+ // Resolve email callbacks on the auth service's origin, not the host
+ // where the request began (root domain, app subdomain or Worker alias).
  try{
   if(action==='logout'){
    const result=await runAuthEndpoint(req,'sign-out',{});
@@ -47,7 +48,7 @@ export async function authAction(req:Request,body:unknown){
     const displayName=typeof input.displayName==='string'?input.displayName.trim().slice(0,100):'';
     if(!displayName)return {response:json({error:'Enter your full name.'},400)};
     if(password.length<8||password.length>128)return {response:json({error:'Use a password between 8 and 128 characters.'},400)};
-    const result=await runAuthEndpoint(req,'sign-up/email',{name:displayName||email.split('@')[0],email,password,callbackURL:`${origin}/auth?mode=confirmed`});
+    const result=await runAuthEndpoint(req,'sign-up/email',{name:displayName||email.split('@')[0],email,password,callbackURL:'/auth?mode=confirmed'});
     if(!result.ok){const detail=await providerMessage(result);const message=detail.toLowerCase().includes('email')?'Account could not be created or the verification email could not be sent. Please retry later.':'Account could not be created. Check the details and try again.';return {response:json({error:message},result.status>=500?503:result.status)};}
     return {response:json({ok:true,requiresConfirmation:true,message:'Check your email for a verification link. You can sign in after verifying your email.'})};
    }
@@ -60,8 +61,8 @@ export async function authAction(req:Request,body:unknown){
    }
    const confirmation=action==='resend_confirmation';
    const result=confirmation
-    ?await runAuthEndpoint(req,'send-verification-email',{email,callbackURL:`${origin}/auth?mode=confirmed`})
-    :await runAuthEndpoint(req,'request-password-reset',{email,redirectTo:`${origin}/auth?mode=reset`});
+    ?await runAuthEndpoint(req,'send-verification-email',{email,callbackURL:'/auth?mode=confirmed'})
+    :await runAuthEndpoint(req,'request-password-reset',{email,redirectTo:'/auth?mode=reset'});
    if(!result.ok)return {response:json({error:'Email delivery is temporarily unavailable. Please try again later.'},result.status>=500?503:429)};
    return {response:json({ok:true,message:confirmation?'If the account needs verification, check its email for a new link.':'If an account matches, check the email for reset instructions.'})};
   }
