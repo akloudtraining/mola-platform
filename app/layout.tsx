@@ -4,11 +4,8 @@ import "./workspace-refresh.css";
 import "./mola-brand.css";
 
 export const metadata: Metadata = {
-  title: "Collective — Investment Workspace",
-  description: "A private workspace for group contributions, projects, and decisions.",
-  other: {
-    "codex-preview": "development",
-  },
+  title: "Mola Holdings — Investment Workspace",
+  description: "A private Mola Holdings workspace for group contributions, projects, and decisions.",
   icons: {
     icon: "/favicon.svg",
     shortcut: "/favicon.svg",
