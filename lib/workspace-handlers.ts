@@ -1,4 +1,3 @@
-Warning: truncated output (original token count: 12816)
 Total output lines: 294
 
 import {receiptConfirmation} from './bank-receipt';
