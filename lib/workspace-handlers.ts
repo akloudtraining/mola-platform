@@ -1,3 +1,6 @@
+Warning: truncated output (original token count: 12816)
+Total output lines: 294
+
 import {receiptConfirmation} from './bank-receipt';
 import {activityFor,type ActivityEvent} from '@/lib/activity';
 import {fundingState,eligibleOfficer,currentApprovals} from '@/lib/funding';
@@ -42,7 +45,7 @@ async function GET(req:Request){try{
  const install=await db.prepare("SELECT owner FROM installation WHERE id='primary'").first<{owner:string}>();
  if(install?.owner===user.userId)await db.batch(templates.map(o=>{const org={...o,id:user.userId+':'+o.id};return db.prepare('INSERT OR IGNORE INTO organizations (id,owner,data,version) VALUES (?,?,?,1)').bind(org.id,user.userId,JSON.stringify(org));}));
  }
- const candidates=await db.prepare("SELECT id,owner,data,version FROM organizations WHERE owner=? OR EXISTS (SELECT 1 FROM json_each(organizations.data,'$.members') m WHERE json_extract(m.value,'$.access.enabled')=1 AND (json_extract(m.value,'$.access.userId')=? OR (json_extract(m.value,'$.access.email')=? AND (json_extract(m.value,'$.access.userId') IS NULL OR (?=1 AND json_extract(m.value,'$.access.userId') LIKE 'supabase:%'))))) ORDER BY id DESC").bind(user.userId,user.userId,normalizeEmail(user.email),user.emailVerified?1:0).all<{id:string;owner:string;data:string;version:number}>();
+ const candidates=await db.prepare("SELECT id,owner,data,version FROM organizations WHERE json_extract(data,'$.mode')='Shared ownership' AND (owner=? OR EXISTS (SELECT 1 FROM json_each(organizations.data,'$.members') m WHERE json_extract(m.value,'$.access.enabled')=1 AND (json_extract(m.value,'$.access.userId')=? OR (json_extract(m.value,'$.access.email')=? AND (json_extract(m.value,'$.access.userId') IS NULL OR (?=1 AND json_extract(m.value,'$.access.userId') LIKE 'supabase:%')))))) ORDER BY id DESC").bind(user.userId,user.userId,normalizeEmail(user.email),user.emailVerified?1:0).all<{id:string;owner:string;data:string;version:number}>();
  const organizations:Org[]=[],entries:Entry[]=[],activity:ActivityEvent[]=[];const activityAsOf=new Date().toISOString();
  for(const row of candidates.results){let org:Org={...JSON.parse(row.data),version:row.version};const claim=org.members.find(m=>m.access?.enabled&&m.access.email===normalizeEmail(user.email)&&(!m.access.userId||(user.emailVerified===true&&m.access.userId.startsWith('supabase:'))));
  if(claim){if(!user.emailVerified)return fail('Verify your email before linking it to a founding member record.',403);if(org.members.some(m=>m.access?.userId===user.userId&&m.id!==claim.id))return fail('This account is already linked to another member.',409);const legacyUserId=claim.access?.userId;if(legacyUserId?.startsWith('supabase:')){await db.prepare("INSERT OR IGNORE INTO auth_identity_links (id,legacy_user_id,auth_user_id,email,linked_at,purpose) VALUES (?,?,?,?,?,'member')").bind(legacyUserId,legacyUserId,user.userId,normalizeEmail(user.email),new Date().toISOString()).run();const link=await db.prepare('SELECT auth_user_id FROM auth_identity_links WHERE legacy_user_id=?').bind(legacyUserId).first<{auth_user_id:string}>();if(link?.auth_user_id!==user.userId)return fail('This verified email is already linked to a different account. Ask the workspace administrator to review the identity migration.',409);}const next={...org,version:row.version+1,members:org.members.map(m=>m.id===claim.id?{...m,access:{...m.access!,userId:user.userId}}:m),accessHistory:[...(org.accessHistory||[]),{at:new Date().toISOString(),actor:user.userId,memberId:claim.id,summary:legacyUserId?.startsWith('supabase:')?'Verified email linked this account to its existing member record':'Member signed in and linked their account'}]};const changed=await db.prepare('UPDATE organizations SET data=?,version=? WHERE id=? AND version=?').bind(JSON.stringify(next),next.version,org.id,row.version).run();if(!changed.meta.changes)return fail('Member setup changed. Please refresh.',409);org=next;}
@@ -164,30 +167,7 @@ async function POST(req:Request){try{
   if(org.activeAgreementId!==entry.id||!Number.isInteger(x.version)||x.version!==row.version)return fail('A new version or member setup is available. Close this form and review it before accepting.',409);
   const member=org.members.find(m=>m.id===permissions.memberId)!;
   if(!sameMemberName(x.typedName,member.name))return fail('Enter your member name as shown in this workspace.',400);
-  const acceptance={memberId:member.id,memberName:member.name,typedName:x.typedName.trim(),actor:user.userId,at:new Date().toISOString(),digest:agreement.digest,consent:acceptanceConsent};
-  const next={...entry,agreement:{...agreement,acceptances:[...agreement.acceptances,acceptance]}};
-  const changed=await db.prepare('UPDATE entries SET data=? WHERE id=? AND org_id=? AND data=? AND EXISTS (SELECT 1 FROM organizations WHERE id=? AND version=?)').bind(JSON.stringify(next),entry.id,org.id,previous.data,org.id,row.version).run();
-  if(!changed.meta.changes)return fail('The agreement or member permissions changed. Refresh before accepting.',409);
-  return resultEntry(next);
- }
- if(['weeklyMinimum','settings','member','memberAccess','linkOwnerFounder','obligation','decision','scheduleSetup','scheduleRate','schedulePreview','scheduleGenerate'].includes(x.action)&&!permissions.canManage)return fail('Only the workspace owner can change organization setup.',403);
- if(x.action==='linkOwnerFounder'){
-  if(org.mode!=='Shared ownership')return fail('Founder linking is available for Mola.',400);
-  if(!Number.isInteger(x.version)||typeof x.memberId!=='string'||typeof x.name!=='string'||!validFounderName(x.name)||x.acknowledged!==true)return fail('Choose your own founder slot, enter your name and confirm the account link.',400);
-  const email=normalizeEmail(user.email||'');
-  if(!email||email.length>254||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))return fail('Your signed-in account needs a valid email before it can be linked.',400);
-  const member=org.members.find(m=>m.id===x.memberId);if(!member)return fail('Founder slot unavailable.',400);
-  if(org.members.some(m=>m.id!==member.id&&(m.access?.userId===user.userId||normalizeEmail(m.access?.email||'')===email)))return fail('Your account or email is already assigned to a different founder. Review Members before linking.',409);
-  if(member.access?.userId===user.userId&&member.access.enabled&&normalizeEmail(member.access.email)===email&&founderNameMatches(member.name,x.name))return resultOrg({...org,version:row.version});
-  if(!founderSlotAvailable(member,email))return fail('This slot is assigned or has disabled access. Review its member configuration before linking.',409);
-  if(member.role!=='Name pending'&&!founderNameMatches(member.name,x.name))return fail('Enter the name already recorded for this founder. Correct member details separately if needed.',400);
-  if(x.version!==row.version)return fail('Member setup changed. Close this form, refresh and choose your slot again.',409);
-  const next={...org,version:row.version+1,members:org.members.map(m=>m.id===member.id?{...m,name:x.name.trim(),role:m.role==='Name pending'?'Member':m.role,access:{email,enabled:true,canReview:m.access?.canReview||false,userId:user.userId}}:m),accessHistory:[...(org.accessHistory||[]),{at:new Date().toISOString(),actor:user.userId,memberId:member.id,summary:'Workspace owner linked their own founder account; membership enabled'}]};
-  const changed=await db.prepare('UPDATE organizations SET data=?,version=? WHERE id=? AND owner=? AND version=?').bind(JSON.stringify(next),next.version,org.id,user.userId,x.version).run();
-  if(!changed.meta.changes)return fail('Member setup changed. Refresh before linking.',409);
-  return resultOrg(next);
- }
- if(x.action==='obligationDeadline'){
+  const acceptance={memberId:member.id,memberName:member.name,typedName:x.t…816 tokens truncated…eadline'){
   if(!permissions.canManage)return fail('Only the workspace owner can record submission deadlines.',403);
   if(!Number.isInteger(x.version)||x.version!==row.version||typeof x.entryId!=='string'||!Number.isInteger(x.historyCount)||typeof x.deadlineAt!=='string')return fail('Refresh this obligation before setting its deadline.',409);
   if(typeof x.reason!=='string'||x.reason.trim().length<5||x.reason.length>2000)return fail('Provide a reason for the deadline change.',400);
