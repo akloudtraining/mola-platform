@@ -263,6 +263,27 @@ let amountMinor:number;try{amountMinor=parseMoney(x.amount,org.currency);}catch(
 if(!Number.isSafeInteger(amountMinor*org.members.length))return fail('Amount exceeds the supported range.',400);
 const next={...org,version:row.version+1,weeklyMinimumMinor:amountMinor,weeklyMinimumHistory:[...(org.weeklyMinimumHistory||[]),{previousMinor:org.weeklyMinimumMinor??10000,amountMinor,at:new Date().toISOString(),actor:user.userId}]};
 const result=await db.prepare('UPDATE organizations SET data=?,version=? WHERE id=? AND owner=? AND version=?').bind(JSON.stringify(next),next.version,x.orgId,user.userId,x.version).run();if(!result.meta.changes)return fail('This organization changed. Refresh before saving again.',409);return resultOrg(next);}
+if(x.action==='resubmitContribution'){
+ if(typeof x.entryId!=='string'||!Number.isInteger(x.reviewCount)||typeof x.reason!=='string'||x.reason.trim().length<5||x.reason.length>2000)return fail('Explain what you corrected before resubmitting.',400);
+ for(const key of ['title','memberId','currency','amount','method','date','reference','purpose','submissionObligationId'])if(typeof x[key]!=='string'||x[key].length>5000)return fail('Check the corrected contribution details.',400);
+ if(!x.title.trim()||x.title.length>180||!['USD','CAD','XAF'].includes(x.currency)||!validDate(x.date)||!['Zelle (external)','Bank transfer (external)','Other external payment'].includes(x.method))return fail('Check the title, date, currency and payment method.',400);
+ const previous=await db.prepare('SELECT data FROM entries WHERE id=? AND org_id=?').bind(x.entryId,x.orgId).first<{data:string}>();if(!previous)return fail('Payment unavailable.',404);
+ const payment=JSON.parse(previous.data) as Entry;if(payment.type!=='contribution')return fail('Only rejected contributions can be corrected.',400);
+ if(payment.status!=='Rejected')return fail('Only a rejected contribution can be edited and resubmitted.',409);
+ if((payment.submittedBy||row.owner)!==user.userId)return fail('Only the original submitter can correct this contribution.',403);
+ if(payment.memberId!==x.memberId)return fail('The contribution member cannot be changed. Record a separate contribution for another member.',400);
+ if((payment.reviews||[]).length!==x.reviewCount)return fail('This payment changed. Close it and refresh before correcting it.',409);
+ let amountMinor:number;try{amountMinor=parseMoney(x.amount,x.currency);}catch(e){return fail((e as Error).message,400);}
+ let submissionDeadline,submissionObligationId:string|undefined,submissionTargetData:string|undefined;
+ if(x.submissionObligationId){const target=await db.prepare('SELECT data FROM entries WHERE id=? AND org_id=?').bind(x.submissionObligationId,x.orgId).first<{data:string}>();const due=target?JSON.parse(target.data) as Entry:null;if(!due||due.type!=='obligation'||due.memberId!==payment.memberId||due.currency!==x.currency)return fail('The selected obligation must belong to the same member and currency.',400);submissionObligationId=due.id;submissionDeadline=due.deadline;submissionTargetData=target!.data;}
+ const snapshot=(value:{title:string;memberId:string;amountMinor:number;currency:string;method:string;date:string;reference:string;purpose:string;submissionObligationId?:string;submissionDeadline?:any})=>({title:value.title,memberId:value.memberId,amountMinor:value.amountMinor,currency:value.currency,method:value.method,date:value.date,reference:value.reference,purpose:value.purpose,submissionObligationId:value.submissionObligationId,submissionDeadline:value.submissionDeadline});
+ const updated=snapshot({title:x.title.trim(),memberId:payment.memberId,amountMinor,currency:x.currency,method:x.method,date:x.date,reference:x.reference.trim(),purpose:x.purpose.trim(),submissionObligationId,submissionDeadline});
+ const at=new Date().toISOString(),actorName=org.members.find(m=>m.id===permissions.memberId)?.name||'Workspace owner';
+ const next:Entry={...payment,...updated,depositKey:undefined,status:'Awaiting verification',corrections:[...(payment.corrections||[]),{actor:user.userId,actorName,at,reason:x.reason.trim(),previous:snapshot(payment),updated}]};
+ const changed=await db.prepare("UPDATE entries SET data=? WHERE id=? AND org_id=? AND data=? AND EXISTS (SELECT 1 FROM organizations WHERE id=? AND version=?) AND (?='' OR EXISTS (SELECT 1 FROM entries WHERE id=? AND org_id=? AND data=?))").bind(JSON.stringify(next),payment.id,org.id,previous.data,org.id,row.version,submissionObligationId||'',submissionObligationId||'',org.id,submissionTargetData||'').run();
+ if(!changed.meta.changes)return fail('The contribution, obligation or permissions changed. Close it and refresh before resubmitting.',409);
+ return resultEntry(next);
+}
 if(x.action==='review'){
 if(typeof x.entryId!=='string'||!Number.isInteger(x.reviewCount)||!['Owner reconciled','Verified','Rejected','Awaiting verification'].includes(x.outcome)||typeof x.evidence!=='string'||x.evidence.trim().length<5||x.evidence.length>2000||typeof x.obligationId!=='string')return fail('Provide a review outcome and evidence reference or correction reason.',400);
 const previous=await db.prepare('SELECT data FROM entries WHERE id=? AND org_id=?').bind(x.entryId,x.orgId).first<{data:string}>();if(!previous)return fail('Payment unavailable.',404);const payment=JSON.parse(previous.data);if(payment.type!=='contribution')return fail('Only contributions can be reviewed.',400);
