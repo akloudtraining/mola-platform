@@ -23,7 +23,7 @@ function harness(){
  await h.get(null,'',401);assert.equal(h.snapshot(),empty);
  await h.get('supabase:outsider','other@example.test',403);assert.equal(h.snapshot(),empty);
  h.env.MOLA_OWNER_EMAIL='';await h.get('supabase:owner','owner@example.test',403);assert.equal(h.snapshot(),empty);
- h.env.MOLA_OWNER_EMAIL=' OWNER@EXAMPLE.TEST ';const first=await h.get('supabase:owner');assert.equal(first.organizations.length,2);
+ h.env.MOLA_OWNER_EMAIL=' OWNER@EXAMPLE.TEST ';const first=await h.get('supabase:owner');assert.equal(first.organizations.length,1);assert.equal(first.organizations[0].mode,'Shared ownership');
  const initialized=h.snapshot();await h.get('supabase:owner');assert.equal(h.snapshot(),initialized);
  await h.get('supabase:another','owner@example.test',403);assert.equal(h.snapshot(),initialized);
  h.sql.close();
