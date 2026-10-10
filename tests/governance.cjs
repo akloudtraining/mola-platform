@@ -18,6 +18,6 @@ async function post(who,body,status=200){login(who);const r=await POST(new Reque
  const fresh=(await get('owner')).organizations.find(o=>o.id===mola.id);assert.equal(fresh.version,mola.version+1);await post('owner',{...base,version:fresh.version,submissionId:base.submissionId},409);
  const adopted=(await post('owner',{...base,version:fresh.version,submissionId:crypto.randomUUID(),decisionStatus:'Adopted',title:'Adopt weighted voting policy',decisionType:'Weighted voting'})).entry;assert.equal(adopted.status,'Adopted');
  const data=await get('owner');assert.equal(data.entries.filter(e=>e.type==='decision').length,2);assert.equal(data.activity.some(e=>e.entryId===saved.id),false);
- const canada=data.organizations.find(o=>o.mode==='Individual land allocations');await post('owner',{...base,orgId:canada.id,version:canada.version,submissionId:crypto.randomUUID()},400);
+ await post('owner',{...base,orgId:'removed-land-workspace',submissionId:crypto.randomUUID()},403);
  console.log('PASS: owner-only governance decisions, validation, stale/duplicate protection, version bump, Mola isolation and activity separation');
 })().catch(e=>{console.error(e);process.exitCode=1;});
