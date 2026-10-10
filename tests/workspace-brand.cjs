@@ -26,10 +26,10 @@ function assertMola(props){
 }
 function assertNeutral(props){
  apply(props);assert.equal(root.getAttribute('data-workspace-brand'),null,'Other workspaces must clear the Mola theme');
- assert.equal(document.title,props.organizationName?props.organizationName+' — Investment Workspace':'Collective — Investment Workspace');
+ assert.equal(document.title,props.organizationName?props.organizationName+' — Investment Workspace':'Mola Holdings — Investment Workspace');
  for(const icon of icons){assert.equal(icon.getAttribute('href'),'/favicon.svg');assert.equal(icon.getAttribute('type'),'image/svg+xml');}
  const tree=logo(props);assert.equal(find(tree,node=>node.type==='img'),null,'Other workspaces must not display the Mola logo');
- assert(find(tree,node=>node.type==='span'&&node.props.children===(props.organizationName||'Collective')),'Other workspaces retain their own name');
+ assert(find(tree,node=>node.type==='span'&&node.props.children===(props.organizationName||'Mola Holdings')),'Other workspaces retain their own name');
 }
 // The bootstrap persists userId + ':' + the template ID, including nested email-identity prefixes.
 assertMola({organizationId:'fictional-account:mola',organizationName:'Mola Holdings'});
