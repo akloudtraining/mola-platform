@@ -1,0 +1,7 @@
+const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict'),ts=require('typescript');
+const source=ts.transpileModule(fs.readFileSync('app/workspace-status.tsx','utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022,jsx:ts.JsxEmit.ReactJSX}}).outputText,moduleRef={exports:{}};
+const req=name=>name==='react/jsx-runtime'?{jsx:(type,props)=>({type,props})}:name==='@/lib/pilot-setup'?{pilotSetupRows:org=>org.rows}:{};
+vm.runInThisContext('(function(require,module,exports){'+source+'\n})')(req,moduleRef,moduleRef.exports);const {workspaceStatus,default:Component}=moduleRef.exports;
+assert.deepEqual(workspaceStatus(true,false),{label:'Test workspace',tone:'test-workspace'});assert.deepEqual(workspaceStatus(false,false),{label:'Group setup in progress',tone:'setup-progress'});assert.deepEqual(workspaceStatus(false,true),{label:'Group setup recorded',tone:'setup-complete'});
+let tree=Component({org:{rows:[{recorded:false}]},entries:[],test:false});assert.equal(tree.props.children,'Group setup in progress');tree=Component({org:{rows:[{recorded:true}]},entries:[],test:false});assert.equal(tree.props.children,'Group setup recorded');tree=Component({org:{rows:[{recorded:false}]},entries:[],test:true});assert.equal(tree.props.children,'Test workspace');
+console.log('WORKSPACE STATUS PASS: the header distinguishes test mode from organization-wide setup progress and completion.');
