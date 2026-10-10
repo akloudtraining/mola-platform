@@ -316,6 +316,7 @@ footer { color: #61788e; border-top: 1px solid #dce5ee; margin-top: 30px; paddin
 .rejected-correction{display:grid;gap:14px;padding:18px;margin:18px 0;border:1px solid #efb4b4;border-left:4px solid #d00000;border-radius:10px;background:#fff7f7}.rejected-correction p{font-size:.875rem;line-height:1.65}.rejected-correction .primary{justify-self:start}
 
 .badge.danger,:root[data-workspace-brand="mola"] .badge.danger{background:#d00000;color:#fff;border:1px solid #b00000;font-weight:700}.overdue-amount,:root[data-workspace-brand="mola"] .overdue-amount{color:#d00000!important;font-weight:800!important}
+.badge.resubmitted{background:#ffd55a;color:#4d3500;border:1px solid #d99b00;font-weight:700}.setup-pill{border:1px solid transparent}.setup-pill.setup-complete{background:#eaf5ef;color:#2f7555;border-color:#b8d5bd}.setup-pill.test-workspace{background:#edf2f6;color:#4c6677;border-color:#c7d4dc}
 
 /* Keep attention on the yellow review label; retain the standard white card. */
 .overview-grid > .metric-card.verification-attention { display: flex; }
