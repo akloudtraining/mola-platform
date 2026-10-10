@@ -38,12 +38,12 @@ async function checkWorkspaceGuard(){
  const render=()=>{cursor=0;refCursor=0;return mod.exports.default();};
  const text=node=>typeof node==='string'?node:Array.isArray(node)?node.map(text).join(''):node?.props?text(node.props.children):'';
  const nav=(tree,label)=>find(tree,n=>n.type==='SidebarMenuButton'&&text(n).includes(label));
- let tree=render();await find(tree,n=>n.type==='button'&&n.props['aria-label']==='Refresh workspace').props.onClick();tree=render();nav(tree,'Members').props.onClick();tree=render();
+ let tree=render();await find(tree,n=>n.type==='button'&&n.props['aria-label']==='Refresh workspace').props.onClick();tree=render();nav(tree,'Founders').props.onClick();tree=render();
  const ownerSetup=find(tree,n=>n.type==='MemberAccess').props.ownerSetup;assert.equal(ownerSetup.type,'OwnerFounderLink');assert.equal(ownerSetup.props.email,'owner@example.test');
- ownerSetup.props.onBusy(true);tree=render();nav(tree,'Governance').props.onClick();tree=render();assert(find(tree,n=>n.type==='MemberAccess'),'Pending linking cannot unmount the member setup view');assert.equal(find(tree,n=>n.type==='Governance'),null);
+ ownerSetup.props.onBusy(true);tree=render();nav(tree,'Company decisions').props.onClick();tree=render();assert(find(tree,n=>n.type==='MemberAccess'),'Pending linking cannot unmount the member setup view');assert.equal(find(tree,n=>n.type==='Governance'),null);
  const selector=find(tree,n=>n.props?.label==='Organization');selector.props.onChange('second-org');tree=render();assert.equal(find(tree,n=>n.type==='MemberAccess').props.org.id,'fictional-org','Pending save cannot change the organization');
  assert.equal(find(tree,n=>n.type==='button'&&n.props['aria-label']==='Refresh workspace').props.disabled,true);
- ownerSetup.props.onBusy(false);tree=render();nav(tree,'Governance').props.onClick();tree=render();assert(find(tree,n=>n.type==='Governance'),'Navigation resumes after save completion');
+ ownerSetup.props.onBusy(false);tree=render();nav(tree,'Company decisions').props.onClick();tree=render();assert(find(tree,n=>n.type==='Governance'),'Navigation resumes after save completion');
 }
 (async()=>{
  let h=harness(),tree=prepare(h);h.update({org:{...h.props().org,version:8,members:[{id:'founder-1',name:'Changed elsewhere',role:'Member'}]},email:'different@example.test'});tree=h.render();assert.equal(h.state[0].email,'owner@example.test');

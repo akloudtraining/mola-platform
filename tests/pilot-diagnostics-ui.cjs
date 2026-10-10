@@ -31,7 +31,7 @@ async function checkOwnerVisibility(){
  vm.runInThisContext('(function(require,module,exports){'+compile('app/page.tsx')+'\n})')(req,module,module.exports);
  const render=()=>{cursor=0;refCursor=0;return module.exports.default();};
  let tree=render();await find(tree,node=>node.type==='button'&&node.props['aria-label']==='Refresh workspace').props.onClick();tree=render();
- const members=find(tree,node=>node.type==='SidebarMenuButton'&&find(node,child=>child.type==='span'&&child.props.children==='Members'));members.props.onClick();tree=render();assert(find(tree,node=>node.type==='PilotDiagnostics'),'Mola owner has the onboarding checks');
+ const members=find(tree,node=>node.type==='SidebarMenuButton'&&find(node,child=>child.type==='span'&&child.props.children==='Founders'));members.props.onClick();tree=render();assert(find(tree,node=>node.type==='PilotDiagnostics'),'Mola owner has the onboarding checks');
  find(tree,node=>node.props?.label==='Organization').props.onChange('fictional:cameroon');tree=render();assert.equal(find(tree,node=>node.type==='PilotDiagnostics'),null,'Land group does not inherit Mola onboarding');
  find(tree,node=>node.props?.label==='Organization').props.onChange(org.id);organizations=[{...org,permissions:{isOwner:false,canManage:false,memberId:'founder-1'}}];tree=render();await find(tree,node=>node.type==='button'&&node.props['aria-label']==='Refresh workspace').props.onClick();tree=render();assert.equal(find(tree,node=>node.type==='PilotDiagnostics'),null,'Ordinary members cannot see owner diagnostics');
 }

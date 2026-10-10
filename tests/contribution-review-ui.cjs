@@ -28,7 +28,7 @@ function harness(){
  const button=(tree,label)=>find(tree,n=>n.type==='button'&&text(n).trim()===label);
  const field=(tree,label)=>{const parent=find(tree,n=>n.type==='label'&&text(n).startsWith(label));return find(parent,n=>n.type==='input'||n.type==='textarea');};
  const choice=(tree,label)=>{const parent=find(tree,n=>n.type==='label'&&text(n).startsWith(label));return find(parent,n=>n.type==='Select');};
- async function open(){let tree=render();await find(tree,n=>n.type==='button'&&n.props['aria-label']==='Refresh workspace').props.onClick();tree=render();button(tree,'View').props.onClick();tree=render();button(tree,'Verify / review payment').props.onClick();return render();}
+ async function open(){let tree=render();await find(tree,n=>n.type==='button'&&n.props['aria-label']==='Refresh workspace').props.onClick();tree=render();find(tree,n=>n.type==='founder-hub').props.onOpen(payment);tree=render();button(tree,'Verify / review payment').props.onClick();return render();}
  return {render,find,text,button,field,choice,open,calls,payment,records:()=>records,updateRecords:next=>records=next,complete:data=>resolve(data),fail:message=>reject(new Error(message)),messages};
 }
 (async()=>{

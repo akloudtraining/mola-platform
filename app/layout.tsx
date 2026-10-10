@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import "./workspace-refresh.css";
 import "./mola-brand.css";
+import "./founder-experience.css";
 
 export const metadata: Metadata = {
   title: "Mola Holdings — Investment Workspace",

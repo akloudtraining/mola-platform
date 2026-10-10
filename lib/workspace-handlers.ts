@@ -1,3 +1,4 @@
+import {founderAction} from './founder-actions';
 import {receiptConfirmation} from './bank-receipt';
 import {activityFor,type ActivityEvent} from '@/lib/activity';
 import {fundingState,eligibleOfficer,currentApprovals} from '@/lib/funding';
@@ -83,6 +84,7 @@ async function POST(req:Request){try{
   if(!changed.meta.changes)return fail('The request or member permissions changed. Refresh before continuing.',409);return Response.json({entry:publicEntry(next,org,row.owner,user)});
  }
  const user=await currentUser(req);if(!user)return fail('Sign in first.',401);if(req.headers.get('origin')!==new URL(req.url).origin)return fail('Invalid request origin.',403);if(!x||typeof x.orgId!=='string')return fail('Choose an organization.',400);const db=database();const row=await db.prepare('SELECT owner,data,version FROM organizations WHERE id=?').bind(x.orgId).first<{owner:string;data:string;version:number}>();if(!row)return fail('Organization unavailable.',403);const org:Org=JSON.parse(row.data);const permissions=accessFor(org,row.owner,user);if(!permissions.isOwner&&!permissions.memberId)return fail('Organization unavailable.',403);
+ const founderResult=await founderAction(x,org,row.owner,row.version,user,db);if(founderResult)return founderResult;
  const resultOrg=(next:Org)=>Response.json({organization:publicOrg(next,row.owner,user)});
  const resultEntry=(entry:Entry)=>Response.json({entry:publicEntry(entry,org,row.owner,user)});
  if(x.action==='collectionInstructions'){
