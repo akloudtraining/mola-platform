@@ -11,7 +11,6 @@ function load(file){const m={exports:{}};const code=ts.transpileModule(fs.readFi
  if(name==='cloudflare:workers')return {env};
  if(name==='@/lib/cloudflare-auth')return {cloudflareUser:async()=>emailUser?{...emailUser,emailVerified:true}:null};
  if(name==='@/lib/database')return {database:()=>db};
- if(name==='@/.openai/hosting.json')return {project_id:'fictional-project'};
  if(name==='@/lib/ledger-export')return load(path.join(root,'lib/ledger-export.ts'));
  if(name==='@/lib/workspace-identity')return load(path.join(root,'lib/workspace-identity.ts'));
  throw new Error('Unexpected dependency '+name);

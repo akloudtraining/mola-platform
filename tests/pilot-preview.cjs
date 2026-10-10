@@ -32,7 +32,7 @@ assert.deepEqual(JSON.parse(JSON.stringify(pilotPreviewVars(environment,true))),
 const sessions=fs.readFileSync('lib/cloudflare-auth.ts','utf8');assert.match(sessions,/httpOnly:true,secure:true,sameSite:'lax'/);
 (async()=>{
  let envReads=0;const configModule={exports:{}};
- const dependencies={vinext:{default:()=>({name:'vinext-test'})},vite:{defineConfig:fn=>fn,loadEnv:()=>{envReads++;return environment;}},'./.openai/hosting.json':{default:{d1:'DB',r2:'BUCKET'}},'./scripts/execution-profile.mjs':{readExecutionProfile:()=> 'managed-linux'},'./build/sites-vite-plugin':{sites:()=>({name:'sites-test'})},'./build/pilot-preview':moduleContext.exports,'@cloudflare/vite-plugin':{cloudflare:options=>({name:'cloudflare-test',options})}};
+ const dependencies={vinext:{default:()=>({name:'vinext-test'})},vite:{defineConfig:fn=>fn,loadEnv:()=>{envReads++;return environment;}},'./scripts/execution-profile.mjs':{readExecutionProfile:()=> 'managed-linux'},'./build/pilot-preview':moduleContext.exports,'@cloudflare/vite-plugin':{cloudflare:options=>({name:'cloudflare-test',options})}};
  vm.runInNewContext(ts.transpileModule(fs.readFileSync('vite.config.ts','utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText,{module:configModule,exports:configModule.exports,require:name=>{assert.ok(dependencies[name],name);return dependencies[name];},process:{env:{},cwd:()=>process.cwd()}});
  const production=await configModule.exports.default({command:'build',mode:'production'});
  assert.equal(envReads,0);assert.deepEqual(JSON.parse(JSON.stringify(production.plugins.find(p=>p.name==='cloudflare-test').options.config.vars)),{});

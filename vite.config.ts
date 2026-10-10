@@ -1,14 +1,12 @@
 import vinext from "vinext";
 import { defineConfig, loadEnv } from "vite";
-import hostingConfig from "./.openai/hosting.json";
 import { readExecutionProfile } from "./scripts/execution-profile.mjs";
-import { sites } from "./build/sites-vite-plugin";
 import { pilotPreview, pilotPreviewVars } from "./build/pilot-preview";
 
-const SITE_CREATOR_PLACEHOLDER_DATABASE_ID =
+const MOLA_DATABASE_ID =
   "91637e1b-0a13-49f7-a9d4-49887a69c69b";
 
-const { d1, r2 } = hostingConfig;
+const d1 = "DB", r2 = "BUCKET";
 
 // The Cloudflare project can provide production variables to the build
 // environment, but the custom Wrangler deploy must explicitly carry them
@@ -33,8 +31,8 @@ const localBindingConfig = {
     ? [
         {
           binding: d1,
-          database_name: "site-creator-d1",
-          database_id: SITE_CREATOR_PLACEHOLDER_DATABASE_ID,
+          database_name: "site-creator-d1", // Existing deployed D1 resource; do not rename during UI cleanup.
+          database_id: MOLA_DATABASE_ID,
           migrations_dir: "drizzle",
         },
       ]
@@ -73,7 +71,6 @@ export default defineConfig(async ({command,mode}) => {
     },
     plugins: [
       vinext(),
-      sites({ mockAuth: !managedLinux }),
       pilotPreview({enabled:managedLinux&&command==='serve'&&previewEnvironment.MOLA_PREVIEW_HTTP_AUTH==='1'}),
       cloudflare({
         viteEnvironment: { name: "rsc", childEnvironments: ["ssr"] },

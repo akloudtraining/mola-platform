@@ -11,14 +11,14 @@ const cutoff = read('weekly-cutoff.tsx');
 const deadline = read('obligation-deadline.tsx');
 
 const sections = [
-  ['Overview', "['overview','Overview'"],
+  ['Overview', "['overview','Founder Hub'"],
   ['Contributions', "['contributions','Contributions'"],
   ['Activity', "['activity','Activity'"],
-  ['Members', "['members','Members'"],
+  ['Members', "['members','Founders'"],
   ['Statements', "['statements','Statements'"],
-  ['Projects', "['projects','Projects'"],
+  ['Projects', "['projects','Contribution schedule'"],
   ['Funding requests', "['requests','Funding requests'"],
-  ['Governance', "['governance','Governance'"],
+  ['Governance', "['governance','Company decisions'"],
   ['Accounts & recipients', "['accounts','Accounts & recipients'"],
   ['Agreements & notes', "['agreements','Agreements & notes'"],
 ];
@@ -30,7 +30,7 @@ const flows = [
   ['governance decision form', "form.action==='decision'"],
   ['account/agreement form', "form.action==='settings'"],
   ['member-name form', "form.action==='member'"],
-  ['contribution form', "form.action==='contribution'"],
+  ['contribution form', "['contribution','resubmitContribution'].includes(form.action)"],
   ['obligation/deadline form', "form.action==='obligation'"],
   ['meeting-note form', "form.action==='note'"],
 ];
@@ -43,7 +43,7 @@ const contracts = [
   ['weekly deadline controls', weekly.includes('<WeeklyCutoff') && cutoff.includes('Future weekly submission cutoff')],
   ['individual deadline controls', page.includes('<DeadlineFields') && deadline.includes('Member submission deadline')],
   ['shared cancel action', page.includes('className="form-actions"') && page.includes('>Cancel</button>')],
-  ['owner auth redirect', page.includes("if(r.status===401){window.location.href='/auth?return_to=%2F';return;}")],
+  ['owner auth redirect', page.includes("if(e.status===401){window.location.href='/auth?return_to=%2F';return;}")],
 ];
 
 const missing = contracts.filter(([, ok]) => !ok);

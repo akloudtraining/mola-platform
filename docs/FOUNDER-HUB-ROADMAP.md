@@ -32,3 +32,15 @@ TypeScript, production build and behavioral/component checks are used. Browser v
 
 ## Optional AI setup
 On the existing Cloudflare Worker, configure `OPENAI_API_KEY` as a secret and `MOLA_AI_MODEL` as the chosen enabled model ID. No key is stored in source or the browser. Until configured, Ask Mola remains in record-answer mode. Broad AI explanations require an explicit per-session opt-in; financial questions retain deterministic record calculations. Provider request uses `store: false`, bounded output and a 30-second per-user cooldown within each Worker isolate. Provider-level spend limits should also be configured before enabling; the isolate cooldown is not a durable global quota.
+
+## Interface cleanup — October 10, 2026
+- [x] Restrict the general contribution action to Contributions; retain obligation-specific reporting inside record details.
+- [x] Remove duplicate payment panels, creation buttons, stage filters, founder financial tables and repeated account/profile text.
+- [x] Replace duplicated setup forms with shortcuts to their canonical pages.
+- [x] Move owner diagnostics and ledger backups into Workspace setup.
+- [x] Remove obsolete pilot, private-Site-sharing and external sign-in-provider claims.
+- [x] Remove unused preferences that did not control app behavior.
+- [x] Delete the old Collective / Mola ChatGPT Site and verify Buildroom remains active.
+- [x] Remove legacy Site hosting metadata, build plugin and ChatGPT sign-in helper; retain deployed Cloudflare binding identities.
+- [x] Validate the cleanup with TypeScript, the production build and 47 behavioral suites.
+- [ ] Review the deployed interface in an authenticated desktop and phone browser.
