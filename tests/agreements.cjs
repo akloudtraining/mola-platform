@@ -49,7 +49,7 @@ const draft1='Fictional agreement version one. Each founder reviews the contribu
  await post('bob-new',{...accept2,version:org.version,typedName:'Renamed Bob'},409);assert.equal(rawEntry(second.id).agreement.acceptances[0].memberName,'Fictional Bob');assert.equal(rawEntry(second.id).agreement.acceptances[0].actor,'bob');
  const rebound=(await get('bob-new')).entries.find(e=>e.id===second.id);assert.equal(rebound.agreement.acceptedByMe,false);assert.equal(rebound.agreement.canAccept,false);
  org=await fresh();await post('owner',{action:'memberAccess',orgId,version:org.version,memberId:'founder-3',name:'Fictional Carol',email:'carol@example.test',role:'Designated reviewer',enabled:false,canReview:true});await post('carol',{...accept2,version:org.version},403);
- const canada=(await get('owner')).organizations.find(o=>o.mode==='Individual land allocations');await post('owner',{...publish,orgId:canada.id,version:canada.version,submissionId:crypto.randomUUID()},400);
+ await post('owner',{...publish,orgId:'removed-land-workspace',submissionId:crypto.randomUUID()},403);
  // A competing organization update makes publication fail without inserting an orphan version.
  org=await fresh();const beforeEntries=sql.prepare('SELECT count(*) AS n FROM entries').get().n;
  beforeWrite=query=>{assert.match(query,/UPDATE organizations/);sql.prepare('UPDATE organizations SET version=version+1 WHERE id=?').run(orgId);};
