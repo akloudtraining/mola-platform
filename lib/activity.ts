@@ -1,11 +1,12 @@
 import {type Org,type Entry,obligationStanding,money} from './model';
 import {obligationPastDue,deadlineLabel,type Deadline} from './deadlines';
-export type ActivityEvent={id:string;orgId:string;entryId:string;memberId:string;kind:'submission'|'review'|'overdue'|'payout'|'payout-correction'|'instructions';targetView?:'contributions';title:string;description:string;at:string;status:string;read?:boolean;deadline?:Deadline};
+export type ActivityEvent={id:string;orgId:string;entryId:string;memberId:string;kind:'submission'|'correction'|'review'|'overdue'|'payout'|'payout-correction'|'instructions';targetView?:'contributions';title:string;description:string;at:string;status:string;read?:boolean;deadline?:Deadline};
 export function activityFor(org:Org,entries:Entry[],today=new Date().toISOString()):ActivityEvent[]{
 const own=entries.filter(e=>e.orgId===org.id),events:ActivityEvent[]=[];
 for(const e of own){const name=org.members.find(m=>m.id===e.memberId)?.name||'Member';const amount=money(e.amountMinor,e.currency)+' '+e.currency;
 if(e.type==='contribution'){
 events.push({id:e.id+':submitted',orgId:org.id,entryId:e.id,memberId:e.memberId,kind:'submission',title:`${name} · contribution recorded`,description:`${amount} reported for ${e.date}. Receipt was not confirmed at submission.`,at:e.created,status:'Submitted'});
+(e.corrections||[]).forEach((c,i)=>events.push({id:e.id+':correction:'+i,orgId:org.id,entryId:e.id,memberId:e.memberId,kind:'correction',title:`${name} · contribution corrected`,description:`${money(c.updated.amountMinor,c.updated.currency)} ${c.updated.currency} resubmitted for review. Reason: ${c.reason}. The rejection and earlier values remain in history.`,at:c.at,status:'Resubmitted'}));
 (e.reviews||[]).forEach((r,i)=>events.push({id:e.id+':review:'+i,orgId:org.id,entryId:e.id,memberId:e.memberId,kind:'review',title:`${name} · ${r.outcome==='Verified'?'payment verified':r.outcome==='Owner reconciled'?'owner reconciliation':r.outcome==='Rejected'?'payment rejected':'returned to pending review'}`,description:`${amount} · ${r.actorName||'Workspace owner'} recorded this review.${i?' Previous review retained in history.':''}${r.outcome==='Owner reconciled'?' This is not independent verification.':''}`,at:r.at,status:r.outcome}));
 }
 if(e.type==='request')for(const p of e.payouts||[]){
