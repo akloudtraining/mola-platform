@@ -6,7 +6,7 @@ const own=entries.filter(e=>e.orgId===org.id),events:ActivityEvent[]=[];
 for(const e of own){const name=org.members.find(m=>m.id===e.memberId)?.name||'Member';const amount=money(e.amountMinor,e.currency)+' '+e.currency;
 if(e.type==='contribution'&&e.status!=='Screenshot required'){
 events.push({id:e.id+':submitted',orgId:org.id,entryId:e.id,memberId:e.memberId,kind:'submission',title:`${name} · contribution recorded`,description:`${amount} reported for ${e.date}. ${e.receipt?'Private screenshot attached; receiving-account confirmation is still required.':'Legacy record has no screenshot attached.'}`,at:e.created,status:'Submitted'});
-(e.corrections||[]).forEach((c,i)=>events.push({id:e.id+':correction:'+i,orgId:org.id,entryId:e.id,memberId:e.memberId,kind:'correction',title:`${name} · rejected payment corrected`,description:`${money(c.updated.amountMinor,c.updated.currency)} ${c.updated.currency} resubmitted for review. Correction: ${c.reason}. This is the same payment record, not a new contribution; the rejection and earlier values remain in history.`,at:c.at,status:'Resubmitted'}));
+(e.corrections||[]).forEach((c,i)=>events.push({id:e.id+':correction:'+i,orgId:org.id,entryId:e.id,memberId:e.memberId,kind:'correction',title:`${name} · rejected payment audited`,description:`${money(c.updated.amountMinor,c.updated.currency)} ${c.updated.currency} resubmitted for review. Correction: ${c.reason}. This is the same payment record, not a new contribution; the rejection and earlier values remain in history.`,at:c.at,status:'Resubmitted'}));
 (e.reviews||[]).forEach((r,i)=>{
  const corrections=e.corrections||[];
  const correctionBefore=[...corrections].filter(c=>c.at<=r.at).sort((a,b)=>a.at.localeCompare(b.at)).at(-1);
@@ -15,11 +15,11 @@ events.push({id:e.id+':submitted',orgId:org.id,entryId:e.id,memberId:e.memberId,
  const reviewedMoney=`${money(reviewAmount.amountMinor,reviewAmount.currency)} ${reviewAmount.currency}`;
  const rejectionBeforeCorrection=correctionBefore?[...(e.reviews||[])].filter(previous=>previous.outcome==='Rejected'&&previous.at<correctionBefore.at).sort((a,b)=>a.at.localeCompare(b.at)).at(-1):undefined;
  const correctedVerification=r.outcome==='Verified'&&!!correctionBefore;
- const title=r.outcome==='Verified'?(correctedVerification?'corrected payment verified':'payment verified'):r.outcome==='Owner reconciled'?'owner reconciliation':r.outcome==='Rejected'?'payment rejected':'returned to pending review';
+ const title=r.outcome==='Verified'?(correctedVerification?'audited payment verified':'payment verified'):r.outcome==='Owner reconciled'?'owner reconciliation':r.outcome==='Rejected'?'payment rejected':'returned to pending review';
  const description=r.outcome==='Rejected'
   ?`${reviewedMoney} · ${r.actorName||'Workspace owner'} rejected this payment. Reason: ${r.evidence||'No rejection reason recorded.'} The contributor may correct and resubmit this same record.`
   :correctedVerification
-   ?`${reviewedMoney} · ${r.actorName||'Workspace owner'} verified the corrected submission.${rejectionBeforeCorrection?.evidence?` It was previously rejected because: ${rejectionBeforeCorrection.evidence}.`:''} This completes the same payment record; no new contribution was created.`
+   ?`${reviewedMoney} · ${r.actorName||'Workspace owner'} verified the audited submission.${rejectionBeforeCorrection?.evidence?` It was previously rejected because: ${rejectionBeforeCorrection.evidence}.`:''} This completes the same payment record; no new contribution was created.`
    :`${reviewedMoney} · ${r.actorName||'Workspace owner'} recorded this review.${i?' Previous review retained in history.':''}${r.outcome==='Owner reconciled'?' This is not independent verification.':''}`;
  events.push({id:e.id+':review:'+i,orgId:org.id,entryId:e.id,memberId:e.memberId,kind:'review',title:`${name} · ${title}`,description,at:r.at,status:r.outcome});
 });
