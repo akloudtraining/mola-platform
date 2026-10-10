@@ -28,7 +28,7 @@ export default function WorkspaceBrand({organizationId,organizationName}:Workspa
 
     if(isMola)root.setAttribute('data-workspace-brand','mola');
     else root.removeAttribute('data-workspace-brand');
-    document.title=organizationName?`${organizationName} — Mola`:'Mola Holdings — Investment Workspace';
+    document.title=organizationName?`${organizationName} — Investment Workspace`:'Mola Holdings — Investment Workspace';
     for(const icon of icons){
       icon.setAttribute('href',isMola?'/mola-logo.png':'/favicon.svg');
       icon.setAttribute('type',isMola?'image/png':'image/svg+xml');
