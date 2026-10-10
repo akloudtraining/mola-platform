@@ -58,6 +58,8 @@
 :root[data-workspace-brand="mola"] .top-left>.choice { background: #f6f8f3; border-color: #dfe5d8; }
 :root[data-workspace-brand="mola"] .breadcrumb { color: #63745e; }
 :root[data-workspace-brand="mola"] .setup-pill { border-color: #e4d4a7; background: #fbf4e2; color: #745626; }
+:root[data-workspace-brand="mola"] .setup-pill.setup-complete { border-color: #b8d5bd; background: #e8f4e8; color: #2f673b; }
+:root[data-workspace-brand="mola"] .setup-pill.test-workspace { border-color: #cbd7c7; background: #edf2e9; color: #4b624b; }
 :root[data-workspace-brand="mola"] .icon-button, :root[data-workspace-brand="mola"] .notification-button { color: #4f654e; }
 :root[data-workspace-brand="mola"] .icon-button:hover, :root[data-workspace-brand="mola"] .notification-button:hover { background: #edf2e8; }
 :root[data-workspace-brand="mola"] .notification-button span { background: var(--mola-forest); }
@@ -89,6 +91,7 @@
 :root[data-workspace-brand="mola"] .empty h3 { color: #31422f; }
 :root[data-workspace-brand="mola"] .empty-icon, :root[data-workspace-brand="mola"] .project-icon { background: #edf3e8; color: #41623b; }
 :root[data-workspace-brand="mola"] .pending { background: #fbf0d6; color: #785818; }
+:root[data-workspace-brand="mola"] .badge.resubmitted { background: #f4c84c; color: #443000; border-color: #c28b00; font-weight: 700; }
 :root[data-workspace-brand="mola"] .badge { font-size: .875rem; line-height: 1.45; }
 :root[data-workspace-brand="mola"] .neutral { background: #edf1e9; color: #54664d; }
 :root[data-workspace-brand="mola"] .green { background: #e5f3e8; color: #235e36; }
