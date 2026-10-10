@@ -16,15 +16,17 @@ async function attachment(id,role='contributor',bytes=null,status=200){const r=a
  await live.GET(new Request(origin+'/api/workspace'));session=(await api({action:'create'})).workspace.session;org=(await api()).organizations[0];
  const draft={action:'contribution',title:'Zelle test',submissionId:crypto.randomUUID(),memberId:'contributor',amount:'100',currency:'USD',date:'2026-10-05',method:'Zelle (external)',reference:'SENDER-REF',purpose:'Fictional only'};
  let payment=(await api(draft,'contributor')).entry;
+ assert.equal(payment.status,'Screenshot required');assert.equal(payment.canUploadReceipt,true);await api({action:'review',entryId:payment.id,reviewCount:0,outcome:'Verified',evidence:'Checked receiving bank independently',obligationId:'',credit:'0',bankReference:'BANK-BLOCKED',bankConfirmed:true},'reviewer',409);
  await attachment(payment.id,'contributor',new Uint8Array([1,2,3]),400);assert.equal(blobs.size,0);
  const png=new Uint8Array([137,80,78,71,13,10,26,10,...Array(24).fill(0)]);
- await attachment(payment.id,'approver',png,403);const uploaded=await (await attachment(payment.id,'contributor',png)).json();payment=uploaded.entry;assert(payment.hasReceipt);assert(payment.canViewReceipt);assert.equal(payment.receipt,undefined);assert.equal(payment.canUploadReceipt,false);assert.equal(blobs.size,1);
+ await attachment(payment.id,'approver',png,403);const uploaded=await (await attachment(payment.id,'contributor',png)).json();payment=uploaded.entry;assert.equal(payment.status,'Awaiting verification');assert(payment.hasReceipt);assert(payment.canViewReceipt);assert.equal(payment.receipt,undefined);assert.equal(payment.canUploadReceipt,false);assert.equal(blobs.size,1);
  await attachment(payment.id,'contributor',png,409);const image=await attachment(payment.id,'reviewer');assert.equal(image.headers.get('content-type'),'image/png');assert.match(image.headers.get('cache-control'),/no-store/);await attachment(payment.id,'approver',null,403);
  const ordinary=(await api(null,'approver')).entries.find(e=>e.id===payment.id);assert.equal(ordinary.canViewReceipt,false);assert.equal(ordinary.receipt,undefined);
  const review={action:'review',entryId:payment.id,reviewCount:0,outcome:'Verified',evidence:'Checked receiving bank independently',obligationId:'',credit:'0'};
  await api(review,'reviewer',400);await api({...review,bankReference:'BANK-001'},'reviewer',400);await api({...review,bankReference:'BANK-001',bankConfirmed:true},'contributor',403);
  let verified=(await api({...review,bankReference:' BANK-001 ',bankConfirmed:true},'reviewer')).entry;assert.equal(verified.status,'Verified');assert.equal(verified.reviews.at(-1).bankReference,'BANK-001');assert.equal(verified.depositKey,undefined);
  const second=(await api({...draft,submissionId:crypto.randomUUID()},'contributor')).entry;
+ await attachment(second.id,'contributor',png);
  await api({...review,entryId:second.id,bankReference:'bank-001',bankConfirmed:true},'reviewer',409);
  await api({...review,reviewCount:1,outcome:'Rejected',evidence:'Wrong deposit reference; correction'},'reviewer');
  verified=(await api({...review,entryId:second.id,bankReference:'BANK-001',bankConfirmed:true},'reviewer')).entry;assert.equal(verified.status,'Verified');
