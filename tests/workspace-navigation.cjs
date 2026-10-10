@@ -28,8 +28,8 @@ const all=(node,predicate,out=[])=>{if(Array.isArray(node)){node.forEach(child=>
  const h=harness();h.org.permissions.isOwner=true;h.org.permissions.canManage=true;
  let tree=h.render();await h.find(tree,n=>n.type==='button'&&n.props['aria-label']==='Refresh workspace').props.onClick();tree=h.render();
  const visit=label=>{h.find(tree,n=>n.type==='SidebarMenuButton'&&h.text(n)===label).props.onClick();tree=h.render();};
- for(const label of ['Founder Hub','Contributions','Founders','Statements','Activity','Savings & planning','Contribution schedule','Opportunities','Ask Mola','Funding requests','Company decisions','Accounts & recipients','Agreements & notes','Help & guides','Workspace setup','My account']){
-  visit(label);const recordButtons=all(tree,n=>n.type==='button'&&h.text(n)==='Record contribution');
+ for(const label of ['Founder Hub','Contributions','Founders','Statements','Activity','Savings & planning','Contribution schedule','Opportunities','Funding requests','Company decisions','Accounts & recipients','Agreements & notes','Help & guides','Workspace setup','My account']){
+  visit(label);assert.equal(h.find(tree,n=>n.type==='SidebarMenuButton'&&h.text(n)==='Ask Mola'),null,'Assistant is outside sidebar navigation');assert(h.find(tree,n=>n.type==='ask-mola'),'Floating assistant is available on every Mola page');const recordButtons=all(tree,n=>n.type==='button'&&h.text(n)==='Record contribution');
   assert.equal(recordButtons.length,label==='Contributions'?1:0,`Contribution action scope: ${label}`);
   const heading=h.find(tree,n=>n.props?.className==='page-heading');
   assert.equal(all(heading,n=>n.type==='button').length,['Contributions','Funding requests'].includes(label)?1:0,`Unrelated heading actions: ${label}`);
@@ -41,6 +41,7 @@ const all=(node,predicate,out=[])=>{if(Array.isArray(node)){node.forEach(child=>
   if(label==='Founders')assert.equal(h.find(tree,n=>n.type==='pilot-diagnostics'),null);
   if(label==='Accounts & recipients')assert.equal(h.find(tree,n=>n.type==='ledger-backup'),null);
  }
+ const assistant=h.find(tree,n=>n.type==='ask-mola');assistant.props.onOpenChange(true);tree=h.render();assert.equal(h.find(tree,n=>n.type==='ask-mola').props.open,true);visit('Statements');assert.equal(h.find(tree,n=>n.type==='ask-mola').props.open,true,'Navigation keeps the assistant available');
  visit('Contributions');const header=h.find(tree,n=>n.props?.className==='page-heading');all(header,n=>n.type==='button')[0].props.onClick();tree=h.render();assert(h.find(tree,n=>n.type==='form'),'Canonical action opens the existing receipt form');
- console.log('WORKSPACE NAVIGATION PASS: one contribution entry point, contextual headings on all 16 pages, setup shortcuts instead of duplicate forms, and diagnostics/backups in owner setup.');
+ console.log('WORKSPACE NAVIGATION PASS: one contribution entry point, contextual headings on all 15 pages, setup shortcuts instead of duplicate forms, and diagnostics/backups in owner setup.');
 })().catch(error=>{console.error(error);process.exitCode=1;}).finally(()=>{global.fetch=originalFetch;});

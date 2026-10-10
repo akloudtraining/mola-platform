@@ -37,8 +37,8 @@ Local development uses local Cloudflare storage. Preview/runtime helper scripts 
 - Contributions: the single general contribution-report action, payment instructions, authorized receipt review and the searchable register.
 - Founders: account permissions and recorded obligations. Payment reporting for a specific obligation is available inside its details.
 - Contribution schedule: effective-dated dues configuration and generation.
-- Savings & planning: targets, scenarios and dated bank checkpoints.
-- Opportunities: shared ideas and review stages. Ask Mola: permission-scoped record answers.
+- Savings & planning: targets, calendar-based scenarios with a selectable start date and 1-month to 10-year duration, monthly/weekly payment detail, founder/group figures, verified actuals and dated bank checkpoints.
+- Opportunities: shared ideas and review stages. Ask Mola lives in a floating lower-right assistant with permission-scoped record answers, local record search and navigation shortcuts.
 - Company decisions, Funding requests, Agreements & notes: their respective records and actions.
 - Workspace setup: owner checklist, links to canonical settings, diagnostics and ledger backups.
 
@@ -47,3 +47,8 @@ Local development uses local Cloudflare storage. Preview/runtime helper scripts 
 The former Collective / Mola ChatGPT Site was deleted on October 10, 2026. Its hosting metadata, build plugin and unused ChatGPT sign-in helper were removed from this repository. GitHub history retains the source history. Existing migration tools and identity links remain where needed to preserve historical records and account linking.
 
 Buildroom remains at https://mola-buildroom.bokobal.chatgpt.site until its separate migration. This production repository does not publish Buildroom. The GitHub → Cloudflare workflow is the sole production path for the Mola founder app.
+
+## Calendar scenario basis
+The first weekly payment falls on the selected start date, then every seven days until the exclusive end date. Years plus extra months determine that date, clamping month-end and leap-day anniversaries to the last valid day. Rows are grouped by calendar year and month, so first/last years can be partial and a full year can contain 52 or 53 payment dates. Rate growth applies on January 1 by default or on the start-date anniversary when selected. Annual group spending is prorated by covered calendar days, with monthly cent allocation summing exactly to the year amount.
+
+Monthly averages include the covered calendar months, including partial months. The expandable month rows show exact payments instead of an assumed four-week month. Verified actuals use payment dates and current review status through today, in the selected organization and currency. Pending/provisional contributions and unrelated records are excluded. Scenario figures are hypothetical equal contributions; the calculator does not write rates, dues or payments.

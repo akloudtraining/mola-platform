@@ -44,3 +44,15 @@ On the existing Cloudflare Worker, configure `OPENAI_API_KEY` as a secret and `M
 - [x] Remove legacy Site hosting metadata, build plugin and ChatGPT sign-in helper; retain deployed Cloudflare binding identities.
 - [x] Validate the cleanup with TypeScript, the production build and 47 behavioral suites.
 - [ ] Review the deployed interface in an authenticated desktop and phone browser.
+
+## Floating assistant and detailed scenarios — October 10, 2026
+- [x] Move Ask Mola out of sidebar navigation and the hub into a lower-right nonmodal chat panel.
+- [x] Keep session conversation state across closing and page navigation; reset and abort pending answers when account/organization changes.
+- [x] Add quick search for permitted pages, record titles, founder names and savings goals; exclude private receipt, sign-in and bank-reference fields.
+- [x] Interpret navigation and search commands locally; link answers back to source pages and records.
+- [x] Add start dates, years plus extra months, 3/5/6-year presets and a 10-year upper limit.
+- [x] Count exact weekly payment dates and show partial calendar years, weekly rates, monthly averages, yearly contributions and projected capital.
+- [x] Offer January 1 or anniversary increases, collection assumptions and prorated spending.
+- [x] Show exact monthly totals/payment dates and separate verified actuals for the group and current founders.
+- [x] Validate TypeScript, the production build and all 51 behavioral suites, including calendar math, calculator inputs, assistant search and chat handlers.
+- [ ] Review the floating panel and detailed calculator in an authenticated desktop and phone browser.
