@@ -19,7 +19,7 @@ const snapshot=()=>JSON.stringify({orgs:sql.prepare('SELECT * FROM organizations
  const unchanged=snapshot();
  await post(null,body,401);await post('outsider',body,403);await post('owner',body,403,'https://untrusted.example');
  await post('owner',{...body,acknowledged:false},400);await post('owner',{...body,name:'Founder 4'},400);await post('owner',{...body,name:''},400);await post('owner',{...body,memberId:'missing'},400);await post('owner',{...body,version:0},409);
- const canada=data.organizations.find(o=>o.mode==='Individual land allocations');await post('owner',{...body,orgId:canada.id},400);assert.equal(snapshot(),unchanged);
+ await post('owner',{...body,orgId:'removed-land-workspace'},403);assert.equal(snapshot(),unchanged);
  // A bound founder's role does not grant workspace-owner setup rights.
  await post('owner',{action:'memberAccess',orgId,version:org.version,memberId:'founder-2',name:'Fictional Bob',email:'bob@example.test',role:'President',enabled:true,canReview:true});await get('bob');
  await post('bob',{...body,version:raw(orgId).version},403);
