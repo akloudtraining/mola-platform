@@ -4,8 +4,8 @@ export type ActivityEvent={id:string;orgId:string;entryId:string;memberId:string
 export function activityFor(org:Org,entries:Entry[],today=new Date().toISOString()):ActivityEvent[]{
 const own=entries.filter(e=>e.orgId===org.id),events:ActivityEvent[]=[];
 for(const e of own){const name=org.members.find(m=>m.id===e.memberId)?.name||'Member';const amount=money(e.amountMinor,e.currency)+' '+e.currency;
-if(e.type==='contribution'){
-events.push({id:e.id+':submitted',orgId:org.id,entryId:e.id,memberId:e.memberId,kind:'submission',title:`${name} · contribution recorded`,description:`${amount} reported for ${e.date}. Receipt was not confirmed at submission.`,at:e.created,status:'Submitted'});
+if(e.type==='contribution'&&e.status!=='Screenshot required'){
+events.push({id:e.id+':submitted',orgId:org.id,entryId:e.id,memberId:e.memberId,kind:'submission',title:`${name} · contribution recorded`,description:`${amount} reported for ${e.date}. ${e.receipt?'Private screenshot attached; receiving-account confirmation is still required.':'Legacy record has no screenshot attached.'}`,at:e.created,status:'Submitted'});
 (e.corrections||[]).forEach((c,i)=>events.push({id:e.id+':correction:'+i,orgId:org.id,entryId:e.id,memberId:e.memberId,kind:'correction',title:`${name} · rejected payment corrected`,description:`${money(c.updated.amountMinor,c.updated.currency)} ${c.updated.currency} resubmitted for review. Correction: ${c.reason}. This is the same payment record, not a new contribution; the rejection and earlier values remain in history.`,at:c.at,status:'Resubmitted'}));
 (e.reviews||[]).forEach((r,i)=>{
  const corrections=e.corrections||[];

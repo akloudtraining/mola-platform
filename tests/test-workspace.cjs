@@ -13,7 +13,7 @@ const {obligationStanding}=load(path.join(root,'lib/model.ts'));
 const login=name=>identity=name?{userId:name,email:name+'@example.test',displayName:name}:null;
 const origin='https://test.example';let session,org;
 async function call(method,body,role=null,status=200,owner='owner',sid=session){login(owner);const query=role?`?${new URLSearchParams({session:sid,role})}`:'';const response=await test[method](new Request(origin+'/api/test-workspace'+query,{method,headers:{origin,'content-type':'application/json'},...(body?{body:JSON.stringify(body)}:{})}));const data=await response.json();assert.equal(response.status,status,JSON.stringify(data));return data;}
-const post=(role,body,status=200)=>call('POST',{orgId:org.id,...body},role,status);
+const post=async(role,body,status=200)=>{const data=await call('POST',{orgId:org.id,...body},role,status);if(status===200&&body.action==='contribution'&&data.entry?.status==='Screenshot required'){const row=sql.prepare('SELECT data FROM test_entries WHERE id=?').get(data.entry.id),entry=JSON.parse(row.data);entry.status='Awaiting verification';entry.receipt={key:'fictional/'+entry.id,mime:'image/png',size:32,uploadedBy:role,uploadedAt:entry.created};sql.prepare('UPDATE test_entries SET data=? WHERE id=?').run(JSON.stringify(entry),entry.id);data.entry={...data.entry,status:'Awaiting verification',hasReceipt:true,canViewReceipt:true,canUploadReceipt:false};}return data;};
 const read=async role=>{const d=await call('GET',null,role);org=d.organizations[0];return d;};
 const snapshot=()=>JSON.stringify(['installation','organizations','entries','notification_reads'].map(table=>sql.prepare(`SELECT * FROM ${table} ORDER BY id`).all()));
 (async()=>{

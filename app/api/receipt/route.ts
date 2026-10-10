@@ -32,7 +32,7 @@ async function handle(req:Request){let orphan='';const bucket=(env as unknown as
  }
  if(!p.isOwner&&p.memberId!==entry.memberId)return fail('Only the contributor or owner can attach this receipt.',403);
  if(entry.receipt)return fail('A receipt is already attached. Refresh to view it.',409);
- if(entry.status!=='Awaiting verification')return fail('Receipts can only be attached while awaiting verification.',409);
+ if(!['Screenshot required','Awaiting verification'].includes(entry.status))return fail('Screenshots can only be attached before payment review.',409);
  if(Number(req.headers.get('content-length'))>limit)return fail('Use a PNG or JPEG screenshot under 3 MB.',413);
  const reader=req.body?.getReader();if(!reader)return fail('Choose a screenshot.',400);let total=0;const chunks:Uint8Array[]=[];
  while(true){const part=await reader.read();if(part.done)break;total+=part.value.length;if(total>limit){await reader.cancel();return fail('Use a screenshot under 3 MB.',413);}chunks.push(part.value);}
@@ -41,8 +41,9 @@ async function handle(req:Request){let orphan='';const bucket=(env as unknown as
  const mime=png?'image/png':jpeg?'image/jpeg':'';if(!mime||total<16)return fail('Only PNG and JPEG screenshots are accepted.',400);
  orphan=`receipts/${session?'test/'+session:'live'}/${crypto.randomUUID()}`;
  await bucket.put(orphan,bytes,{httpMetadata:{contentType:mime}});
- const next:Entry={...entry,receipt:{key:orphan,mime,size:total,uploadedBy:user.userId,uploadedAt:new Date().toISOString()}};
- const changed=await db.prepare('UPDATE entries SET data=? WHERE id=? AND org_id=? AND data=? AND EXISTS (SELECT 1 FROM organizations WHERE id=? AND version=?)').bind(JSON.stringify(next),entryId,orgId,previous.data,orgId,row.version).run();
+ const uploadedAt=new Date().toISOString();
+ const next:Entry={...entry,status:entry.status==='Screenshot required'?'Awaiting verification':entry.status,created:entry.status==='Screenshot required'?uploadedAt:entry.created,receipt:{key:orphan,mime,size:total,uploadedBy:user.userId,uploadedAt}};
+ const changed=await db.prepare('UPDATE entries SET data=?,created=? WHERE id=? AND org_id=? AND data=? AND EXISTS (SELECT 1 FROM organizations WHERE id=? AND version=?)').bind(JSON.stringify(next),next.created,entryId,orgId,previous.data,orgId,row.version).run();
  if(!changed.meta.changes){await bucket.delete(orphan);orphan='';return fail('The contribution or permissions changed. Refresh before attaching a receipt.',409);}
  orphan='';return Response.json({entry:publicEntry(next,org,row.owner,user)},{headers:{'Cache-Control':'no-store'}});
  }catch(e){if(orphan&&bucket)await bucket.delete(orphan).catch(()=>{});console.error('Receipt request failed');return fail('Receipt action could not be confirmed. Refresh before retrying.',503);}}
