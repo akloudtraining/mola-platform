@@ -5,7 +5,9 @@ const root = path.resolve(__dirname, '..');
 const css = [
   fs.readFileSync(path.join(root, 'app', 'globals.css'), 'utf8'),
   fs.readFileSync(path.join(root, 'app', 'workspace-refresh.css'), 'utf8'),
+  fs.readFileSync(path.join(root, 'app', 'founder-experience.css'), 'utf8'),
 ].join('\n');
+const sidebar = fs.readFileSync(path.join(root, 'components', 'ui', 'sidebar.tsx'), 'utf8');
 
 const contracts = [
   ['a 700px responsive breakpoint', /@media\s*\(\s*max-width\s*:\s*700px\s*\)/],
@@ -21,9 +23,12 @@ const contracts = [
   ['mobile reconciliation summary collapses', /\.reconciliation-summary\s*\{\s*grid-template-columns:\s*minmax\(0,\s*1fr\);/s],
   ['mobile account details collapse', /\.account dl, \.detail dl\s*\{\s*grid-template-columns:\s*minmax\(0,\s*1fr\);/s],
   ['mobile governance controls use full width', /\.governance-toolbar \.field\s*\{\s*min-width:\s*100%;/s],
+  ['assistant composer text remains visibly rendered', /\.assistant-composer textarea\s*\{[^}]*color:\s*#23382e;[^}]*-webkit-text-fill-color:\s*#23382e;/s],
+  ['assistant composer controls have touch-sized targets', /\.assistant-mode button[^\{]*\{[^}]*min-height:\s*44px;/s],
+  ['mobile nav closes after a destination is selected', /if\s*\(isMobile[^)]*\)\s*setOpenMobile\(false\)/],
 ];
 
-const missing = contracts.filter(([, pattern]) => !pattern.test(css));
+const missing = contracts.filter(([, pattern]) => !pattern.test(pattern.source.includes('isMobile') ? sidebar : css));
 if (missing.length) {
   console.error('MOBILE CSS CONTRACT FAIL');
   for (const [label] of missing) console.error(`- ${label}`);
