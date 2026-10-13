@@ -33,6 +33,10 @@ const contracts = [
   ['mobile navigation has touch-sized active items', /\[data-sidebar="sidebar"\]\[data-mobile="true"\][^\{]*\.nav-button\{[^}]*min-height:\s*50px/s],
   ['mobile assistant has a visible send action', /\.assistant-send-label\{display:\s*inline\}/s],
   ['mobile assistant composer is keyboard-safe', /\.assistant-composer\{[^}]*position:\s*sticky;[^}]*env\(safe-area-inset-bottom\)/s],
+  ['mobile assistant launcher stays compact in the lower corner', /\.mola-assistant-launcher\{[^}]*left:\s*auto;[^}]*right:\s*14px;[^}]*width:\s*auto;[^}]*border-radius:\s*999px/s],
+  ['mobile pages reserve scroll space above the floating launcher', /main\{padding:\s*18px 14px calc\(92px \+ env\(safe-area-inset-bottom\)\)/s],
+  ['short mobile navigation drawer has an explicit momentum scroll region', /\.nav-content\{[^}]*flex:\s*1 1 0%;[^}]*min-height:\s*0;[^}]*overflow-y:\s*auto!important;[^}]*overscroll-behavior:\s*contain;[^}]*-webkit-overflow-scrolling:\s*touch/s],
+  ['short-height drawer reduces chrome without hiding destinations', /@media\(max-width:700px\) and \(max-height:620px\)[\s\S]*?\.nav-scope\{display:\s*none\}[\s\S]*?\.nav-footer/],
   ['assistant dialog resets centered desktop transform', /\.mola-assistant\[data-slot="dialog-content"\]\{[^}]*right:\s*24px;[^}]*bottom:\s*calc\(84px[^}]*--tw-translate-x:\s*0px!important;[^}]*--tw-translate-y:\s*0px!important/s],
   ['mobile nav closes after a destination is selected', /if\s*\(isMobile[^)]*\)\s*setOpenMobile\(false\)/],
 ];
