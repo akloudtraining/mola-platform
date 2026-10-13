@@ -37,6 +37,7 @@ const contracts = [
   ['mobile assistant has a visible send action', /\.assistant-send-label\{display:\s*inline\}/s],
   ['mobile assistant composer is keyboard-safe', /\.assistant-composer\{[^}]*position:\s*sticky;[^}]*env\(safe-area-inset-bottom\)/s],
   ['mobile assistant launcher stays compact in the lower corner', /\.mola-assistant-launcher\{[^}]*left:\s*auto;[^}]*right:\s*14px;[^}]*width:\s*auto;[^}]*border-radius:\s*999px/s],
+  ['launcher shrinks on short extra-narrow phones', /@media \(max-width: 360px\) and \(max-height: 620px\)\{[^}]*\.mola-assistant-launcher\{[^}]*height:42px/s],
   ['mobile pages reserve scroll space above the floating launcher', /main\{padding:\s*18px 14px calc\(92px \+ env\(safe-area-inset-bottom\)\)/s],
   ['short mobile navigation drawer has an explicit momentum scroll region', /\.nav-content\{[^}]*flex:\s*1 1 0%;[^}]*min-height:\s*0;[^}]*overflow-y:\s*auto!important;[^}]*overscroll-behavior:\s*contain;[^}]*-webkit-overflow-scrolling:\s*touch/s],
   ['short-height drawer reduces chrome without hiding destinations', /@media\(max-width:700px\) and \(max-height:620px\)[\s\S]*?\.nav-scope\{display:\s*none\}[\s\S]*?\.nav-footer/],
