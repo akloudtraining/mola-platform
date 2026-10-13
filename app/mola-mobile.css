@@ -1,0 +1,88 @@
+/* Purpose-built Mola mobile composition. Desktop layout remains in the existing workspace styles. */
+@media(max-width:700px){
+  :root[data-workspace-brand="mola"] body{overflow-x:hidden;background:#f3f6f1}
+  :root[data-workspace-brand="mola"] .main-shell{min-width:0;padding-bottom:env(safe-area-inset-bottom)}
+  :root[data-workspace-brand="mola"] .topbar{position:sticky;top:0;z-index:35;height:60px;min-height:60px;padding:8px 10px;background:#fbfcf9;border-bottom:1px solid #dce5d9;box-shadow:0 5px 18px #203b2512;backdrop-filter:blur(14px)}
+  :root[data-workspace-brand="mola"] .top-left{flex:1;min-width:0;gap:6px}
+  :root[data-workspace-brand="mola"] .top-left>[data-sidebar="trigger"]{width:44px;height:44px;min-width:44px;border-radius:13px;color:#284a34;background:#edf3eb}
+  :root[data-workspace-brand="mola"] .top-left>.choice{height:44px;min-height:44px;border-radius:13px;background:#f0f5ed;border-color:#dbe5d8;padding-inline:11px;color:#294431;font-size:.8125rem!important}
+  :root[data-workspace-brand="mola"] .top-right{flex-shrink:0;gap:2px}
+  :root[data-workspace-brand="mola"] .top-right>.icon-button{width:44px;height:44px;min-width:44px;padding:0;border-radius:13px;color:#4d674d}
+  :root[data-workspace-brand="mola"] main{padding:18px 14px calc(34px + env(safe-area-inset-bottom));max-width:none}
+  :root[data-workspace-brand="mola"] .page-heading{padding:3px 2px 17px;margin:0 0 18px;border-bottom:1px solid #dbe4d8}
+  :root[data-workspace-brand="mola"] .page-heading .eyebrow{font-size:.625rem;letter-spacing:.17em;margin-bottom:8px}
+  :root[data-workspace-brand="mola"] .page-heading h1{font-size:clamp(2rem,9vw,2.55rem);line-height:1.05;letter-spacing:-.055em;margin-bottom:9px}
+  :root[data-workspace-brand="mola"] .page-heading p{font-size:.875rem;line-height:1.6;max-width:34rem}
+  :root[data-workspace-brand="mola"] .founder-home{gap:16px}
+  :root[data-workspace-brand="mola"] .capital-hero{display:flex;flex-direction:column;gap:0;min-width:0;min-height:0;padding:22px 18px 18px;border-radius:24px;background:linear-gradient(145deg,#102d1d,#1d4b31);border-color:#3e6749;box-shadow:0 16px 30px #1538211c}
+  :root[data-workspace-brand="mola"] .capital-hero::before{width:250px;height:250px;right:-125px;bottom:-155px;border-color:#e8d18b36;box-shadow:0 0 0 18px #e8d18b09,0 0 0 38px #e8d18b05}
+  :root[data-workspace-brand="mola"] .capital-hero-copy{width:100%;min-width:0;padding:0}
+  :root[data-workspace-brand="mola"] .capital-hero .eyebrow{font-size:.625rem;letter-spacing:.19em}
+  :root[data-workspace-brand="mola"] .capital-hero h2{max-width:100%;font-size:clamp(2.2rem,10.5vw,3rem);line-height:1.01;letter-spacing:-.065em;margin:12px 0 15px;text-wrap:balance}
+  :root[data-workspace-brand="mola"] .capital-hero-copy>p{max-width:100%;font-size:.875rem;line-height:1.65;color:#d6e4d6}
+  :root[data-workspace-brand="mola"] .hero-actions{display:grid;grid-template-columns:minmax(0,1fr);gap:10px;margin-top:20px;min-width:0}
+  :root[data-workspace-brand="mola"] .capital-hero .secondary{width:100%;min-height:52px;padding:13px 15px;border-radius:14px!important;font-size:.875rem;white-space:normal}
+  :root[data-workspace-brand="mola"] .hero-actions>span{justify-self:start;max-width:100%;padding:2px 0;border:0;background:none;font-size:.6875rem;line-height:1.5;color:#c4d8c5}
+  :root[data-workspace-brand="mola"] .capital-total{width:100%;min-height:0;margin-top:22px;padding:18px 0 0;border:0;border-top:1px solid #6a8c6e;background:transparent}
+  :root[data-workspace-brand="mola"] .capital-total>span{font-size:.6rem;letter-spacing:.13em;color:#e5cb86}
+  :root[data-workspace-brand="mola"] .capital-total>strong{font-size:clamp(2.45rem,12vw,3.2rem);line-height:1.05;margin:11px 0;color:#f1d994}
+  :root[data-workspace-brand="mola"] .capital-total>p{font-size:.75rem;line-height:1.55;color:#c7d9c7}
+  :root[data-workspace-brand="mola"] .capital-total-foot{gap:7px;margin-top:15px;padding-top:13px;font-size:.75rem;color:#c8d7c7}
+  :root[data-workspace-brand="mola"] .capital-total-foot b{color:#f1d994}
+  :root[data-workspace-brand="mola"] .hub-metrics{grid-template-columns:minmax(0,1fr);gap:11px}
+  :root[data-workspace-brand="mola"] .hub-metric{grid-template-columns:32px minmax(0,1fr);gap:5px 12px;min-height:0;padding:18px 17px;border-radius:18px;background:#fff;border-color:#dde6da;box-shadow:0 5px 16px #1b38260a}
+  :root[data-workspace-brand="mola"] .hub-metric>svg{grid-row:span 2;width:32px;height:32px;padding:8px;border-radius:10px}
+  :root[data-workspace-brand="mola"] .hub-metric>span{align-self:end;font-size:.6875rem}
+  :root[data-workspace-brand="mola"] .hub-metric>strong{align-self:start;font-size:1.55rem;line-height:1.15}
+  :root[data-workspace-brand="mola"] .hub-metric small{grid-column:2;font-size:.71875rem;line-height:1.45}
+  :root[data-workspace-brand="mola"] .hub-two-column{grid-template-columns:minmax(0,1fr);gap:14px}
+  :root[data-workspace-brand="mola"] .panel{border-radius:18px}
+  :root[data-workspace-brand="mola"] .panel-header{padding:18px;gap:12px;align-items:flex-start}
+  :root[data-workspace-brand="mola"] .panel-header h2{font-size:1rem;line-height:1.35}
+  :root[data-workspace-brand="mola"] .hub-panel-body{padding:18px}
+  :root[data-workspace-brand="mola"] .savings-highlight .hub-panel-body{padding:18px}
+  :root[data-workspace-brand="mola"] .founder-list{padding:0 18px}
+  :root[data-workspace-brand="mola"] .founder-line{padding:15px 0;gap:10px}
+  :root[data-workspace-brand="mola"] .hub-next{gap:11px}
+  :root[data-workspace-brand="mola"] .hub-next>button{min-height:112px;padding:18px;border-radius:18px;gap:12px}
+  :root[data-workspace-brand="mola"] .mola-assistant-launcher{left:14px;right:14px;bottom:calc(12px + env(safe-area-inset-bottom));justify-content:center;min-height:52px;height:52px;padding:13px 18px;border-radius:16px;background:#173d2b;box-shadow:0 12px 28px #15362335;font-size:.875rem}
+  :root[data-workspace-brand="mola"] .mola-assistant[data-slot="dialog-content"]{left:10px;right:10px;bottom:calc(74px + env(safe-area-inset-bottom));width:auto;max-width:none;height:min(690px,calc(100dvh - 90px - env(safe-area-inset-bottom)));max-height:calc(100dvh - 90px - env(safe-area-inset-bottom));border-radius:22px;box-shadow:0 18px 60px #112b1d32}
+  :root[data-workspace-brand="mola"] .assistant-header[data-slot="dialog-header"]{min-height:64px;padding:12px 14px;border-radius:21px 21px 0 0}
+  :root[data-workspace-brand="mola"] .assistant-header .icon-button{width:44px;height:44px;min-width:44px;border-radius:12px}
+  :root[data-workspace-brand="mola"] .assistant-mode{padding:8px 10px;gap:7px}
+  :root[data-workspace-brand="mola"] .assistant-mode button{flex:1;justify-content:center;min-height:44px;padding:8px 7px}
+  :root[data-workspace-brand="mola"] .assistant-scroll{padding:0;scroll-padding-bottom:16px}
+  :root[data-workspace-brand="mola"] .assistant-welcome,
+  :root[data-workspace-brand="mola"] .assistant-search{padding:18px 16px 22px}
+  :root[data-workspace-brand="mola"] .assistant-welcome h3{font-size:1.2rem}
+  :root[data-workspace-brand="mola"] .assistant-prompts{gap:9px;margin-top:17px}
+  :root[data-workspace-brand="mola"] .assistant-prompts button{min-height:52px;padding:12px 13px;font-size:.75rem}
+  :root[data-workspace-brand="mola"] .assistant-messages{padding:16px;gap:16px}
+  :root[data-workspace-brand="mola"] .assistant-question{margin-left:10px;padding:11px 12px}
+  :root[data-workspace-brand="mola"] .assistant-answer{padding-top:12px}
+  :root[data-workspace-brand="mola"] .assistant-composer{position:sticky;bottom:0;z-index:2;padding:10px 12px calc(10px + env(safe-area-inset-bottom));box-shadow:0 -8px 20px #1636220e}
+  :root[data-workspace-brand="mola"] .assistant-composer textarea{min-height:52px;max-height:120px;padding:12px 13px;font-size:.875rem;border-radius:13px}
+  :root[data-workspace-brand="mola"] .assistant-composer>div{align-items:center;gap:8px}
+  :root[data-workspace-brand="mola"] .assistant-composer>div>span{max-width:56%;font-size:.625rem;line-height:1.35}
+  :root[data-workspace-brand="mola"] .assistant-composer .primary{min-width:82px;min-height:44px;padding:9px 12px;border-radius:12px}
+  :root[data-workspace-brand="mola"] .assistant-info{padding:10px 14px calc(12px + env(safe-area-inset-bottom))}
+  :root[data-workspace-brand="mola"] [data-sidebar="sidebar"][data-mobile="true"]{width:min(88vw,360px)!important;background:#0b1710}
+  :root[data-workspace-brand="mola"] [data-sidebar="sidebar"][data-mobile="true"] .nav-header{padding:22px 20px 20px!important}
+  :root[data-workspace-brand="mola"] [data-sidebar="sidebar"][data-mobile="true"] .nav-content{padding:18px 12px!important;overflow-y:auto}
+  :root[data-workspace-brand="mola"] [data-sidebar="sidebar"][data-mobile="true"] .nav-label{margin:0 12px 11px;font-size:.625rem;letter-spacing:.18em}
+  :root[data-workspace-brand="mola"] [data-sidebar="sidebar"][data-mobile="true"] .nav-button{min-height:50px!important;margin:3px 0;padding:0 14px!important;border-radius:14px!important;font-size:.9375rem!important}
+  :root[data-workspace-brand="mola"] [data-sidebar="sidebar"][data-mobile="true"] .nav-button[data-active=true]{background:#d9bb70!important;color:#17271b!important;box-shadow:0 8px 18px #d9bb7030}
+  :root[data-workspace-brand="mola"] [data-sidebar="sidebar"][data-mobile="true"] .nav-button[data-active=true] svg{color:#17271b}
+  :root[data-workspace-brand="mola"] [data-sidebar="sidebar"][data-mobile="true"] .nav-group-heading{padding:20px 12px 7px;font-size:.6rem;letter-spacing:.16em}
+  :root[data-workspace-brand="mola"] [data-sidebar="sidebar"][data-mobile="true"] .nav-scope{margin:18px 8px 0;padding:15px 14px;border-radius:14px}
+  :root[data-workspace-brand="mola"] [data-sidebar="sidebar"][data-mobile="true"] .nav-footer{padding:16px 20px!important}
+  :root[data-workspace-brand="mola"] [data-sidebar="sidebar"][data-mobile="true"] .nav-footer>a{min-height:44px;padding-bottom:10px}
+}
+@media(min-width:701px){.assistant-send-label{display:none}}
+@media(max-width:700px){.assistant-send-label{display:inline}.assistant-composer .primary{gap:6px}}
+@media(prefers-reduced-motion:reduce){
+  :root[data-workspace-brand="mola"] .topbar,
+  :root[data-workspace-brand="mola"] .nav-button,
+  :root[data-workspace-brand="mola"] .mola-assistant-launcher,
+  :root[data-workspace-brand="mola"] .hub-metric{transition:none!important;animation:none!important;transform:none!important}
+}

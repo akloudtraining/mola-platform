@@ -6,6 +6,7 @@ const css = [
   fs.readFileSync(path.join(root, 'app', 'globals.css'), 'utf8'),
   fs.readFileSync(path.join(root, 'app', 'workspace-refresh.css'), 'utf8'),
   fs.readFileSync(path.join(root, 'app', 'founder-experience.css'), 'utf8'),
+  fs.readFileSync(path.join(root, 'app', 'mola-mobile.css'), 'utf8'),
 ].join('\n');
 const sidebar = fs.readFileSync(path.join(root, 'components', 'ui', 'sidebar.tsx'), 'utf8');
 
@@ -28,6 +29,10 @@ const contracts = [
   ['mobile founder hero descendants can shrink', /\.capital-hero-copy[^\{]*\{[^}]*min-width:\s*0;[^}]*max-width:\s*100%/s],
   ['mobile founder hero action fits the viewport', /\.hero-actions>button[^\{]*\{[^}]*width:\s*100%;[^}]*max-width:\s*100%;/s],
   ['mobile organization selector ellipsizes', /\.top-left>\.choice \[data-slot="select-value"\][^\{]*\{[^}]*text-overflow:\s*ellipsis;/s],
+  ['mobile shell uses a sticky compact header', /\.topbar\{[^}]*position:\s*sticky;[^}]*height:\s*60px;/s],
+  ['mobile navigation has touch-sized active items', /\[data-sidebar="sidebar"\]\[data-mobile="true"\][^\{]*\.nav-button\{[^}]*min-height:\s*50px/s],
+  ['mobile assistant has a visible send action', /\.assistant-send-label\{display:\s*inline\}/s],
+  ['mobile assistant composer is keyboard-safe', /\.assistant-composer\{[^}]*position:\s*sticky;[^}]*env\(safe-area-inset-bottom\)/s],
   ['mobile nav closes after a destination is selected', /if\s*\(isMobile[^)]*\)\s*setOpenMobile\(false\)/],
 ];
 
