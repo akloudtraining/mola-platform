@@ -3,6 +3,7 @@ import "./globals.css";
 import "./workspace-refresh.css";
 import "./mola-brand.css";
 import "./founder-experience.css";
+import "./mola-mobile.css";
 
 export const metadata: Metadata = {
   title: "Mola Holdings — Investment Workspace",
