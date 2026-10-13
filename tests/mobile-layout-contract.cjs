@@ -25,6 +25,9 @@ const contracts = [
   ['mobile governance controls use full width', /\.governance-toolbar \.field\s*\{\s*min-width:\s*100%;/s],
   ['assistant composer text remains visibly rendered', /\.assistant-composer textarea\s*\{[^}]*color:\s*#23382e;[^}]*-webkit-text-fill-color:\s*#23382e;/s],
   ['assistant composer controls have touch-sized targets', /\.assistant-mode button[^\{]*\{[^}]*min-height:\s*44px;/s],
+  ['mobile founder hero descendants can shrink', /\.capital-hero-copy[^\{]*\{[^}]*min-width:\s*0;[^}]*max-width:\s*100%/s],
+  ['mobile founder hero action fits the viewport', /\.hero-actions>button[^\{]*\{[^}]*width:\s*100%;[^}]*max-width:\s*100%;/s],
+  ['mobile organization selector ellipsizes', /\.top-left>\.choice \[data-slot="select-value"\][^\{]*\{[^}]*text-overflow:\s*ellipsis;/s],
   ['mobile nav closes after a destination is selected', /if\s*\(isMobile[^)]*\)\s*setOpenMobile\(false\)/],
 ];
 

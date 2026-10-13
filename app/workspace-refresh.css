@@ -322,3 +322,13 @@ footer { color: #61788e; border-top: 1px solid #dce5ee; margin-top: 30px; paddin
 .overview-grid > .metric-card.verification-attention { display: flex; }
 .verification-callout { align-self: flex-start; margin-top: 14px; padding: 5px 10px; border-radius: 6px; background: #f7ca35; color: #442b00; font-size: .8rem; font-weight: 750; }
 .overview-grid .verification-attention strong { margin-top: 12px; }
+
+/* Keep the mobile workspace selector shrinkable; its value ellipsizes instead of widening the header. */
+@media(max-width:700px){
+ .topbar,.top-left,.top-left>.choice{min-width:0}
+ .top-left>.choice{flex:1 1 auto;width:0;max-width:none}
+ .top-left>.choice [data-slot="select-value"]{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+ .top-left>.choice [data-slot="select-trigger"]{min-width:0;max-width:100%}
+ .top-left>.choice,.top-right .icon-button{min-height:44px}
+ .top-left>.choice{padding-block:10px}
+}
