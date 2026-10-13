@@ -46,7 +46,7 @@
   :root[data-workspace-brand="mola"] .hub-next{gap:11px}
   :root[data-workspace-brand="mola"] .hub-next>button{min-height:112px;padding:18px;border-radius:18px;gap:12px}
   :root[data-workspace-brand="mola"] .mola-assistant-launcher{left:14px;right:14px;bottom:calc(12px + env(safe-area-inset-bottom));justify-content:center;min-height:52px;height:52px;padding:13px 18px;border-radius:16px;background:#173d2b;box-shadow:0 12px 28px #15362335;font-size:.875rem}
-  :root[data-workspace-brand="mola"] .mola-assistant[data-slot="dialog-content"]{top:auto;left:10px;right:10px;bottom:calc(74px + env(safe-area-inset-bottom));width:auto;max-width:none;height:min(690px,calc(100dvh - 90px - env(safe-area-inset-bottom)));max-height:calc(100dvh - 90px - env(safe-area-inset-bottom));translate:none!important;transform:none!important;border-radius:22px;box-shadow:0 18px 60px #112b1d32}
+  :root[data-workspace-brand="mola"] .mola-assistant[data-slot="dialog-content"]{top:auto;left:10px;right:10px;bottom:calc(74px + env(safe-area-inset-bottom));width:auto;max-width:none;height:min(690px,calc(100dvh - 90px - env(safe-area-inset-bottom)));max-height:calc(100dvh - 90px - env(safe-area-inset-bottom));--tw-translate-x:0px!important;--tw-translate-y:0px!important;transform:none!important;border-radius:22px;box-shadow:0 18px 60px #112b1d32}
   :root[data-workspace-brand="mola"] .assistant-header[data-slot="dialog-header"]{min-height:64px;padding:12px 14px;border-radius:21px 21px 0 0}
   :root[data-workspace-brand="mola"] .assistant-header .icon-button{width:44px;height:44px;min-width:44px;border-radius:12px}
   :root[data-workspace-brand="mola"] .assistant-mode{padding:8px 10px;gap:7px}
