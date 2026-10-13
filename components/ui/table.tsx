@@ -4,7 +4,51 @@ import * as React from "react"
 
 import { cn } from "@/lib/utils"
 
-function Table({ className, ...props }: React.ComponentProps<"table">) {
+function nodeText(node: React.ReactNode): string {
+  return React.Children.toArray(node).map((child) => {
+    if (typeof child === "string" || typeof child === "number") return String(child)
+    if (React.isValidElement<{ children?: React.ReactNode }>(child)) return nodeText(child.props.children)
+    return ""
+  }).join(" ").replace(/\s+/g, " ").trim()
+}
+
+function headerLabels(children: React.ReactNode): string[] {
+  const labels: string[] = []
+  const visit = (nodes: React.ReactNode) => React.Children.forEach(nodes, (child) => {
+    if (!React.isValidElement<{ children?: React.ReactNode }>(child)) return
+    if (child.type === TableHead) {
+      labels.push(nodeText(child.props.children))
+      return
+    }
+    visit(child.props.children)
+  })
+  visit(children)
+  return labels
+}
+
+function labelBodyCells(children: React.ReactNode, labels: string[]): React.ReactNode {
+  return React.Children.map(children, (child) => {
+    if (!React.isValidElement<{ children?: React.ReactNode }>(child)) return child
+    if (child.type !== TableBody) return child
+
+    const rows = React.Children.map(child.props.children, (row) => {
+      if (!React.isValidElement<{ children?: React.ReactNode }>(row) || row.type !== TableRow) return row
+      let column = 0
+      const cells = React.Children.map(row.props.children, (cell) => {
+        if (!React.isValidElement(cell) || cell.type !== TableCell) return cell
+        const label = labels[column++] || ""
+        return React.cloneElement(cell as React.ReactElement<Record<string, unknown>>, { "data-label": label })
+      })
+      return React.cloneElement(row as React.ReactElement<{ children?: React.ReactNode }>, { children: cells })
+    })
+
+    return React.cloneElement(child as React.ReactElement<{ children?: React.ReactNode }>, { children: rows })
+  })
+}
+
+function Table({ className, children, ...props }: React.ComponentProps<"table">) {
+  const labels = headerLabels(children)
+  const labeledChildren = labelBodyCells(children, labels)
   return (
     <div
       data-slot="table-container"
@@ -14,6 +58,7 @@ function Table({ className, ...props }: React.ComponentProps<"table">) {
         data-slot="table"
         className={cn("w-full caption-bottom text-sm", className)}
         {...props}
+        children={labeledChildren}
       />
     </div>
   )

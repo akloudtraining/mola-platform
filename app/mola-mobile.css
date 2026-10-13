@@ -91,6 +91,42 @@
   :root[data-workspace-brand="mola"] [data-sidebar="sidebar"][data-mobile="true"] .nav-footer>a{min-height:34px;padding-bottom:4px}
   :root[data-workspace-brand="mola"] [data-sidebar="sidebar"][data-mobile="true"] .nav-footer>div{padding-top:10px}
 }
+@media(max-width:700px){
+  [data-slot="table-container"]{max-width:100%;overflow-x:visible!important;overscroll-behavior-inline:auto}
+  [data-slot="table"]{display:block;width:100%;min-width:0!important;table-layout:fixed}
+  [data-slot="table-header"]{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+  [data-slot="table-body"]{display:grid;gap:10px}
+  [data-slot="table-row"]{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 10px;padding:9px 12px;border:1px solid #e1e8de;border-radius:14px;background:#fff;box-shadow:0 3px 12px #183b2507}
+  [data-slot="table-cell"]{display:block;min-width:0;padding:8px 3px!important;white-space:normal!important;overflow-wrap:anywhere;line-height:1.45}
+  [data-slot="table-cell"]::before{content:attr(data-label);display:block;margin-bottom:4px;color:#71816f;font-size:.625rem;font-weight:650;line-height:1.35;letter-spacing:.02em;white-space:normal}
+  [data-slot="table-cell"][data-label=""]::before{display:none}
+  [data-slot="table-row"]>[data-slot="table-cell"]:first-child,[data-slot="table-row"]>[data-slot="table-cell"]:last-child{grid-column:1/-1}
+  [data-slot="table-cell"] small{display:block;overflow-wrap:anywhere}
+  .calendar-output .table-wrap{max-width:100%;overflow-x:visible!important;overscroll-behavior-inline:auto}
+  .calendar-output .table-wrap>table{display:block;width:100%;min-width:0!important;table-layout:fixed;border-collapse:separate}
+  .calendar-output .table-wrap>table thead{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+  .calendar-output .table-wrap>table tbody{display:grid;gap:10px}
+  .calendar-output .table-wrap>table tbody>tr{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 10px;padding:9px 12px;border:1px solid #e1e8de;border-radius:14px;background:#fff}
+  .calendar-output .table-wrap>table tbody>tr>th[scope="row"]{grid-column:1/-1;min-width:0;padding:8px 3px!important;white-space:normal;overflow-wrap:anywhere}
+  .calendar-output .table-wrap>table tbody>tr>td{display:block;min-width:0;padding:8px 3px!important;white-space:normal!important;overflow-wrap:anywhere;font-size:.75rem;line-height:1.45}
+  .calendar-output .table-wrap>table tbody>tr>td::before{display:block;margin-bottom:4px;color:#71816f;font-size:.625rem;font-weight:650;line-height:1.35;white-space:normal}
+  .calendar-year-table tbody td:nth-of-type(1)::before{content:"Weeks"}
+  .calendar-year-table tbody td:nth-of-type(2)::before{content:"Weekly contribution"}
+  .calendar-year-table tbody td:nth-of-type(3)::before{content:"Monthly average"}
+  .calendar-year-table tbody td:nth-of-type(4)::before{content:"Year contribution"}
+  .calendar-year-table tbody td:nth-of-type(5)::before{content:"Expected collected"}
+  .calendar-year-table tbody td:nth-of-type(6)::before{content:"Spending"}
+  .calendar-year-table tbody td:nth-of-type(7)::before{content:"Capital at period end"}
+  .scenario-year-detail>.table-wrap table tbody td:nth-of-type(1)::before{content:"Weeks"}
+  .scenario-year-detail>.table-wrap table tbody td:nth-of-type(2)::before{content:"Per founder"}
+  .scenario-year-detail>.table-wrap table tbody td:nth-of-type(3)::before{content:"Group contribution"}
+  .scenario-year-detail>.table-wrap table tbody td:nth-of-type(4)::before{content:"Expected collected"}
+  .scenario-year-detail>.table-wrap table tbody td:nth-of-type(5)::before{content:"Verified records"}
+  .scenario-year-detail>.table-wrap table tbody td:nth-of-type(6)::before{content:"Projected capital"}
+  .founder-period-records .table-wrap table tbody td:nth-of-type(1)::before{content:"Scenario weekly rate"}
+  .founder-period-records .table-wrap table tbody td:nth-of-type(2)::before{content:"Scenario year contribution"}
+  .founder-period-records .table-wrap table tbody td:nth-of-type(3)::before{content:"Actual verified"}
+}
 @media(min-width:701px){.assistant-send-label{display:none}}
 @media(max-width:700px){.assistant-send-label{display:inline}.assistant-composer .primary{gap:6px}}
 @keyframes mola-assistant-popover-in{from{opacity:0;scale:.98}to{opacity:1;scale:1}}

@@ -9,6 +9,7 @@ const css = [
   fs.readFileSync(path.join(root, 'app', 'mola-mobile.css'), 'utf8'),
 ].join('\n');
 const sidebar = fs.readFileSync(path.join(root, 'components', 'ui', 'sidebar.tsx'), 'utf8');
+const table = fs.readFileSync(path.join(root, 'components', 'ui', 'table.tsx'), 'utf8');
 
 const contracts = [
   ['a 700px responsive breakpoint', /@media\s*\(\s*max-width\s*:\s*700px\s*\)/],
@@ -18,7 +19,9 @@ const contracts = [
   ['long project copy wraps', /\.project-strip p\s*\{[^}]*overflow-wrap:\s*anywhere;/s],
   ['long notices wrap', /\.notice p\s*\{[^}]*min-width:\s*0;[^}]*overflow-wrap:\s*anywhere;/s],
   ['mobile page heading stacks the primary action', /\.page-heading>\.primary\s*\{[^}]*width:\s*100%;/s],
-  ['tables remain horizontally scrollable', /\.table-wrap\s*\{[^}]*overflow\s*:\s*auto/s],
+  ['phone-sized data tables reflow into stacked cards', /\[data-slot="table-row"\]\{display:grid;grid-template-columns:repeat\(2,minmax\(0,1fr\)\)/s],
+  ['mobile table scroll wrappers do not force sideways panning', /\[data-slot="table-container"\]\{[^}]*overflow-x:visible!important/s],
+  ['phone-sized savings tables fit their card width', /\.calendar-output \.table-wrap>table\{display:block;width:100%;min-width:0!important/s],
   ['dialog width is bounded by the viewport', /\.editor\s*\{[^}]*width:\s*min\(650px,\s*calc\(100vw\s*-\s*32px\)\)/s],
   ['mobile forms collapse to one column', /\.form-grid\s*\{\s*grid-template-columns:\s*minmax\(0,\s*1fr\);/s],
   ['mobile reconciliation summary collapses', /\.reconciliation-summary\s*\{\s*grid-template-columns:\s*minmax\(0,\s*1fr\);/s],
@@ -48,5 +51,15 @@ if (missing.length) {
   process.exit(1);
 }
 
-console.log(`MOBILE CSS CONTRACT PASS: ${contracts.length} responsive safeguards present.`);
+const tableContracts = [
+  ['shared table cells receive readable labels from column headings', /function headerLabels\([\s\S]*?child\.type === TableHead[\s\S]*?data-label": label/s],
+];
+const missingTable = tableContracts.filter(([, pattern]) => !pattern.test(table));
+if (missingTable.length) {
+  console.error('MOBILE TABLE CONTRACT FAIL');
+  for (const [label] of missingTable) console.error(`- ${label}`);
+  process.exit(1);
+}
+
+console.log(`MOBILE CSS CONTRACT PASS: ${contracts.length + tableContracts.length} responsive safeguards present.`);
 console.log('This is a source-level regression guard; owner phone/browser acceptance remains pending.');
