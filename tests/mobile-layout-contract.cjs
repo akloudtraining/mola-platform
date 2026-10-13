@@ -33,6 +33,7 @@ const contracts = [
   ['mobile navigation has touch-sized active items', /\[data-sidebar="sidebar"\]\[data-mobile="true"\][^\{]*\.nav-button\{[^}]*min-height:\s*50px/s],
   ['mobile assistant has a visible send action', /\.assistant-send-label\{display:\s*inline\}/s],
   ['mobile assistant composer is keyboard-safe', /\.assistant-composer\{[^}]*position:\s*sticky;[^}]*env\(safe-area-inset-bottom\)/s],
+  ['assistant dialog resets centered desktop transform', /\.mola-assistant\[data-slot="dialog-content"\]\{[^}]*right:\s*24px;[^}]*bottom:\s*calc\(84px[^}]*--tw-translate-x:\s*0px!important;[^}]*--tw-translate-y:\s*0px!important/s],
   ['mobile nav closes after a destination is selected', /if\s*\(isMobile[^)]*\)\s*setOpenMobile\(false\)/],
 ];
 
