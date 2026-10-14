@@ -856,6 +856,7 @@
   :root[data-theme="dark"][data-workspace-brand="mola"] [data-sidebar="sidebar"][data-mobile="true"] .nav-account-icon{background:#23291e;box-shadow:none;color:#badbc4}
   :root[data-theme="dark"][data-workspace-brand="mola"] [data-sidebar="sidebar"][data-mobile="true"] .nav-account-icon .mola-icon .mi-accent{fill:#dabe81}
 }
+:root[data-theme="dark"][data-workspace-brand="mola"] .capital-total-foot b.not-set{color:#c4d8c5}
 
 /* hand tuning */
 /* Hand-tuned dark theme surfaces, appended after the generated rules. */

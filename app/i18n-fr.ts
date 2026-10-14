@@ -1,6 +1,8 @@
 // French interface catalogue, keyed by the exact English text the components render.
 // Edit entries here directly; anything missing falls back to English.
 export const fr:Record<string,string>={
+ "Not set yet":"Pas encore défini",
+ "No weekly contribution amount has been set yet. The workspace owner sets it in Workspace setup, under weekly dues and cutoff, once the group agrees it.":"Aucun montant de contribution hebdomadaire n’a encore été défini. Le propriétaire de l’espace le définit dans Configuration de l’espace, sous cotisations hebdomadaires et heure limite, une fois que le groupe l’a convenu.",
  "Sign out":"Se déconnecter",
  "Only the workspace owner or an officer (President, Treasurer or Secretary) can publish an agreement version.":"Seul le propriétaire de l’espace ou un responsable (président, trésorier ou secrétaire) peut publier une version de l’accord.",
  "View screenshot to review":"Voir la capture pour vérifier",

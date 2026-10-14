@@ -587,3 +587,4 @@
   :root[data-workspace-brand="mola"] [data-sidebar="sidebar"][data-mobile="true"] .nav-account-icon{background:#eef3ea;box-shadow:none;color:#2f5b3c}
   :root[data-workspace-brand="mola"] [data-sidebar="sidebar"][data-mobile="true"] .nav-account-icon .mola-icon .mi-accent{fill:#d6aa4a}
 }
+:root[data-workspace-brand="mola"] .capital-total-foot b.not-set{color:#c4d8c5;font-weight:600;font-style:italic}

@@ -26,4 +26,7 @@ export function obligationStanding(obligation:Entry,entries:Entry[],today=new Da
  return {credit,ignoredCreditCount,remaining:Math.max(0,obligation.amountMinor-credit),excess:Math.max(0,credit-obligation.amountMinor),status:credit>=obligation.amountMinor?'Covered':obligationPastDue(obligation,today)?'Behind':credit>0?'Part paid':'Due'};
 }
 
+// The weekly amount the group has actually set (schedule or minimum), or null before setup.
+// weeklyMinimum below falls back to $100 and is only for pre-filling editors and scenarios.
+export const configuredWeekly=(org:Org):number|null=>(org.weeklySchedule?rateOn(org.weeklySchedule,new Date().toISOString().slice(0,10))??org.weeklyMinimumMinor:org.weeklyMinimumMinor)??null;
 export const weeklyMinimum=(org:Org)=>org.weeklySchedule?rateOn(org.weeklySchedule,new Date().toISOString().slice(0,10))??org.weeklyMinimumMinor??10000:org.weeklyMinimumMinor??10000;
