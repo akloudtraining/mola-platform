@@ -48,7 +48,9 @@ export default function AuthPage(){
    if(mode==='recover'||mode==='confirm'){setMessage(d.message||(mode==='confirm'?'If an account needs confirmation, check its email for a new link.':'If an account matches, check the email for reset instructions.'));return;}
    if(mode==='reset'){setMessage(d.message||'Password updated. Sign in again.');setMode('login');setPassword('');setConfirmPassword('');setAccessToken('');window.history.replaceState(null,'',window.location.pathname);return;}
    if(d.requiresConfirmation){setMode('confirm');setMessage(d.message||'Check your email to confirm your account.');setPassword('');setConfirmPassword('');window.history.replaceState(null,'',window.location.pathname+'?mode=confirm');return;}
-   window.location.href='/';
+   // Return to the page that sent the member here (e.g. a payment link from an email); same-site paths only.
+   const back=new URLSearchParams(window.location.search).get('return_to')||'';
+   window.location.href=/^\/(?!\/)[^\\]*$/.test(back)?back:'/';
   }catch(e){setError((e as Error).message);}finally{submitting.current=false;setBusy(false);}
  };
 

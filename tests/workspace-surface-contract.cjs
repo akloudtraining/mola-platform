@@ -43,7 +43,7 @@ const contracts = [
   ['weekly deadline controls', weekly.includes('<WeeklyCutoff') && cutoff.includes('Future weekly submission cutoff')],
   ['individual deadline controls', page.includes('<DeadlineFields') && deadline.includes('Member submission deadline')],
   ['shared cancel action', page.includes('className="form-actions"') && page.includes('>Cancel</button>')],
-  ['owner auth redirect', page.includes("if(e.status===401){window.location.href='/auth?return_to=%2F';return;}")],
+  ['owner auth redirect returns to the requested page', page.includes("if(e.status===401){window.location.href='/auth?return_to='+encodeURIComponent(window.location.pathname+window.location.search);return;}")],
 ];
 
 const missing = contracts.filter(([, ok]) => !ok);

@@ -551,3 +551,8 @@
 :root[data-workspace-brand="mola"] .nav-account>svg{flex:none;color:#b9cdbd}
 .copy-instructions{display:inline-flex;align-items:center;gap:8px;margin-top:12px}
 @media(max-width:700px){:root[data-workspace-brand="mola"] .hero-actions>.hero-goals-link{align-self:flex-start;width:fit-content;justify-content:flex-start;margin-top:2px}}
+/* Top of a reviewed payment: who already handled it, so a second reviewer arriving from email knows at once. */
+.review-done{display:flex;align-items:flex-start;gap:8px;margin:0 0 14px;padding:11px 13px;border:1px solid #cfe2c9;border-radius:12px;background:#eef6ea;color:#24472f;font-size:.8125rem;line-height:1.45}
+.review-done>svg{flex:none;margin-top:1px;color:#2f6b3f}
+.review-done.is-rejected{border-color:#f0d3cf;background:#fbefed;color:#7a2e24}
+.review-done.is-rejected>svg{color:#b5473a}

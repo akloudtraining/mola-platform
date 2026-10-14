@@ -4,6 +4,7 @@ import {database} from '@/lib/database';
 import {accessFor,publicEntry} from '@/lib/access';
 import {testDatabase,testIdentity,testOrgId} from '@/lib/test-workspace';
 import type {Org,Entry} from '@/lib/model';
+import {notifyReviewNeeded} from '@/lib/notifications';
 const fail=(error:string,status:number)=>Response.json({error},{status,headers:{'Cache-Control':'no-store'}});
 const limit=3*1024*1024;
 export async function GET(req:Request){return handle(req);}
@@ -45,5 +46,8 @@ async function handle(req:Request){let orphan='';const bucket=(env as unknown as
  const next:Entry={...entry,status:entry.status==='Screenshot required'?'Awaiting verification':entry.status,created:entry.status==='Screenshot required'?uploadedAt:entry.created,receipt:{key:orphan,mime,size:total,uploadedBy:user.userId,uploadedAt}};
  const changed=await db.prepare('UPDATE entries SET data=?,created=? WHERE id=? AND org_id=? AND data=? AND EXISTS (SELECT 1 FROM organizations WHERE id=? AND version=?)').bind(JSON.stringify(next),next.created,entryId,orgId,previous.data,orgId,row.version).run();
  if(!changed.meta.changes){await bucket.delete(orphan);orphan='';return fail('The contribution or permissions changed. Refresh before attaching a receipt.',409);}
- orphan='';return Response.json({entry:publicEntry(next,org,row.owner,user)},{headers:{'Cache-Control':'no-store'}});
+ orphan='';
+ // The screenshot moves the payment into review: alert reviewers (never for the test workspace).
+ if(session===null&&entry.status==='Screenshot required')await notifyReviewNeeded(org,next,url.origin);
+ return Response.json({entry:publicEntry(next,org,row.owner,user)},{headers:{'Cache-Control':'no-store'}});
  }catch(e){if(orphan&&bucket)await bucket.delete(orphan).catch(()=>{});console.error('Receipt request failed');return fail('Receipt action could not be confirmed. Refresh before retrying.',503);}}

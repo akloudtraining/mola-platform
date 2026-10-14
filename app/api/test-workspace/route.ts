@@ -20,7 +20,7 @@ async function handle(req:Request){try{
   if(req.method==='POST'){
    const body:any=await req.clone().json();if(!body||body.orgId!==testOrgId(session.session))return reply({error:'Test actions must belong to this test workspace.'},403);
   }
-  const handlers=workspaceHandlers(async()=>identity,()=>testDatabase(db),false);
+  const handlers=workspaceHandlers(async()=>identity,()=>testDatabase(db),false,false);
   return req.method==='POST'?handlers.POST(req):handlers.GET(req);
  }
  if(req.method==='POST'){

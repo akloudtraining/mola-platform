@@ -835,6 +835,10 @@
 :root[data-theme="dark"][data-workspace-brand="mola"] .nav-account small{color:#b9cdbd}
 :root[data-theme="dark"][data-workspace-brand="mola"] .nav-account .avatar{background:#e1c27a;color:#17271b}
 :root[data-theme="dark"][data-workspace-brand="mola"] .nav-account>svg{color:#b9cdbd}
+:root[data-theme="dark"] .review-done{border:1px solid #3e4b39;background:#202a1b;color:#c4e1cd}
+:root[data-theme="dark"] .review-done>svg{color:#b1ddbc}
+:root[data-theme="dark"] .review-done.is-rejected{border-color:#4b322e;background:#2a1714;color:#e5aea6}
+:root[data-theme="dark"] .review-done.is-rejected>svg{color:#d99289}
 
 /* hand tuning */
 /* Hand-tuned dark theme surfaces, appended after the generated rules. */
