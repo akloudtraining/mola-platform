@@ -423,3 +423,16 @@
 
 .settings-actions{display:flex;flex-wrap:wrap;gap:10px}
 @media(max-width:700px){.settings-actions>a{flex:1 1 100%;justify-content:center;text-align:center}}
+
+/* Mola lockup (shield + MOLA Holdings), shared by the desktop sidebar and the phone sheet. */
+:root[data-workspace-brand="mola"] .nav-header .mola-brand{flex-direction:row;align-items:center;gap:12px}
+:root[data-workspace-brand="mola"] .nav-header .mola-brand img{width:42px;height:42px;max-width:none;aspect-ratio:1;filter:drop-shadow(0 3px 6px #0000004d)}
+:root[data-workspace-brand="mola"] .mola-brand .mola-brand-name{display:flex;align-items:baseline;gap:7px;max-width:none;color:inherit;font-size:inherit;letter-spacing:normal;text-transform:none;align-self:center}
+:root[data-workspace-brand="mola"] .mola-brand-name strong{font:600 1.25rem/1 Georgia,"Times New Roman",serif;letter-spacing:.14em;text-transform:uppercase;color:#f1e4bb}
+:root[data-workspace-brand="mola"] .mola-brand-name small{font:600 .625rem/1 Arial,Helvetica,sans-serif;letter-spacing:.2em;text-transform:uppercase;color:#d4ad55}
+@media(max-width:700px){
+  :root[data-workspace-brand="mola"] [data-sidebar="sidebar"][data-mobile="true"] .nav-header .mola-brand img{width:38px;height:38px;filter:drop-shadow(0 2px 4px #1d3a2622)}
+  :root[data-workspace-brand="mola"] [data-sidebar="sidebar"][data-mobile="true"] .nav-header .mola-brand .mola-brand-name{color:inherit;font-size:inherit;letter-spacing:normal}
+  :root[data-workspace-brand="mola"] [data-sidebar="sidebar"][data-mobile="true"] .mola-brand-name strong{font-size:1.125rem;color:#1f3a28}
+  :root[data-workspace-brand="mola"] [data-sidebar="sidebar"][data-mobile="true"] .mola-brand-name small{color:#a07f36}
+}

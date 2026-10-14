@@ -13,7 +13,7 @@ function isMolaWorkspace(organizationId?:string){
 
 export function WorkspaceLogo({organizationId,organizationName}:WorkspaceIdentity){
   return isMolaWorkspace(organizationId)
-    ?<div className="mola-brand"><img src="/mola-logo.png" alt="Mola Holdings" width={1024} height={1024} decoding="async"/><span>Investment workspace</span></div>
+    ?<div className="mola-brand"><img src="/mola-mark.png" alt="" width={256} height={256} decoding="async"/><span className="mola-brand-name"><strong>Mola</strong><small>Holdings</small></span></div>
     :<><div className="wordmark workspace-identity"><span className="brand-icon" aria-hidden="true"><Landmark size={24}/></span><span>{organizationName||'Mola Holdings'}</span></div><p>Mola investment workspace</p></>;
 }
 

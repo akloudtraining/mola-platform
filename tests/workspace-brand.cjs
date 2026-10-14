@@ -20,9 +20,9 @@ function assertMola(props){
  apply(props);
  assert.equal(root.getAttribute('data-workspace-brand'),'mola','Saved Mola organization must enable its theme');
  assert.equal(document.title,props.organizationName+' — Investment Workspace');
- for(const icon of icons){assert.equal(icon.getAttribute('href'),'/mola-logo.png');assert.equal(icon.getAttribute('type'),'image/png');}
+ for(const icon of icons){assert.equal(icon.getAttribute('href'),'/mola-mark.png');assert.equal(icon.getAttribute('type'),'image/png');}
  const img=find(logo(props),node=>node.type==='img');assert(img,'Saved Mola organization must show its supplied logo');
- assert.equal(img.props.src,'/mola-logo.png');assert.equal(img.props.alt,'Mola Holdings');
+ assert.equal(img.props.src,'/mola-mark.png');assert.equal(img.props.alt,'','The visible Mola Holdings wordmark names the logo');assert(find(logo(props),node=>node.type==='strong'&&node.props.children==='Mola'),'Mola wordmark is shown beside the shield');
 }
 function assertNeutral(props){
  apply(props);assert.equal(root.getAttribute('data-workspace-brand'),null,'Other workspaces must clear the Mola theme');
