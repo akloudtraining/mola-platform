@@ -397,3 +397,24 @@
   :root[data-workspace-brand="mola"] .assistant-info{padding:2px 16px 12px;max-height:none}
   :root[data-workspace-brand="mola"] .mola-assistant-launcher[data-state="open"]{opacity:0;pointer-events:none}
 }
+
+/* Ask Mola on phones: a full-screen chat sized to the visible viewport, composer resting on the keyboard. */
+@keyframes mola-chat-in{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
+@media(max-width:700px){
+  :root[data-workspace-brand="mola"] .mola-assistant[data-slot="dialog-content"]{z-index:60;top:var(--mola-vv-top,0px)!important;right:0;bottom:auto;left:0;display:flex;flex-direction:column;width:100%;height:var(--mola-vv-height,100dvh);max-height:none;margin:0;border:0;border-radius:0;background:rgba(247,249,245,.97);box-shadow:none}
+  :root[data-workspace-brand="mola"] .mola-assistant[data-slot="dialog-content"][data-state="open"]{animation:mola-chat-in .34s cubic-bezier(.22,1,.36,1) both}
+  :root[data-workspace-brand="mola"] .assistant-header[data-slot="dialog-header"]{flex:none;padding:calc(10px + env(safe-area-inset-top)) 12px 10px 18px;border-bottom:1px solid #e4ebe1}
+  :root[data-workspace-brand="mola"] .assistant-header [data-slot="dialog-title"]{font-size:1.0625rem}
+  :root[data-workspace-brand="mola"] .assistant-info{flex:none;padding:6px 18px 0;text-align:center}
+  :root[data-workspace-brand="mola"] .assistant-info>summary{font-size:.625rem}
+  :root[data-workspace-brand="mola"] .assistant-info[open]{max-height:40%;overflow-y:auto;text-align:left}
+  :root[data-workspace-brand="mola"] .assistant-scroll{flex:1 1 auto;min-height:0;overflow-y:auto}
+  :root[data-workspace-brand="mola"] .assistant-welcome{padding:22px 18px 14px}
+  :root[data-workspace-brand="mola"] .assistant-messages{gap:16px;padding:14px 14px 10px}
+  :root[data-workspace-brand="mola"] .assistant-composer{position:static;flex:none;align-items:end;gap:8px;padding:8px 10px calc(8px + env(safe-area-inset-bottom));border-top:1px solid #e4ebe1;background:rgba(251,252,249,.98)}
+  :root[data-mola-keyboard][data-workspace-brand="mola"] .assistant-composer{padding-bottom:8px}
+  :root[data-workspace-brand="mola"] .assistant-composer textarea{height:42px;min-height:42px;max-height:120px;padding:10px 16px;border-radius:21px;font-size:16px;line-height:1.3;field-sizing:content;box-shadow:none}
+  /* The paper-plane icon is the visible send action; the label stays for screen readers via aria-label. */
+  :root[data-workspace-brand="mola"] .assistant-composer .primary{display:grid;place-items:center;width:42px;min-width:42px;height:42px;min-height:42px;padding:0;border-radius:999px}
+  :root[data-workspace-brand="mola"] .assistant-composer .assistant-send-label{display:none}
+}
