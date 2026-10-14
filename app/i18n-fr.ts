@@ -1,6 +1,7 @@
 // French interface catalogue, keyed by the exact English text the components render.
 // Edit entries here directly; anything missing falls back to English.
 export const fr:Record<string,string>={
+ "Sign out":"Se déconnecter",
  "Only the workspace owner or an officer (President, Treasurer or Secretary) can publish an agreement version.":"Seul le propriétaire de l’espace ou un responsable (président, trésorier ou secrétaire) peut publier une version de l’accord.",
  "View screenshot to review":"Voir la capture pour vérifier",
  "Open the screenshot above and check it before reviewing.":"Ouvrez la capture d’écran ci-dessus et vérifiez-la avant de valider.",

@@ -38,7 +38,7 @@ export default function AccountSettings({name,email,ownerTools}:{name:string;ema
   <section className="panel settings-card"><div className="panel-header"><h2>My profile</h2><AccountIcon size={22}/></div><div className="settings-body">
    <div className="settings-identity"><span className="avatar light">{name.slice(0,1).toUpperCase()||'—'}</span><div><strong>{name||'Signed-in user'}</strong><small translate="no">{email||'Email unavailable'}</small></div></div>
    <ChangeEmail email={email}/>
-   <div className="settings-actions"><a className="secondary" href="/auth?mode=recover"><LockIcon size={18}/>Reset my password</a><a className="secondary" href="/auth?logout=1" target="_top"><SignOutIcon size={18}/>Sign out / switch account</a></div>
+   <div className="settings-actions"><a className="secondary" href="/auth?mode=recover"><LockIcon size={18}/>Reset my password</a><a className="secondary" href="/auth?logout=1" target="_top"><SignOutIcon size={18}/>Sign out</a></div>
   </div></section>
   <section className="panel settings-card"><div className="panel-header"><h2>Appearance</h2><AppearanceIcon size={22}/></div><div className="settings-body">
    <p>Choose a theme for this device. System follows your phone or computer setting.</p>
