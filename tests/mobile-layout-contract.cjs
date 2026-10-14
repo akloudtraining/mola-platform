@@ -10,6 +10,8 @@ const css = [
 ].join('\n');
 const sidebar = fs.readFileSync(path.join(root, 'components', 'ui', 'sidebar.tsx'), 'utf8');
 const table = fs.readFileSync(path.join(root, 'components', 'ui', 'table.tsx'), 'utf8');
+const page = fs.readFileSync(path.join(root, 'app', 'page.tsx'), 'utf8');
+const layout = fs.readFileSync(path.join(root, 'app', 'layout.tsx'), 'utf8');
 
 const contracts = [
   ['a 700px responsive breakpoint', /@media\s*\(\s*max-width\s*:\s*700px\s*\)/],
@@ -62,5 +64,26 @@ if (missingTable.length) {
   process.exit(1);
 }
 
-console.log(`MOBILE CSS CONTRACT PASS: ${contracts.length + tableContracts.length} responsive safeguards present.`);
+const mobileContracts = [
+  ['mobile section tabs expose direct workspace navigation', /mobile-section-tabs" aria-label="Main workspace sections"/],
+  ['mobile section controls retain the compact labels and active state', /aria-current=\{view===id\?'page':undefined\} className=\{view===id\?'is-active':''\}/],
+].filter(([, pattern]) => !pattern.test(page));
+mobileContracts.push(...[
+  ['mobile text controls stay at iOS zoom-safe readable size', /\[role="combobox"\]\{font-size:16px!important\}/],
+  ['mobile dashboard metrics form an intentional swipe rail', /\.hub-metrics\{[^}]*grid-auto-flow:column;[^}]*overflow-x:auto;[^}]*scroll-snap-type:x mandatory/s],
+  ['mobile drawer fits the dynamic viewport', /max-height:100dvh;[^}]*padding-bottom:env\(safe-area-inset-bottom\)/s],
+  ['mobile navigation remains hidden at desktop widths', /\.mobile-section-tabs\{display:none\}/],
+].filter(([, pattern]) => !pattern.test(css)));
+if (!/viewportFit: "cover"/.test(layout)) mobileContracts.push(['mobile viewport uses safe-area insets', /viewportFit: "cover"/]);
+if (mobileContracts.length) {
+  console.error('MOBILE UX CONTRACT FAIL');
+  for (const [label] of mobileContracts) console.error(`- ${label}`);
+  process.exit(1);
+}
+if (/:root\[data-workspace-brand="mola"\] body\{[^}]*overflow-x:\s*hidden/.test(css)) {
+  console.error('MOBILE UX CONTRACT FAIL\n- document overflow is not hidden to mask mobile width defects');
+  process.exit(1);
+}
+
+console.log(`MOBILE UX CONTRACT PASS: ${contracts.length + tableContracts.length + 8} responsive safeguards present.`);
 console.log('This is a source-level regression guard; owner phone/browser acceptance remains pending.');
