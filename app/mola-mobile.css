@@ -300,6 +300,8 @@
   :root[data-workspace-brand="mola"] .capital-total-foot b{font-size:.875rem}
 
   /* Tab bar: muted icons that fill in gold when selected. */
+  :root[data-workspace-brand="mola"] .mobile-section-tabs>button{position:relative}
+  :root[data-workspace-brand="mola"] .tab-badge{position:absolute;top:2px;left:calc(50% + 6px);min-width:18px;height:18px;padding:0 5px;border:2px solid #fbfcf9;border-radius:999px;background:#c8402f;color:#fff;font:700 .625rem/14px Arial,Helvetica,sans-serif;text-align:center;box-sizing:border-box}
   :root[data-workspace-brand="mola"] .mobile-section-tabs>button svg{width:22px;height:22px;padding:4px 15px;transition:background-color .2s ease,color .2s ease,transform .15s ease}
   :root[data-workspace-brand="mola"] .mobile-section-tabs .mola-icon .mi-accent{fill:#d3dccf}
   :root[data-workspace-brand="mola"] .mobile-section-tabs>button.is-active .mola-icon .mi-accent,:root[data-workspace-brand="mola"] .mobile-section-tabs>.mobile-section-more[aria-expanded="true"] .mola-icon .mi-accent{fill:#d6aa4a}
@@ -322,6 +324,11 @@
   :root[data-workspace-brand="mola"] .secondary{border-radius:14px;background:#fff;box-shadow:0 2px 8px #1b38260d}
 
   /* "More" sheet in the same light theme as the rest of the app. */
+  :root[data-workspace-brand="mola"] [data-sidebar="sidebar"][data-mobile="true"] .nav-in-tabbar{display:none}
+  /* The sheet sizes to its content, so cap the inner column too; otherwise the list never scrolls and the footer is clipped. */
+  :root[data-workspace-brand="mola"] [data-sidebar="sidebar"][data-mobile="true"]>div{height:auto;max-height:86dvh;min-height:0}
+  :root[data-workspace-brand="mola"] [data-sidebar="sidebar"][data-mobile="true"] .nav-content{flex:1 1 auto;min-height:0;overflow-y:auto!important;overscroll-behavior:contain}
+  :root[data-workspace-brand="mola"] [data-sidebar="sidebar"][data-mobile="true"] .nav-footer{flex:0 0 auto;padding-bottom:calc(12px + env(safe-area-inset-bottom))!important}
   :root[data-workspace-brand="mola"] [data-slot="sheet-overlay"]{background:rgba(16,37,26,.28);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
   :root[data-workspace-brand="mola"] [data-sidebar="sidebar"][data-mobile="true"]{background:#fbfcf9!important;color:#23382a;box-shadow:0 -10px 40px #1b382624}
   :root[data-workspace-brand="mola"] [data-sidebar="sidebar"][data-mobile="true"][data-state="open"]{animation-duration:.45s!important;animation-timing-function:cubic-bezier(.32,.72,0,1)!important}
@@ -352,4 +359,41 @@
 @media(prefers-reduced-motion:reduce){
   :root[data-workspace-brand="mola"] :is(.capital-hero,.hub-metric,[data-sidebar="menu-item"],.mobile-section-tabs svg){animation:none!important}
   :root[data-workspace-brand="mola"] :is(.primary,.secondary,.hub-next>button,.nav-button):active{transform:none}
+}
+
+/* Ask Mola: one quiet frosted surface where the conversation is the focus. */
+:root[data-workspace-brand="mola"] .mola-assistant[data-slot="dialog-content"]{border:1px solid rgba(255,255,255,.7);border-radius:24px;background:rgba(250,252,248,.86);-webkit-backdrop-filter:blur(22px) saturate(1.4);backdrop-filter:blur(22px) saturate(1.4);box-shadow:0 24px 60px #1b38262e,0 2px 8px #1b38260f;overflow:hidden}
+:root[data-workspace-brand="mola"] .mola-assistant[data-slot="dialog-content"][data-state="open"]{animation:mola-rise .32s cubic-bezier(.22,1,.36,1) both}
+:root[data-workspace-brand="mola"] .assistant-header[data-slot="dialog-header"]{min-height:0;padding:14px 12px 6px 18px;border:0;border-radius:0;background:transparent;color:#1d3226}
+:root[data-workspace-brand="mola"] .assistant-title{display:flex;align-items:center;gap:8px;min-width:0}
+:root[data-workspace-brand="mola"] .assistant-header [data-slot="dialog-title"]{font-size:1rem;font-weight:700;letter-spacing:-.01em;color:#1d3226}
+:root[data-workspace-brand="mola"] .assistant-actions{display:flex;gap:4px}
+:root[data-workspace-brand="mola"] .assistant-header .icon-button{width:36px;height:36px;min-width:36px;border-radius:999px;background:rgba(29,64,41,.06);color:#4f6553}
+:root[data-workspace-brand="mola"] .assistant-back{display:inline-flex;align-items:center;gap:2px;min-height:36px;padding:0 10px 0 4px;border:0;border-radius:999px;background:rgba(29,64,41,.06);color:#2f5b3c;font-size:.8125rem;font-weight:600}
+:root[data-workspace-brand="mola"] .assistant-welcome{padding:6px 18px 14px}
+:root[data-workspace-brand="mola"] .assistant-welcome h3{margin:0 0 4px;font-size:1.25rem;letter-spacing:-.02em;color:#1d3226}
+:root[data-workspace-brand="mola"] .assistant-welcome>p{margin:0;font-size:.8125rem;line-height:1.5;color:#5f7463}
+:root[data-workspace-brand="mola"] .assistant-prompts{gap:7px;margin-top:14px}
+:root[data-workspace-brand="mola"] .assistant-prompts button{min-height:44px;padding:10px 14px;border:1px solid rgba(214,224,208,.9);border-radius:16px;background:rgba(255,255,255,.75);color:#2a3f2f;font-size:.78rem}
+:root[data-workspace-brand="mola"] .assistant-search{padding:6px 18px 16px}
+:root[data-workspace-brand="mola"] .assistant-messages{gap:14px;padding:8px 14px 14px}
+:root[data-workspace-brand="mola"] .assistant-messages>article{display:grid;gap:8px}
+:root[data-workspace-brand="mola"] .assistant-question{justify-self:end;max-width:85%;margin:0;padding:10px 14px;border:0;border-radius:18px 18px 4px 18px;background:#21442c;color:#fff;font-size:.8125rem;line-height:1.45}
+:root[data-workspace-brand="mola"] .assistant-answer{justify-self:start;max-width:92%;padding:12px 14px;border:1px solid rgba(214,224,208,.8);border-radius:18px 18px 18px 4px;background:rgba(255,255,255,.85)}
+:root[data-workspace-brand="mola"] .assistant-answer>span{font-size:.5625rem;letter-spacing:.14em;color:#a07f36}
+:root[data-workspace-brand="mola"] .assistant-composer{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:end;gap:8px;padding:8px 12px 6px;border:0;background:transparent;box-shadow:none}
+:root[data-workspace-brand="mola"] .assistant-composer>.form-error{grid-column:1/-1;margin:0}
+:root[data-workspace-brand="mola"] .assistant-composer>div{display:block}
+:root[data-workspace-brand="mola"] .assistant-composer textarea{min-height:46px;max-height:120px;padding:12px 16px;border:1px solid #dbe4d7;border-radius:23px;background:#fff;resize:none;box-shadow:0 2px 8px #1b38260a}
+:root[data-workspace-brand="mola"] .assistant-composer .primary{min-width:46px;min-height:46px;padding:0 14px;border-radius:999px}
+:root[data-workspace-brand="mola"] .assistant-info{padding:2px 18px 12px;border:0;background:transparent}
+:root[data-workspace-brand="mola"] .assistant-info>summary{font-size:.6875rem;color:#7a8a7c;cursor:pointer}
+@media(max-width:700px){
+  :root[data-workspace-brand="mola"] .mola-assistant[data-slot="dialog-content"]{left:10px;right:10px;bottom:calc(78px + env(safe-area-inset-bottom));width:auto;max-height:min(72dvh,620px);border-radius:26px}
+  :root[data-workspace-brand="mola"] .assistant-header[data-slot="dialog-header"]{min-height:0;padding:14px 12px 6px 18px;border-radius:0}
+  :root[data-workspace-brand="mola"] .assistant-header .icon-button{width:40px;height:40px;min-width:40px;border-radius:999px}
+  :root[data-workspace-brand="mola"] .assistant-composer{padding:8px 10px 6px}
+  :root[data-workspace-brand="mola"] .assistant-composer .primary{min-width:46px;min-height:46px;border-radius:999px}
+  :root[data-workspace-brand="mola"] .assistant-info{padding:2px 16px 12px;max-height:none}
+  :root[data-workspace-brand="mola"] .mola-assistant-launcher[data-state="open"]{opacity:0;pointer-events:none}
 }
