@@ -441,9 +441,28 @@
 :root[data-workspace-brand="mola"] .navigation{background:linear-gradient(180deg,#1d4b31,#173f29)!important}
 :root[data-workspace-brand="mola"] .navigation .nav-header{background:linear-gradient(145deg,#173f29,#1d4b31)!important;border-bottom-color:#2f5c40}
 :root[data-workspace-brand="mola"] .navigation .nav-content{background:transparent}
+/* The sidebar's inner panel paints its own near-black; let the gradient show through the whole column. */
+:root[data-workspace-brand="mola"] .navigation [data-sidebar="sidebar"]{background:transparent!important}
 :root[data-workspace-brand="mola"] .navigation .nav-button{color:#d3e2d5}
 :root[data-workspace-brand="mola"] .navigation .nav-button:hover{background:#26583b!important}
 :root[data-workspace-brand="mola"] .navigation .nav-group-heading{color:#9dbba3}
 :root[data-workspace-brand="mola"] .navigation .nav-scope{background:#1f4a31;border-color:#3a6a4b}
 :root[data-workspace-brand="mola"] .navigation .nav-footer{background:#173f29;border-top-color:#2f5c40}
 :root[data-workspace-brand="mola"] .navigation .nav-footer>div{border-color:#2f5c40}
+
+/* My account: segmented choices and the change-email form. */
+.settings-choice{display:flex;gap:4px;padding:4px;border:1px solid #dfe7db;border-radius:14px;background:#f1f5ef}
+.settings-choice>button{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:42px;padding:0 10px;border:0;border-radius:10px;background:transparent;color:#4f6553;font-size:.8125rem;font-weight:600;transition:background-color .2s ease,color .2s ease,box-shadow .2s ease}
+.settings-choice>button[aria-checked="true"]{background:#fff;color:#1d4029;box-shadow:0 2px 8px #1b382614}
+.settings-email{display:grid;gap:10px}
+.settings-email>button{justify-self:start;display:inline-flex;align-items:center;gap:8px}
+.settings-email form{display:grid;gap:10px}
+.settings-success{color:#2f5b3c}
+.settings-actions>a{display:inline-flex;align-items:center;gap:8px}
+@media(max-width:700px){.settings-choice>button{min-height:44px;font-size:.75rem;padding:0 6px}.settings-email>button{justify-self:stretch;justify-content:center}}
+.settings-identity{display:flex;align-items:center;gap:12px}
+.settings-identity>div{display:grid;gap:2px;min-width:0}
+.settings-identity small{color:#607368;overflow-wrap:anywhere}
+.settings-choice .mola-icon .mi-accent{fill:#cfd8cb}
+.settings-choice>button[aria-checked="true"] .mola-icon .mi-accent{fill:#d6aa4a}
+.settings-card .panel-header>.mola-icon{color:#2f5b3c}
