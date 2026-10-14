@@ -67,7 +67,7 @@ if (missingTable.length) {
 const mobileContracts = [
   ['mobile section tabs expose direct workspace navigation', /mobile-section-tabs" aria-label="Main workspace sections"/],
   ['mobile section controls retain the compact labels and active state', /aria-current=\{view===id\?'page':undefined\} className=\{view===id\?'is-active':''\}/],
-  ['mobile navigation keeps the selected section in view', /mobile-section-tabs \.is-active'\);active\?\.scrollIntoView\(\{block:'nearest',inline:'nearest',behavior:'smooth'\}\)/],
+  ['mobile navigation keeps the selected section inset within its rail', /const rail=document\.querySelector\('\.mobile-section-tabs'\),active=rail\?\.querySelector\('\.is-active'\);if\(!rail\|\|!active\)return;const bounds=active\.getBoundingClientRect\(\),clip=rail\.getBoundingClientRect\(\),inset=10,delta=.*;if\(delta\)rail\.scrollBy\(\{left:delta,behavior:'smooth'\}\)/],
 ].filter(([, pattern]) => !pattern.test(page));
 mobileContracts.push(...[
   ['mobile text controls stay at iOS zoom-safe readable size', /\[role="combobox"\]\{font-size:16px!important\}/],
