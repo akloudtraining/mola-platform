@@ -1,6 +1,11 @@
 // French interface catalogue, keyed by the exact English text the components render.
 // Edit entries here directly; anything missing falls back to English.
 export const fr:Record<string,string>={
+ "Next due":"Prochaine échéance",
+ "Record a balance":"Enregistrer un solde",
+ "RECORDS":"REGISTRES",
+ "DECISIONS":"DÉCISIONS",
+ "SETTINGS":"PARAMÈTRES",
  "% contributed":"% versé",
  "(human confirmation)":"(confirmation humaine)",
  "(optional)":"(facultatif)",

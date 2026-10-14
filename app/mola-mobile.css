@@ -492,3 +492,41 @@
   :root[data-workspace-brand="mola"] .capital-total-foot{display:flex;flex-direction:column;align-items:flex-start;gap:2px;margin-top:auto;padding-top:9px;border-top:1px solid #6a8c6e66;text-align:left;font-size:.5625rem}
   :root[data-workspace-brand="mola"] .capital-total-foot b{font-size:.8125rem}
 }
+
+/* Home hero: "Record a payment" is the main action, with the next due amount beneath it. */
+:root[data-workspace-brand="mola"] .capital-hero .hero-record{display:inline-flex;align-items:center;gap:8px}
+:root[data-workspace-brand="mola"] .capital-hero .hero-record .mola-icon .mi-accent{fill:#fff6dc}
+:root[data-workspace-brand="mola"] .hero-actions>.hero-next-due{display:block;padding:0;border:0;background:none;color:#d6e4d6;font-size:.8125rem}
+:root[data-workspace-brand="mola"] .hero-next-due b{color:#f1d994;font-weight:700}
+:root[data-workspace-brand="mola"] .hero-goals-link{display:inline-flex;align-items:center;gap:4px;padding:0;border:0;background:none;color:#c4d8c5;font-size:.8125rem;font-weight:600;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+:root[data-workspace-brand="mola"] .hero-goals-link:hover{color:#f1d994}
+/* Metric colours follow their meaning now that the order changed. */
+:root[data-workspace-brand="mola"] .hub-metric.metric-pending::before{background:#d7b86e}
+:root[data-workspace-brand="mola"] .hub-metric.metric-pending>svg{background:#fbf3e1;color:#7a5d22}
+:root[data-workspace-brand="mola"] .hub-metric.metric-spending::before{background:#9bb5a0}
+:root[data-workspace-brand="mola"] .hub-metric.metric-spending>svg{background:#edf3ef;color:#3f6656}
+:root[data-workspace-brand="mola"] .hub-metric.metric-bank::before{background:#4f7a5a}
+:root[data-workspace-brand="mola"] .hub-metric.metric-bank>svg{background:#eef4ea;color:#2f5b3c}
+
+/* Long explanatory notes show two lines; tap to read the rest. Not applied inside forms or dialogs. */
+:root[data-workspace-brand="mola"] :is(.notice p,.hub-caption,main .panel-header p.muted):not(.is-expanded):not(form *):not([role="dialog"] *){display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
+:root[data-workspace-brand="mola"] .is-clamped{position:relative;padding-right:26px;cursor:pointer}
+:root[data-workspace-brand="mola"] .is-clamped::after{content:"";position:absolute;right:4px;bottom:4px;width:16px;height:16px;border-radius:50%;background:#e7f0e2 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4.5 6.5 8 10l3.5-3.5' fill='none' stroke='%232f5b3c' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/12px no-repeat}
+:root[data-workspace-brand="mola"] .is-clamped:focus-visible,:root[data-workspace-brand="mola"] .is-expanded:focus-visible{outline:2px solid #2f5b3c;outline-offset:3px;border-radius:6px}
+
+/* Gentle page arrival when switching sections, and a branded loading mark. */
+@keyframes mola-view-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@keyframes mola-pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.06);opacity:.82}}
+:root[data-workspace-brand="mola"] main.view-enter,main.view-enter{animation:mola-view-in .3s cubic-bezier(.22,1,.36,1) both}
+.workspace-gate-mark{background:transparent!important;border:0!important;box-shadow:none!important}
+.workspace-gate-mark img{display:block;width:56px;height:56px;animation:mola-pulse 1.6s ease-in-out infinite;filter:drop-shadow(0 4px 10px #1d3a2633)}
+@media(prefers-reduced-motion:reduce){main.view-enter,.workspace-gate-mark img{animation:none!important}}
+
+@media(max-width:700px){
+  :root[data-workspace-brand="mola"] .hero-actions{display:flex;flex-direction:column;align-items:stretch;gap:7px}
+  :root[data-workspace-brand="mola"] .capital-hero .hero-record{justify-content:center;gap:6px}
+  :root[data-workspace-brand="mola"] .capital-hero .hero-record .mola-icon{width:15px;height:15px}
+  :root[data-workspace-brand="mola"] .hero-actions>.hero-next-due{font-size:.6875rem;line-height:1.35}
+  :root[data-workspace-brand="mola"] .hero-goals-link{display:none}
+}
+:root[data-workspace-brand="mola"] .hero-next-due time{white-space:nowrap}

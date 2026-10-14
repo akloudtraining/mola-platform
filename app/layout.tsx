@@ -14,7 +14,11 @@ export const metadata: Metadata = {
   icons: {
     icon: "/favicon.svg",
     shortcut: "/favicon.svg",
+    apple: "/apple-touch-icon.png",
   },
+  // "Add to Home Screen" opens the workspace full screen, without browser bars.
+  manifest: "/manifest.webmanifest",
+  appleWebApp: { capable: true, title: "Mola", statusBarStyle: "default" },
 };
 
 export const viewport: Viewport = {
@@ -22,6 +26,10 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 5,
   viewportFit: "cover",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#f3f6f1" },
+    { media: "(prefers-color-scheme: dark)", color: "#0e1511" },
+  ],
 };
 
 export default function RootLayout({
