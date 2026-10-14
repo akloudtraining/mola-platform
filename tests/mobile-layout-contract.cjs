@@ -75,6 +75,7 @@ mobileContracts.push(...[
   ['mobile drawer fits the dynamic viewport', /max-height:100dvh;[^}]*padding-bottom:env\(safe-area-inset-bottom\)/s],
   ['mobile navigation remains hidden at desktop widths', /\.mobile-section-tabs\{display:none\}/],
   ['mobile dashboard makes the verified total visible sooner', /\.capital-hero-copy>p\{display:none\}/],
+  ['mobile hero removes duplicate weekly-rate copy from the first screen', /\.hero-actions>span\{display:none\}/],
   ['mobile verified total label stays on one line', /\.capital-total>span\{[^}]*white-space:nowrap/],
 ].filter(([, pattern]) => !pattern.test(css)));
 if (!/viewportFit: "cover"/.test(layout)) mobileContracts.push(['mobile viewport uses safe-area insets', /viewportFit: "cover"/]);
@@ -88,5 +89,5 @@ if (/:root\[data-workspace-brand="mola"\] body\{[^}]*overflow-x:\s*hidden/.test(
   process.exit(1);
 }
 
-console.log(`MOBILE UX CONTRACT PASS: ${contracts.length + tableContracts.length + 11} responsive safeguards present.`);
+console.log(`MOBILE UX CONTRACT PASS: ${contracts.length + tableContracts.length + 12} responsive safeguards present.`);
 console.log('This is a source-level regression guard; owner phone/browser acceptance remains pending.');
