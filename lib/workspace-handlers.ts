@@ -136,7 +136,7 @@ async function POST(req:Request){try{
  if(x.action==='publishAgreement'||x.action==='acceptAgreement'){
   if(org.mode!=='Shared ownership')return fail('Agreement acceptance is being piloted with Mola first.',400);
   if(x.action==='publishAgreement'){
-   if(!permissions.canManage)return fail('Only the workspace owner can publish an agreement version.',403);
+   if(!permissions.canManage&&!permissions.canPublishAgreement)return fail('Only the workspace owner or an officer (President, Treasurer or Secretary) can publish an agreement version.',403);
    if(typeof x.title!=='string'||!x.title.trim()||x.title.length>180||typeof x.body!=='string'||x.body.trim().length<10||x.body.length>20000||typeof x.decisionReference!=='string'||x.decisionReference.trim().length<5||x.decisionReference.length>500||x.acknowledged!==true||typeof x.submissionId!=='string'||!/^[a-f0-9-]{36}$/.test(x.submissionId))return fail('Review the saved draft, title and group decision reference, then confirm publication.',400);
    const title=x.title.trim(),decisionReference=x.decisionReference.trim();
    const id=org.id+':agreement:'+x.submissionId;

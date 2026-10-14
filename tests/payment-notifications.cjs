@@ -4,7 +4,8 @@ const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/st
 const env={RESEND_API_KEY:'re_test',MOLA_EMAIL_FROM:'Mola <alerts@example.test>',MOLA_APP_URL:'https://app.example.test',MOLA_OWNER_EMAIL:'owner@example.test'};
 let sent=[];global.fetch=async(url,options)=>{assert.equal(url,'https://api.resend.com/emails');sent.push(JSON.parse(options.body));return new Response('{}',{status:200});};
 const mod={exports:{}};
-const req=name=>name==='cloudflare:workers'?{env}:name==='./model'?{money:minor=>'$'+(minor/100).toFixed(2)}:{};
+const emailStub={emailConfigured:()=>!!env.RESEND_API_KEY&&!!env.MOLA_EMAIL_FROM,sendEmail:async(to,subject,text,html)=>{const r=await fetch('https://api.resend.com/emails',{method:'POST',body:JSON.stringify({from:env.MOLA_EMAIL_FROM,to:[to],subject,text,html})});if(!r.ok)throw new Error('send failed');}};
+const req=name=>name==='cloudflare:workers'?{env}:name==='./model'?{money:minor=>'$'+(minor/100).toFixed(2)}:name==='./email'?emailStub:{};
 vm.runInThisContext('(function(require,module,exports){'+ts.transpileModule(fs.readFileSync('lib/notifications.ts','utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText+'\n})')(req,mod,mod.exports);
 const {founderRecipients,notifyPaymentEvent}=mod.exports;
 const member=(id,name,email,userId,enabled=true)=>({id,name,role:'Founder',access:{email,enabled,canReview:true,userId}});

@@ -3,6 +3,7 @@ const path = require('node:path');
 const root = path.resolve(__dirname, '..');
 const read = file => fs.readFileSync(path.join(root, file), 'utf8');
 const auth = read('lib/cloudflare-auth.ts');
+const emailSender = read('lib/email.ts');
 const actions = read('lib/auth-actions.ts');
 const route = read('app/api/auth/route.ts');
 const catchAll = read('app/api/auth/[...all]/route.ts');
@@ -14,7 +15,7 @@ const contracts = [
   ['email/password requires verified email before sign-in', auth.includes('requireEmailVerification:true') && auth.includes('sendOnSignUp:true')],
   ['sessions use secure HttpOnly same-site cookies', auth.includes('useSecureCookies:true') && auth.includes("sameSite:'lax'") && auth.includes('httpOnly:true')],
   ['password resets revoke other active sessions', auth.includes('revokeSessionsOnPasswordReset:true')],
-  ['transactional emails use the configured Resend sender', auth.includes("fetch('https://api.resend.com/emails'") && auth.includes("value('RESEND_API_KEY')") && auth.includes("value('MOLA_EMAIL_FROM')")],
+  ['transactional emails use the configured Resend sender', auth.includes("sendEmail(to,subject,text,html)") && emailSender.includes("fetch('https://api.resend.com/emails'") && emailSender.includes("value('RESEND_API_KEY')") && emailSender.includes("value('MOLA_EMAIL_FROM')")],
   ['sign-up is allowlisted to owner/member emails', actions.includes('isEligibleSignup') && actions.includes('access.enabled')],
   ['authentication mutations require same-origin requests', actions.includes('function sameOrigin') && actions.includes('Invalid request origin.')],
   ['reset links redeem a one-use Better Auth token', actions.includes("runAuthEndpoint(req,'reset-password'") && actions.includes('token})')],

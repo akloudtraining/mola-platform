@@ -1,5 +1,6 @@
 import {env} from 'cloudflare:workers';
 import {money,type Org,type Entry} from './model';
+import {sendEmail,emailConfigured} from './email';
 
 // Payment email alerts through Resend (the same provider as sign-in emails).
 // Every founder hears about each step of a contribution except the person who took that step:
@@ -8,19 +9,17 @@ import {money,type Org,type Entry} from './model';
 
 export type PaymentEvent='submitted'|'resubmitted'|'Verified'|'Rejected'|'Owner reconciled';
 type Recipient={email:string;name:string;memberId?:string};
-const value=(name:'RESEND_API_KEY'|'MOLA_EMAIL_FROM'|'MOLA_APP_URL'|'MOLA_OWNER_EMAIL')=>String((env as unknown as Record<string,string|undefined>)[name]||(typeof process!=='undefined'?process.env[name]:'')||'').trim();
+const value=(name:'MOLA_APP_URL'|'MOLA_OWNER_EMAIL')=>String((env as unknown as Record<string,string|undefined>)[name]||(typeof process!=='undefined'?process.env[name]:'')||'').trim();
 const escapeHtml=(text:string)=>text.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]!));
 const firstName=(name:string)=>name.trim().split(/\s+/)[0]||name;
 const amount=(entry:Entry)=>`${money(entry.amountMinor,entry.currency)} ${entry.currency}`;
 export const recordLink=(origin:string,entryId:string)=>`${value('MOLA_APP_URL')||origin}/?record=${encodeURIComponent(entryId)}`;
 
 async function send(to:Recipient,subject:string,lines:string[],url:string){
- const key=value('RESEND_API_KEY'),from=value('MOLA_EMAIL_FROM');
- if(!key||!from)return;
+ if(!emailConfigured())return;
  const text=`Hi ${to.name},\n\n${lines.join('\n\n')}\n\nOpen the payment: ${url}\n\nMola Holdings`;
  const html=`<p>Hi ${escapeHtml(to.name)},</p>${lines.map(l=>`<p>${escapeHtml(l)}</p>`).join('')}<p><a href="${escapeHtml(url)}">Open the payment</a></p><p>Mola Holdings</p>`;
- const response=await fetch('https://api.resend.com/emails',{method:'POST',headers:{Authorization:`Bearer ${key}`,'Content-Type':'application/json'},body:JSON.stringify({from,to:[to.email],subject,text,html}),signal:AbortSignal.timeout(8000)});
- if(!response.ok)throw new Error(`Resend ${response.status}`);
+ await sendEmail(to.email,subject,text,html);
 }
 
 // All founders with enabled access and an email, except the person who acted. The owner is

@@ -26,7 +26,7 @@ const snapshot=()=>JSON.stringify({orgs:sql.prepare('SELECT * FROM organizations
  const current=raw(orgId),claim={...body,version:current.version};
  await post('owner',{...claim,memberId:'founder-2',name:'Fictional Bob'},409);
  const linked=(await post('owner',{...claim,email:'spoof@example.test',userId:'bob',role:'President',canReview:true,enabled:false,actor:'bob'})).organization;
- assert.equal(linked.permissions.memberId,'founder-4');assert.equal(linked.permissions.canReview,false);
+ assert.equal(linked.permissions.memberId,'founder-4');assert.equal(linked.permissions.canReview,true,'Every linked founder, including the owner, may review other founders’ payments');
  assert.equal(linked.members.find(m=>m.id==='founder-4').access.userId,undefined);assert.equal(linked.members.find(m=>m.id==='founder-4').access.claimed,true);
  let actual=raw(orgId),ownerMember=actual.members.find(m=>m.id==='founder-4');assert.equal(ownerMember.access.userId,'owner');assert.equal(ownerMember.access.email,'owner@example.test');assert.equal(ownerMember.access.canReview,false);assert.equal(ownerMember.role,'Member');assert.equal(ownerMember.name,'Fictional Owner');assert.equal(actual.accessHistory.at(-1).actor,'owner');
  const afterLink=snapshot();await post('owner',claim);assert.equal(snapshot(),afterLink,'Retry preserves the first successful link and audit timestamp');

@@ -5,10 +5,10 @@ import {validDate} from './schedule';
 export function memberReadiness(org:Org){
  const enabled=org.members.filter(m=>m.access?.enabled);
  const linked=enabled.filter(m=>m.access?.claimed||m.access?.userId);
- const reviewers=linked.filter(m=>m.access?.canReview);
+ const reviewers=linked; // every linked founder reviews
  const configured=enabled.filter(m=>m.role!=='Name pending'&&m.name.trim()&&!/^Founder\s+\d+$/i.test(m.name.trim())&&/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(m.access?.email||''));
  const emails=new Set(configured.map(m=>m.access!.email.trim().toLowerCase()));
- return {enabled:enabled.length,linked:linked.length,reviewers:reviewers.length,configured:configured.length,independentReviewPrepared:emails.size>=2&&configured.some(m=>m.access?.canReview),independentReviewConfigured:linked.length>=2&&reviewers.length>0};
+ return {enabled:enabled.length,linked:linked.length,reviewers:reviewers.length,configured:configured.length,independentReviewPrepared:emails.size>=2,independentReviewConfigured:linked.length>=2&&reviewers.length>0};
 }
 export function designatedRuleRecorded(org:Org){
  const policy=org.approvalPolicy,ids=policy?.approverMemberIds;

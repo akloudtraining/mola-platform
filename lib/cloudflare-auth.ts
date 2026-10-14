@@ -4,6 +4,7 @@ import {drizzle} from 'drizzle-orm/d1';
 import {env} from 'cloudflare:workers';
 import * as schema from '@/db/schema';
 import type {Identity} from './access';
+import {sendEmail} from './email';
 
 const runtime=():Record<string,string|undefined>=>typeof process!=='undefined'?(process.env as Record<string,string|undefined>):{};
 function value(name:'MOLA_AUTH_SECRET'|'MOLA_APP_URL'|'MOLA_EMAIL_FROM'|'RESEND_API_KEY'){
@@ -19,13 +20,7 @@ export function createCloudflareAuth(request:Request){
  if(!db)throw new Error('Cloudflare D1 is not configured for authentication.');
  if(secret.length<32)throw new Error('MOLA_AUTH_SECRET must be set to a random value of at least 32 characters.');
  const origin=value('MOLA_APP_URL')||new URL(request.url).origin;
- const sender=value('MOLA_EMAIL_FROM');
- const resendKey=value('RESEND_API_KEY');
- const send=async(to:string,subject:string,text:string,html:string)=>{
-  if(!resendKey||!sender)throw new Error('Resend email delivery is not configured.');
-  const response=await fetch('https://api.resend.com/emails',{method:'POST',headers:{Authorization:`Bearer ${resendKey}`,'Content-Type':'application/json'},body:JSON.stringify({from:sender,to:[to],subject,text,html})});
-  if(!response.ok){const detail=await response.text().catch(()=> '');throw new Error(`Resend email delivery failed (${response.status}): ${detail.slice(0,500)}`);}
- };
+ const send=(to:string,subject:string,text:string,html:string)=>sendEmail(to,subject,text,html);
  return betterAuth({
   appName:'Mola Holdings',baseURL:origin,basePath:'/api/auth',secret,
   trustedOrigins:[origin,new URL(request.url).origin],

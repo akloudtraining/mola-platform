@@ -29,7 +29,7 @@ const snapshot=()=>JSON.stringify(['installation','organizations','entries','not
  await post('admin',{action:'scheduleSetup',version:org.version,effectiveDate:'2026-10-05',amount:'100',deadlineTime:'17:00',deadlineTimeZone:'UTC'});await read('admin');
  const preview=(await post('admin',{action:'schedulePreview',version:org.version,from:'2026-10-05',weeks:1})).preview;assert.equal(preview.records.length,4);
  await post('admin',{action:'scheduleGenerate',version:preview.version,from:'2026-10-05',weeks:1,token:preview.token});
- data=await read('contributor');assert.equal(org.permissions.isOwner,false);assert.equal(org.permissions.memberId,'contributor');assert.equal(org.permissions.canReview,false);
+ data=await read('contributor');assert.equal(org.permissions.isOwner,false);assert.equal(org.permissions.memberId,'contributor');assert.equal(org.permissions.canReview,true,'Every linked founder may review others’ payments');
  const due=data.entries.find(e=>e.type==='obligation'&&e.memberId==='contributor');
  const draft={action:'contribution',submissionId:crypto.randomUUID(),title:'Fictional contribution',memberId:'contributor',amount:'60',currency:'USD',date:'2026-10-05',method:'Bank transfer (external)',reference:'TEST-ONLY-001',purpose:'No money moved',submissionObligationId:due.id};
  let payment=(await post('contributor',draft)).entry;assert.equal((await post('contributor',draft)).entry.id,payment.id);

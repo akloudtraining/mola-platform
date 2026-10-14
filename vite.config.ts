@@ -22,7 +22,9 @@ const isCodexSeatbeltSandbox = process.env.CODEX_SANDBOX === "seatbelt";
 const managedLinux = readExecutionProfile() === "managed-linux";
 
 const localBindingConfig = {
-  main: "vinext/server/fetch-handler",
+  // Wraps vinext's fetch handler and adds the scheduled() handler for email jobs.
+  main: "./worker.ts",
+  triggers: { crons: ["0 * * * *"] },
   compatibility_flags: ["nodejs_compat"],
   // Dashboard runtime variables must survive deploys even when they are
   // not also available as build-time environment variables.

@@ -5,9 +5,13 @@ import {publicPayout} from './payouts';
 import {publicCollectionInstructions} from './collection-instructions';
 export type Identity={userId:string;email:string;displayName:string;emailVerified?:boolean};
 export const normalizeEmail=(s:string)=>s.trim().toLowerCase();
+// Officers who may publish a membership agreement version for every founder to accept.
+export const AGREEMENT_PUBLISHERS=['President','Treasurer','Secretary'];
+// Every founder with enabled, linked access may review other founders' payments; the
+// checks below still block reviewing a payment that is theirs or that they submitted.
 export function accessFor(org:Org,owner:string,user:Identity){
  const member=org.members.find(m=>m.access?.enabled&&m.access.userId===user.userId);
- return {isOwner:owner===user.userId,memberId:member?.id||'',canManage:owner===user.userId,canReview:!!member?.access?.canReview,role:member?.role||'Workspace owner'};
+ return {isOwner:owner===user.userId,memberId:member?.id||'',canManage:owner===user.userId,canPublishAgreement:owner===user.userId||AGREEMENT_PUBLISHERS.includes(member?.role||''),canReview:!!member,role:member?.role||'Workspace owner'};
 }
 export function canIndependentlyReview(org:Org,owner:string,user:Identity,entry:Entry){const p=accessFor(org,owner,user);return p.canReview&&entry.type==='contribution'&&entry.status!=='Screenshot required'&&!!entry.receipt&&entry.memberId!==p.memberId&&(entry.submittedBy||owner)!==user.userId;}
 export function canOwnerReconcile(org:Org,owner:string,user:Identity,entry:Entry){const p=accessFor(org,owner,user);return p.isOwner&&entry.type==='contribution'&&entry.status!=='Screenshot required'&&!!entry.receipt&&entry.memberId!==p.memberId&&(entry.submittedBy||owner)!==user.userId&&!entry.reviews?.some(r=>r.outcome==='Verified');}
