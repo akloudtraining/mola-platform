@@ -8,6 +8,7 @@ function harness(){
   if(name==='react')return {useRef:()=>ref,useState:()=>{const index=cursor++;return [state[index],v=>state[index]=v];}};
   if(name==='react/jsx-runtime')return {jsx:(type,props)=>({type,props}),jsxs:(type,props)=>({type,props})};
   if(name==='@/lib/model')return {money:()=> '100.00',weeklyMinimum:()=>10000};
+  if(name==='@/lib/founder-hub')return {currentGoal:()=>undefined,goalWeekly:()=>null};
   if(name==='sonner')return {toast:{success:message=>notices.push(message)}};
   return new Proxy({},{get:(_,key)=>String(key)});
  };

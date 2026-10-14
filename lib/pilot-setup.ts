@@ -1,6 +1,7 @@
-import type {Org,Entry} from './model';
+import {type Org,type Entry,money} from './model';
 import {acceptanceConsent,currentAgreement} from './agreements';
 import {validDate} from './schedule';
+import {currentGoal,goalWeekly} from './founder-hub';
 
 export function memberReadiness(org:Org){
  const enabled=org.members.filter(m=>m.access?.enabled);
@@ -17,11 +18,12 @@ export function designatedRuleRecorded(org:Org){
 export function pilotSetupRows(org:Org,entries:Entry[]){
  const members=memberReadiness(org),current=currentAgreement(org,entries);
  const accepted=new Set(current?.agreement?.acceptances.filter(a=>org.members.some(m=>m.id===a.memberId)&&a.digest===current.agreement!.digest&&a.consent===acceptanceConsent).map(a=>a.memberId));
- const schedule=org.weeklySchedule;
+ const schedule=org.weeklySchedule,goal=currentGoal(org),pace=goal?goalWeekly(goal,org.members.length):null;
  const scheduled=!!schedule&&validDate(schedule.startDate)&&!!schedule.deadlineRule&&schedule.rates.length>0&&schedule.rates.every(r=>validDate(r.effectiveDate)&&Number.isSafeInteger(r.amountMinor)&&r.amountMinor>0);
  return [
   ...(org.permissions?.isOwner?[{id:'owner',view:'members',title:'Link your own founder account',recorded:!!org.permissions.memberId,detail:org.permissions.memberId?'Your founder account is linked':'Choose your founder slot and use your sign-in email'}]:[]),
   {id:'reviewers',view:'members',title:'Configure independent receipt review',recorded:members.independentReviewConfigured,detail:`${members.linked} accounts linked · ${members.reviewers} active reviewers`},
+  {id:'goal',view:'goals',title:'Set the savings goal',recorded:!!goal,detail:goal&&pace?`${goal.title} · ${money(goal.targetMinor,goal.currency)} by ${goal.targetDate} · ${money(pace.perFounder,goal.currency)} per founder each week`:'Agree what the group is saving toward, how much, and by when'},
   {id:'schedule',view:'members',title:'Record weekly dues and cutoff',recorded:scheduled,detail:scheduled?`Schedule begins ${schedule!.startDate} · ${schedule!.deadlineRule!.time} ${schedule!.deadlineRule!.timeZone}`:'Agree the first due date, rate, cutoff and time zone'},
   {id:'account',view:'accounts',title:'Record the collection account',recorded:!!org.accountLabel.trim()&&!!org.accountHolder.trim(),detail:org.accountLabel&&org.accountHolder?'Labels recorded · bank ownership still needs verification':'Record the account label and holder after bank setup'},
   {id:'agreement',view:'agreements',title:'Review membership agreement',recorded:!!current&&accepted.size===org.members.length,detail:current?`Version ${current.agreement!.revision} · ${accepted.size} of ${org.members.length} founders accepted`:org.agreement.trim()?'Working draft saved · no published version':'Prepare the group’s agreed text for member review'},
