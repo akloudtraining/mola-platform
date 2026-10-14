@@ -579,3 +579,11 @@
   :root[data-workspace-brand="mola"] [data-sidebar="sidebar"][data-mobile="true"] .nav-account small,:root[data-workspace-brand="mola"] [data-sidebar="sidebar"][data-mobile="true"] .nav-account>svg{color:#6f8272}
   :root[data-workspace-brand="mola"] [data-sidebar="sidebar"][data-mobile="true"] .nav-account .avatar{background:#e1c27a;color:#17271b}
 }
+/* Account card icon: the Mola two-tone account mark in a tile, like the menu icons. */
+:root[data-workspace-brand="mola"] .nav-account-icon{display:grid;place-items:center;flex:none;width:38px;height:38px;border-radius:12px;background:#ffffff14;box-shadow:inset 0 0 0 1px #e1c27a59;color:#f1e4bb}
+:root[data-workspace-brand="mola"] .nav-account-icon .mola-icon .mi-accent{fill:#e1c27a}
+:root[data-workspace-brand="mola"] .nav-account:hover .nav-account-icon{box-shadow:inset 0 0 0 1px #e1c27a99}
+@media(max-width:700px){
+  :root[data-workspace-brand="mola"] [data-sidebar="sidebar"][data-mobile="true"] .nav-account-icon{background:#eef3ea;box-shadow:none;color:#2f5b3c}
+  :root[data-workspace-brand="mola"] [data-sidebar="sidebar"][data-mobile="true"] .nav-account-icon .mola-icon .mi-accent{fill:#d6aa4a}
+}

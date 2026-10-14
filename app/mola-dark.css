@@ -849,6 +849,13 @@
   :root[data-theme="dark"][data-workspace-brand="mola"] [data-sidebar="sidebar"][data-mobile="true"] .nav-account small,:root[data-theme="dark"][data-workspace-brand="mola"] [data-sidebar="sidebar"][data-mobile="true"] .nav-account>svg{color:#abb7ad}
   :root[data-theme="dark"][data-workspace-brand="mola"] [data-sidebar="sidebar"][data-mobile="true"] .nav-account .avatar{background:#e1c27a;color:#17271b}
 }
+:root[data-theme="dark"][data-workspace-brand="mola"] .nav-account-icon{background:#16161614;box-shadow:inset 0 0 0 1px #e1c27a59;color:#f1e4bb}
+:root[data-theme="dark"][data-workspace-brand="mola"] .nav-account-icon .mola-icon .mi-accent{fill:#dabf81}
+:root[data-theme="dark"][data-workspace-brand="mola"] .nav-account:hover .nav-account-icon{box-shadow:inset 0 0 0 1px #e1c27a99}
+@media(max-width:700px){
+  :root[data-theme="dark"][data-workspace-brand="mola"] [data-sidebar="sidebar"][data-mobile="true"] .nav-account-icon{background:#23291e;box-shadow:none;color:#badbc4}
+  :root[data-theme="dark"][data-workspace-brand="mola"] [data-sidebar="sidebar"][data-mobile="true"] .nav-account-icon .mola-icon .mi-accent{fill:#dabe81}
+}
 
 /* hand tuning */
 /* Hand-tuned dark theme surfaces, appended after the generated rules. */
