@@ -12,7 +12,10 @@ export function authCallback(url:URL){
  const callback=!!token||!!type||failed||['access_token','refresh_token','token_hash','code'].some(key=>hash.has(key)||params.has(key));
  let mode:AuthMode=requested==='signup'?'signup':requested==='recover'?'recover':requested==='confirm'?'confirm':'login';
  let recoveryToken='',message='',error='';
- if(failed){
+ const emailChange=requested==='email-change';
+ if(failed&&emailChange){
+  error='This email update link is invalid or expired. Start the update again from My account.';
+ }else if(failed){
   mode=recovery?'recover':'confirm';
   error=recovery?'This reset link is invalid or expired. Request a new reset link.':'This confirmation link is invalid or expired. Request a new confirmation email below.';
  }else if(recovery){
@@ -21,9 +24,11 @@ export function authCallback(url:URL){
  }else if(callback){
   mode='login';
   message='Your email link has opened. Sign in with your password to continue.';
+ }else if(emailChange){
+  message='Email update link accepted. If you approved it from your current inbox, open the final link sent to your new address. If that was the final link, your email is updated: sign in with the new address.';
  }else if(requested==='confirmed'){
   message='Your email is verified. Sign in with your password to continue.';
  }
- const cleanPath=callback||requested==='reset'?url.pathname+(mode==='reset'?'?mode=reset':mode==='recover'?'?mode=recover':mode==='confirm'?'?mode=confirm':''):null;
+ const cleanPath=callback||emailChange||requested==='reset'?url.pathname+(mode==='reset'?'?mode=reset':mode==='recover'?'?mode=recover':mode==='confirm'?'?mode=confirm':''):null;
  return {mode,recoveryToken,message,error,cleanPath};
 }

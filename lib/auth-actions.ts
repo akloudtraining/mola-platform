@@ -66,6 +66,15 @@ export async function authAction(req:Request,body:unknown){
    if(!result.ok)return {response:json({error:'Email delivery is temporarily unavailable. Please try again later.'},result.status>=500?503:429)};
    return {response:json({ok:true,message:confirmation?'If the account needs verification, check its email for a new link.':'If an account matches, check the email for reset instructions.'})};
   }
+  if(action==='change_email'){
+   const newEmail=typeof input.newEmail==='string'?input.newEmail.trim().toLowerCase():'';
+   if(!validEmail(newEmail))return {response:json({error:'Enter a valid new email address.'},400)};
+   const result=await runAuthEndpoint(req,'change-email',{newEmail,callbackURL:'/auth?mode=email-change'});
+   if(result.status===401)return {response:json({error:'Your session has expired. Please sign in again.'},401)};
+   if(!result.ok){const detail=(await providerMessage(result)).toLowerCase();return {response:json({error:detail.includes('same')?'That is already your email address.':'The email update could not be started. Please try again later.'},result.status>=500?503:400)};}
+   // Same reply whether or not the new address already has an account, so this cannot be used to probe for members.
+   return {response:json({ok:true,message:'Check your current inbox and approve the update. A final verification link will then go to the new address.'})};
+  }
   if(action==='update_password'){
    const password=typeof input.password==='string'?input.password:'';
    const token=typeof input.token==='string'?input.token.trim():'';

@@ -11,6 +11,8 @@ function value(name:'MOLA_AUTH_SECRET'|'MOLA_APP_URL'|'MOLA_EMAIL_FROM'|'RESEND_
  return String(cloudflareValue||runtime()[name]||'').trim();
 }
 
+const escapeHtml=(text:string)=>text.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]!));
+
 export function createCloudflareAuth(request:Request){
  const db=env.DB;
  const secret=value('MOLA_AUTH_SECRET');
@@ -32,8 +34,13 @@ export function createCloudflareAuth(request:Request){
    sendResetPassword:async({user,url})=>send(user.email,'Reset your Mola sign-in password',`Use this secure link to reset your password. It expires in one hour.\n\n${url}\n\nIf you did not request a reset, ignore this email.`,`<p>Use this secure link to reset your password. It expires in one hour.</p><p><a href="${url}">Reset password</a></p><p>If you did not request a reset, ignore this email.</p>`)
   },
   emailVerification:{sendOnSignUp:true,sendOnSignIn:false,autoSignInAfterVerification:false,expiresIn:60*60,
-   sendVerificationEmail:async({user,url})=>send(user.email,'Verify your Mola member account',`Verify your email to activate sign-in to Mola Holdings. This link expires in one hour.\n\n${url}\n\nIf you did not create a Mola account, ignore this email.`, `<p>Verify your email to activate sign-in to Mola Holdings. This link expires in one hour.</p><p><a href="${url}">Verify email</a></p><p>If you did not create a Mola account, ignore this email.</p>`)
+   // Also used for the second step of an email change, so the wording covers both cases.
+   sendVerificationEmail:async({user,url})=>send(user.email,'Verify your email for Mola Holdings',`Confirm this email address for your Mola Holdings account. This link expires in one hour.\n\n${url}\n\nIf you did not create a Mola account or ask to update your email, ignore this email.`, `<p>Confirm this email address for your Mola Holdings account. This link expires in one hour.</p><p><a href="${url}">Verify email</a></p><p>If you did not create a Mola account or ask to update your email, ignore this email.</p>`)
   },
+  // Changing a verified email takes two inboxes: the current address approves, then the new address verifies.
+  user:{changeEmail:{enabled:true,
+   sendChangeEmailConfirmation:async({user,newEmail,url})=>send(user.email,'Approve your Mola email update',`Someone signed in to your Mola Holdings account asked to update its email to ${newEmail}. If this was you, approve the update with this link. A final verification link will then be sent to the new address. The link expires in one hour.\n\n${url}\n\nIf this was not you, ignore this email and reset your password.`,`<p>Someone signed in to your Mola Holdings account asked to update its email to <strong>${escapeHtml(newEmail)}</strong>.</p><p>If this was you, approve the update. A final verification link will then be sent to the new address. The link expires in one hour.</p><p><a href="${url}">Approve email update</a></p><p>If this was not you, ignore this email and reset your password.</p>`)
+  }},
   session:{expiresIn:60*60*24*14,updateAge:60*60*24},
   advanced:{useSecureCookies:true,defaultCookieAttributes:{httpOnly:true,secure:true,sameSite:'lax',path:'/' }},
   rateLimit:{enabled:true,window:60,max:10},

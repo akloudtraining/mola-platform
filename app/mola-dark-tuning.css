@@ -1,0 +1,3 @@
+/* Hand-tuned dark theme surfaces, appended after the generated rules. */
+:root[data-theme="dark"]{--mola-dark-page:#0e1511;--mola-dark-card:#151f19;--mola-dark-raised:#1b271f;--mola-dark-line:#26352b;--mola-dark-text:#e4ece5;--mola-dark-muted:#9fb2a4}
+:root[data-theme="dark"] body,:root[data-theme="dark"][data-workspace-brand="mola"] body{background:var(--mola-dark-page);color:var(--mola-dark-text)}

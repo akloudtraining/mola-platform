@@ -133,3 +133,53 @@ export const AccountIcon=icon('AccountIcon',<>
   <circle className="mi-accent" cx="12" cy="10" r="3"/>
   <path d="M6.6 18.2c1.3-2.1 3.1-3.2 5.4-3.2s4.1 1.1 5.4 3.2"/>
 </>);
+
+export const MailIcon=icon('MailIcon',<>
+  <rect className="mi-soft" x="3" y="5.5" width="18" height="13" rx="3"/>
+  <rect x="3" y="5.5" width="18" height="13" rx="3"/>
+  <path d="m4.5 7.5 7.5 5.8 7.5-5.8"/>
+  <circle className="mi-accent" cx="12" cy="13.4" r="1.8"/>
+</>);
+
+export const SystemIcon=icon('SystemIcon',<>
+  <rect className="mi-soft" x="3" y="4" width="18" height="12" rx="2.5"/>
+  <rect x="3" y="4" width="18" height="12" rx="2.5"/>
+  <path d="M12 16v4M8.5 20h7"/>
+  <circle cx="12" cy="10" r="3"/>
+  <path className="mi-accent" d="M12 7a3 3 0 0 1 0 6z"/>
+</>);
+
+export const SunIcon=icon('SunIcon',<>
+  <circle className="mi-accent" cx="12" cy="12" r="4"/>
+  <path d="M12 2.8v2.2M12 19v2.2M2.8 12H5M19 12h2.2M5.5 5.5l1.6 1.6M16.9 16.9l1.6 1.6M5.5 18.5l1.6-1.6M16.9 7.1l1.6-1.6"/>
+</>);
+
+export const MoonIcon=icon('MoonIcon',<>
+  <path className="mi-accent" d="M19.5 14.6A7.8 7.8 0 1 1 9.4 4.5a6.2 6.2 0 0 0 10.1 10.1z"/>
+  <path d="M17 3.2v2.6M15.7 4.5h2.6"/>
+</>);
+
+export const AppearanceIcon=icon('AppearanceIcon',<>
+  <circle cx="12" cy="12" r="8"/>
+  <path className="mi-accent" d="M12 4a8 8 0 0 1 0 16z"/>
+</>);
+
+export const LanguageIcon=icon('LanguageIcon',<>
+  <path className="mi-soft" d="M3.5 6A2.5 2.5 0 0 1 6 3.5h7A2.5 2.5 0 0 1 15.5 6v3.5A2.5 2.5 0 0 1 13 12H8.5l-3 2.5V12H6a2.5 2.5 0 0 1-2.5-2.5z"/>
+  <path d="M3.5 6A2.5 2.5 0 0 1 6 3.5h7A2.5 2.5 0 0 1 15.5 6v3.5A2.5 2.5 0 0 1 13 12H8.5l-3 2.5V12H6a2.5 2.5 0 0 1-2.5-2.5z"/>
+  <path d="M7 6.8h5M7 9h3"/>
+  <path className="mi-accent" d="M11 15.5a2.5 2.5 0 0 1 2.5-2.5h5a2.5 2.5 0 0 1 2.5 2.5V18a2.5 2.5 0 0 1-2.5 2.5h-.5v2l-2.6-2h-1.9A2.5 2.5 0 0 1 11 18z"/>
+</>);
+
+export const LockIcon=icon('LockIcon',<>
+  <rect className="mi-soft" x="5" y="10.5" width="14" height="10" rx="2.5"/>
+  <rect x="5" y="10.5" width="14" height="10" rx="2.5"/>
+  <path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/>
+  <circle className="mi-accent" cx="12" cy="15.3" r="1.8"/>
+</>);
+
+export const SignOutIcon=icon('SignOutIcon',<>
+  <path className="mi-soft" d="M6.5 4H11v16H6.5A1.5 1.5 0 0 1 5 18.5v-13A1.5 1.5 0 0 1 6.5 4z"/>
+  <path d="M11 4H6.5A1.5 1.5 0 0 0 5 5.5v13A1.5 1.5 0 0 0 6.5 20H11"/>
+  <path className="mi-accent-stroke" strokeWidth={2} d="M10 12h9.5M16 8.5l3.5 3.5-3.5 3.5"/>
+</>);
