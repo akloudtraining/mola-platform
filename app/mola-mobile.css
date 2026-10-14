@@ -556,3 +556,5 @@
 .review-done>svg{flex:none;margin-top:1px;color:#2f6b3f}
 .review-done.is-rejected{border-color:#f0d3cf;background:#fbefed;color:#7a2e24}
 .review-done.is-rejected>svg{color:#b5473a}
+.review-gate{display:grid;gap:6px;justify-items:start}
+.review-gate>.form-note{margin:0}

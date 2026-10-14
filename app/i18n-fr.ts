@@ -1,6 +1,8 @@
 // French interface catalogue, keyed by the exact English text the components render.
 // Edit entries here directly; anything missing falls back to English.
 export const fr:Record<string,string>={
+ "View screenshot to review":"Voir la capture pour vérifier",
+ "Open the screenshot above and check it before reviewing.":"Ouvrez la capture d’écran ci-dessus et vérifiez-la avant de valider.",
  "Updates refresh every 30 seconds while the workspace is open. You can also refresh manually. Review events are history; open the record for its current status. Founders also get an email when a payment is submitted, reviewed or resubmitted, except the person who took that step.":"Mises à jour toutes les 30 secondes tant que l’espace est ouvert. Vous pouvez aussi actualiser manuellement. Les événements de vérification sont de l’historique ; ouvrez l’enregistrement pour voir son statut actuel. Les fondateurs reçoivent aussi un e-mail lorsqu’un paiement est soumis, vérifié ou soumis à nouveau, sauf la personne à l’origine de cette étape.",
  "Returned for correction":"Renvoyé pour correction",
  "Provisionally reconciled":"Rapproché provisoirement",
