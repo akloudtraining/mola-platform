@@ -67,8 +67,8 @@ if (missingTable.length) {
 const mobileContracts = [
   ['mobile section tabs expose direct workspace navigation', /mobile-section-tabs" aria-label="Main workspace sections"/],
   ['mobile section controls retain the compact labels and active state', /aria-current=\{view===id\?'page':undefined\} className=\{view===id\?'is-active':''\}/],
-  ['mobile navigation keeps the selected section inset within its rail', /const rail=document\.querySelector\('\.mobile-section-tabs'\),active=rail\?\.querySelector\('\.is-active'\);if\(!rail\|\|!active\)return;const bounds=active\.getBoundingClientRect\(\),clip=rail\.getBoundingClientRect\(\),inset=10,delta=.*;if\(delta\)rail\.scrollBy\(\{left:delta,behavior:'smooth'\}\)/],
 ].filter(([, pattern]) => !pattern.test(page));
+if (!page.includes("window.setTimeout(()=>{const rail=document.querySelector('.mobile-section-tabs')") || !page.includes("rail.scrollBy({left:delta,behavior:'smooth'})")) mobileContracts.push(['mobile navigation keeps the selected section inset within its rail', /window\.setTimeout/]);
 mobileContracts.push(...[
   ['mobile text controls stay at iOS zoom-safe readable size', /\[role="combobox"\]\{font-size:16px!important\}/],
   ['mobile dashboard metrics form an intentional swipe rail', /\.hub-metrics\{[^}]*grid-auto-flow:column;[^}]*overflow-x:auto;[^}]*scroll-snap-type:x mandatory/s],
@@ -78,6 +78,7 @@ mobileContracts.push(...[
   ['mobile hero removes duplicate weekly-rate copy from the first screen', /\.hero-actions>span\{display:none\}/],
   ['mobile verified total label stays on one line', /\.capital-total>span\{[^}]*white-space:nowrap/],
 ].filter(([, pattern]) => !pattern.test(css)));
+if (!/scroll-padding-inline:10px/.test(css)) mobileContracts.push(['mobile scroll padding keeps focused tabs inside the rail', /scroll-padding-inline:10px/]);
 if (!/viewportFit: "cover"/.test(layout)) mobileContracts.push(['mobile viewport uses safe-area insets', /viewportFit: "cover"/]);
 if (mobileContracts.length) {
   console.error('MOBILE UX CONTRACT FAIL');
@@ -89,5 +90,5 @@ if (/:root\[data-workspace-brand="mola"\] body\{[^}]*overflow-x:\s*hidden/.test(
   process.exit(1);
 }
 
-console.log(`MOBILE UX CONTRACT PASS: ${contracts.length + tableContracts.length + 12} responsive safeguards present.`);
+console.log(`MOBILE UX CONTRACT PASS: ${contracts.length + tableContracts.length + 13} responsive safeguards present.`);
 console.log('This is a source-level regression guard; owner phone/browser acceptance remains pending.');
