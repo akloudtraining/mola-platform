@@ -1,7 +1,7 @@
 // French interface catalogue, keyed by the exact English text the components render.
 // Edit entries here directly; anything missing falls back to English.
 export const fr:Record<string,string>={
- "Updates refresh every 30 seconds while the workspace is open. You can also refresh manually. Review events are history; open the record for its current status. Designated reviewers also get an email when a payment needs review, and contributors when their payment is reviewed.":"Mises à jour toutes les 30 secondes tant que l’espace est ouvert. Vous pouvez aussi actualiser manuellement. Les événements de vérification sont de l’historique ; ouvrez l’enregistrement pour voir son statut actuel. Les vérificateurs désignés reçoivent aussi un e-mail lorsqu’un paiement doit être vérifié, et les contributeurs lorsque leur paiement a été vérifié.",
+ "Updates refresh every 30 seconds while the workspace is open. You can also refresh manually. Review events are history; open the record for its current status. Founders also get an email when a payment is submitted, reviewed or resubmitted, except the person who took that step.":"Mises à jour toutes les 30 secondes tant que l’espace est ouvert. Vous pouvez aussi actualiser manuellement. Les événements de vérification sont de l’historique ; ouvrez l’enregistrement pour voir son statut actuel. Les fondateurs reçoivent aussi un e-mail lorsqu’un paiement est soumis, vérifié ou soumis à nouveau, sauf la personne à l’origine de cette étape.",
  "Returned for correction":"Renvoyé pour correction",
  "Provisionally reconciled":"Rapproché provisoirement",
  "The contributor can correct and resubmit it.":"Le contributeur peut le corriger et le soumettre à nouveau.",
