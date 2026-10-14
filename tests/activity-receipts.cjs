@@ -1,4 +1,4 @@
-// The activity feed is built from public entries (receipt keys removed, hasReceipt kept).
+// Activity submission lines state amount and date; screenshot status belongs on the record itself.
 const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm'),assert=require('node:assert/strict'),ts=require('typescript');
 const cache=new Map();
 function load(file){
@@ -12,6 +12,6 @@ const org={id:'fictional:mola',mode:'Shared ownership',members:[{id:'a',name:'Al
 const base={orgId:org.id,type:'contribution',title:'Weekly',memberId:'a',amountMinor:2500,currency:'USD',method:'Zelle (external)',date:'2026-10-14',reference:'',purpose:'',status:'Awaiting verification',created:'2026-10-14T09:00:00.000Z'};
 const events=activityFor(org,[{...base,id:'public',receipt:undefined,hasReceipt:true},{...base,id:'legacy'}],new Date('2026-10-15T00:00:00Z'));
 const text=id=>events.find(e=>e.entryId===id&&e.kind==='submission').description;
-assert(text('public').endsWith('· screenshot attached'),'A public entry with a screenshot is not reported as legacy');
-assert(text('legacy').endsWith('· no screenshot (older record)'),'Records without any screenshot keep the legacy wording');
-console.log('ACTIVITY RECEIPTS PASS: submission events read the public screenshot flag.');
+assert.equal(text('public'),'$25.00 USD reported for 2026-10-14','Submission lines state the amount and date only');
+assert.equal(text('legacy'),text('public'),'Screenshot status is not repeated in the feed; the record shows it');
+console.log('ACTIVITY RECEIPTS PASS: submission lines state amount and date only.');
