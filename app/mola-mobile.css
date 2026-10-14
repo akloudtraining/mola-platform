@@ -325,8 +325,6 @@
 
   /* "More" sheet in the same light theme as the rest of the app. */
   :root[data-workspace-brand="mola"] [data-sidebar="sidebar"][data-mobile="true"] .nav-in-tabbar{display:none}
-  /* Account actions live under My account on phones; the sheet is destinations only. */
-  :root[data-workspace-brand="mola"] [data-sidebar="sidebar"][data-mobile="true"] .nav-footer{display:none}
   /* The sheet sizes to its content, so cap the inner column too; otherwise the list never scrolls and the footer is clipped. */
   :root[data-workspace-brand="mola"] [data-sidebar="sidebar"][data-mobile="true"]>div{height:auto;max-height:86dvh;min-height:0}
   :root[data-workspace-brand="mola"] [data-sidebar="sidebar"][data-mobile="true"] .nav-content{flex:1 1 auto;min-height:0;overflow-y:auto!important;overscroll-behavior:contain}
@@ -572,3 +570,12 @@
 .mola-assistant-launcher:active{transform:scale(.97)}
 .assistant-title .mola-orb{margin-right:2px}
 @media(prefers-reduced-motion:reduce){.mola-orb,.mola-orb-ring,.mola-orb-core{animation:none!important}}
+
+/* My account is reached only through the account card at the foot of the sidebar / More sheet. */
+@media(max-width:700px){
+  :root[data-workspace-brand="mola"] [data-sidebar="sidebar"][data-mobile="true"] .nav-footer{display:flex;padding:8px 12px calc(10px + env(safe-area-inset-bottom))!important}
+  :root[data-workspace-brand="mola"] [data-sidebar="sidebar"][data-mobile="true"] .nav-account{color:#23382a}
+  :root[data-workspace-brand="mola"] [data-sidebar="sidebar"][data-mobile="true"] .nav-account:hover{background:#eef4ea}
+  :root[data-workspace-brand="mola"] [data-sidebar="sidebar"][data-mobile="true"] .nav-account small,:root[data-workspace-brand="mola"] [data-sidebar="sidebar"][data-mobile="true"] .nav-account>svg{color:#6f8272}
+  :root[data-workspace-brand="mola"] [data-sidebar="sidebar"][data-mobile="true"] .nav-account .avatar{background:#e1c27a;color:#17271b}
+}
