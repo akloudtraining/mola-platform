@@ -275,3 +275,81 @@
   :root[data-workspace-brand="mola"] .mobile-section-tabs>button svg{padding-inline:12px}
 }
 @media(prefers-reduced-motion:reduce){:root[data-workspace-brand="mola"] .mobile-section-tabs>button svg{transition:none}}
+
+/* Mola icon set: outline in currentColor, faint body tint, gold accent. */
+.mola-icon{flex:none}
+.mola-icon .mi-soft{fill:currentColor;fill-opacity:.1;stroke:none}
+.mola-icon .mi-accent{fill:#e2c27a;transition:fill .2s ease}
+.mola-icon .mi-accent-stroke{stroke:#c9a14a}
+:root[data-workspace-brand="mola"] .nav-button[data-active=true] .mola-icon .mi-accent{fill:#fbf1d6}
+
+/* Motion language: soft spring for things arriving, a gentle press for things tapped. */
+@keyframes mola-rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes mola-pop{0%{transform:scale(.82)}60%{transform:scale(1.06)}100%{transform:scale(1)}}
+
+@media(max-width:700px){
+  /* Hero: slimmer card, no eyebrow line above the headline. */
+  :root[data-workspace-brand="mola"] .capital-hero{padding:14px 16px 13px;border-radius:18px}
+  :root[data-workspace-brand="mola"] .capital-hero .eyebrow{display:none}
+  :root[data-workspace-brand="mola"] .capital-hero h2{margin:0;font-size:clamp(1.2rem,5.4vw,1.4rem);line-height:1.12}
+  :root[data-workspace-brand="mola"] .hero-actions{margin-top:9px}
+  :root[data-workspace-brand="mola"] .capital-hero .secondary{min-height:36px;padding:7px 13px;font-size:.75rem}
+  :root[data-workspace-brand="mola"] .capital-total{margin-top:11px;padding-top:9px}
+  :root[data-workspace-brand="mola"] .capital-total>span{font-size:.53rem}
+  :root[data-workspace-brand="mola"] .capital-total>strong{font-size:clamp(1.3rem,5.8vw,1.5rem)}
+  :root[data-workspace-brand="mola"] .capital-total-foot b{font-size:.875rem}
+
+  /* Tab bar: muted icons that fill in gold when selected. */
+  :root[data-workspace-brand="mola"] .mobile-section-tabs>button svg{width:22px;height:22px;padding:4px 15px;transition:background-color .2s ease,color .2s ease,transform .15s ease}
+  :root[data-workspace-brand="mola"] .mobile-section-tabs .mola-icon .mi-accent{fill:#d3dccf}
+  :root[data-workspace-brand="mola"] .mobile-section-tabs>button.is-active .mola-icon .mi-accent,:root[data-workspace-brand="mola"] .mobile-section-tabs>.mobile-section-more[aria-expanded="true"] .mola-icon .mi-accent{fill:#d6aa4a}
+  :root[data-workspace-brand="mola"] .mobile-section-tabs>button.is-active svg,:root[data-workspace-brand="mola"] .mobile-section-tabs>.mobile-section-more[aria-expanded="true"] svg{animation:mola-pop .38s cubic-bezier(.34,1.56,.64,1)}
+  :root[data-workspace-brand="mola"] .mobile-section-tabs>button:active svg{transform:scale(.88)}
+
+  /* Overview icons sit in soft tiles. */
+  :root[data-workspace-brand="mola"] .hub-metric>svg{background:#eef4ea;color:#2f5b3c}
+  :root[data-workspace-brand="mola"] .hub-metric:nth-child(2)>svg{background:#fbf3e1;color:#7a5d22}
+  :root[data-workspace-brand="mola"] .hub-metric:nth-child(3)>svg{background:#edf3ef;color:#3f6656}
+  :root[data-workspace-brand="mola"] .hub-next>button>svg{box-sizing:content-box;padding:10px;border-radius:14px;background:#fbf3e1;color:#7a5d22}
+
+  /* Arrivals and presses */
+  :root[data-workspace-brand="mola"] .capital-hero,:root[data-workspace-brand="mola"] .hub-metric{animation:mola-rise .5s cubic-bezier(.22,1,.36,1) both}
+  :root[data-workspace-brand="mola"] .hub-metric:nth-child(2){animation-delay:.06s}
+  :root[data-workspace-brand="mola"] .hub-metric:nth-child(3){animation-delay:.12s}
+  :root[data-workspace-brand="mola"] :is(.primary,.secondary,.text-button,.hub-next>button,.nav-button){transition:transform .15s ease,background-color .2s ease,box-shadow .2s ease}
+  :root[data-workspace-brand="mola"] :is(.primary,.secondary,.hub-next>button,.nav-button):active:not(:disabled){transform:scale(.97)}
+  :root[data-workspace-brand="mola"] .primary{border-radius:14px;background:linear-gradient(180deg,#2d5c3c,#1f4329);box-shadow:0 6px 16px #1f43292b}
+  :root[data-workspace-brand="mola"] .secondary{border-radius:14px;background:#fff;box-shadow:0 2px 8px #1b38260d}
+
+  /* "More" sheet in the same light theme as the rest of the app. */
+  :root[data-workspace-brand="mola"] [data-slot="sheet-overlay"]{background:rgba(16,37,26,.28);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
+  :root[data-workspace-brand="mola"] [data-sidebar="sidebar"][data-mobile="true"]{background:#fbfcf9!important;color:#23382a;box-shadow:0 -10px 40px #1b382624}
+  :root[data-workspace-brand="mola"] [data-sidebar="sidebar"][data-mobile="true"][data-state="open"]{animation-duration:.45s!important;animation-timing-function:cubic-bezier(.32,.72,0,1)!important}
+  :root[data-workspace-brand="mola"] [data-sidebar="sidebar"][data-mobile="true"] .nav-header{background:transparent!important;border-bottom:1px solid #e4ebe1}
+  :root[data-workspace-brand="mola"] [data-sidebar="sidebar"][data-mobile="true"] .nav-content{background:transparent}
+  :root[data-workspace-brand="mola"] [data-sidebar="sidebar"][data-mobile="true"] .nav-header::before{background:#d2dccf}
+  :root[data-workspace-brand="mola"] [data-sidebar="sidebar"][data-mobile="true"] .nav-header .mola-brand img{width:46px;filter:drop-shadow(0 3px 6px #1d3a2626)}
+  :root[data-workspace-brand="mola"] [data-sidebar="sidebar"][data-mobile="true"] .nav-header .mola-brand span{color:#5f7463;font-size:.625rem;letter-spacing:.16em}
+  :root[data-workspace-brand="mola"] [data-sidebar="sidebar"][data-mobile="true"] .nav-label{color:#a07f36}
+  :root[data-workspace-brand="mola"] [data-sidebar="sidebar"][data-mobile="true"] .nav-group-heading{color:#8a9a8c}
+  :root[data-workspace-brand="mola"] [data-sidebar="sidebar"][data-mobile="true"] .nav-button{gap:12px;min-height:52px!important;padding:0 10px!important;border-radius:16px!important;background:transparent!important;color:#2a3f2f!important;font-weight:600;box-shadow:none}
+  :root[data-workspace-brand="mola"] [data-sidebar="sidebar"][data-mobile="true"] .nav-button svg{box-sizing:content-box;width:20px!important;height:20px!important;padding:8px;border-radius:12px;background:#eef3ea;color:#2f5b3c!important}
+  :root[data-workspace-brand="mola"] [data-sidebar="sidebar"][data-mobile="true"] .nav-button:hover{background:#f1f5ef!important;transform:none}
+  :root[data-workspace-brand="mola"] [data-sidebar="sidebar"][data-mobile="true"] .nav-button[data-active=true]{background:#e7f0e2!important;color:#1d4029!important;box-shadow:none}
+  :root[data-workspace-brand="mola"] [data-sidebar="sidebar"][data-mobile="true"] .nav-button[data-active=true] svg{background:#fff;box-shadow:0 2px 6px #1d402914}
+  :root[data-workspace-brand="mola"] [data-sidebar="sidebar"][data-mobile="true"] .nav-button[data-active=true] .mola-icon .mi-accent{fill:#d6aa4a}
+  :root[data-workspace-brand="mola"] [data-sidebar="sidebar"][data-mobile="true"] [data-sidebar="menu-item"]{animation:mola-rise .4s cubic-bezier(.22,1,.36,1) both}
+  :root[data-workspace-brand="mola"] [data-sidebar="sidebar"][data-mobile="true"] [data-sidebar="menu-item"]:nth-child(n+2){animation-delay:.03s}
+  :root[data-workspace-brand="mola"] [data-sidebar="sidebar"][data-mobile="true"] [data-sidebar="menu-item"]:nth-child(n+4){animation-delay:.06s}
+  :root[data-workspace-brand="mola"] [data-sidebar="sidebar"][data-mobile="true"] [data-sidebar="menu-item"]:nth-child(n+6){animation-delay:.09s}
+  :root[data-workspace-brand="mola"] [data-sidebar="sidebar"][data-mobile="true"] [data-sidebar="menu-item"]:nth-child(n+8){animation-delay:.12s}
+  :root[data-workspace-brand="mola"] [data-sidebar="sidebar"][data-mobile="true"] .nav-footer{background:#f3f6f1;border-top:1px solid #e4ebe1}
+  :root[data-workspace-brand="mola"] [data-sidebar="sidebar"][data-mobile="true"] .nav-footer>a{color:#3d5443}
+  :root[data-workspace-brand="mola"] [data-sidebar="sidebar"][data-mobile="true"] .nav-footer>div{border-color:#e0e8dc;color:#23382a}
+  :root[data-workspace-brand="mola"] [data-sidebar="sidebar"][data-mobile="true"] .nav-footer small{color:#6f8272}
+  :root[data-workspace-brand="mola"] [data-sidebar="sidebar"][data-mobile="true"] .nav-footer .avatar{background:#dcebd6;color:#1d4029}
+}
+@media(prefers-reduced-motion:reduce){
+  :root[data-workspace-brand="mola"] :is(.capital-hero,.hub-metric,[data-sidebar="menu-item"],.mobile-section-tabs svg){animation:none!important}
+  :root[data-workspace-brand="mola"] :is(.primary,.secondary,.hub-next>button,.nav-button):active{transform:none}
+}
