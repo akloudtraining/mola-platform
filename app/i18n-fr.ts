@@ -1,6 +1,14 @@
 // French interface catalogue, keyed by the exact English text the components render.
 // Edit entries here directly; anything missing falls back to English.
 export const fr:Record<string,string>={
+ "Copy instructions":"Copier les instructions",
+ "Payment instructions copied":"Instructions de paiement copiées",
+ "Copy is not available here. Select the text instead.":"La copie n’est pas disponible ici. Sélectionnez plutôt le texte.",
+ "Owner tools":"Outils du propriétaire",
+ "Only the workspace owner sees these.":"Seul le propriétaire de l’espace voit ces options.",
+ "Good morning":"Bonjour",
+ "Good afternoon":"Bon après-midi",
+ "Good evening":"Bonsoir",
  "Next due":"Prochaine échéance",
  "Record a balance":"Enregistrer un solde",
  "RECORDS":"REGISTRES",
@@ -1751,6 +1759,9 @@ const activity:Record<string,string>={'contribution recorded':'contribution enre
 export const frPatterns:[RegExp,string|((...parts:string[])=>string)][]=[
  // Placeholder founder names in a new workspace.
  [/^Founder (\d+)$/,'Fondateur $1'],
+ [/^Good morning, (.+)$/,'Bonjour, $1'],
+ [/^Good afternoon, (.+)$/,'Bon après-midi, $1'],
+ [/^Good evening, (.+)$/,'Bonsoir, $1'],
  [/^For your review \((\d+)\)$/,'Pour votre vérification ($1)'],
  [/^All pending \((\d+)\)$/,'Tous en attente ($1)'],
  [/^Owner reconciled \((\d+)\)$/,'Rapprochés par le propriétaire ($1)'],

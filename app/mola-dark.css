@@ -830,6 +830,11 @@
 :root[data-theme="dark"][data-workspace-brand="mola"] .is-clamped:focus-visible,:root[data-theme="dark"][data-workspace-brand="mola"] .is-expanded:focus-visible{outline:2px solid #2f5b3c}
 :root[data-theme="dark"] .workspace-gate-mark{background:transparent!important;border:0!important;box-shadow:none!important}
 :root[data-theme="dark"] .workspace-gate-mark img{filter:drop-shadow(0 4px 10px #00000066)}
+:root[data-theme="dark"][data-workspace-brand="mola"] .nav-account{border:0;background:transparent;color:#e5eadf}
+:root[data-theme="dark"][data-workspace-brand="mola"] .nav-account:hover{background:#26583b}
+:root[data-theme="dark"][data-workspace-brand="mola"] .nav-account small{color:#b9cdbd}
+:root[data-theme="dark"][data-workspace-brand="mola"] .nav-account .avatar{background:#e1c27a;color:#17271b}
+:root[data-theme="dark"][data-workspace-brand="mola"] .nav-account>svg{color:#b9cdbd}
 
 /* hand tuning */
 /* Hand-tuned dark theme surfaces, appended after the generated rules. */

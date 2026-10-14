@@ -530,3 +530,24 @@
   :root[data-workspace-brand="mola"] .hero-goals-link{display:none}
 }
 :root[data-workspace-brand="mola"] .hero-next-due time{white-space:nowrap}
+
+/* Hero is the same on phone and desktop: eyebrow, headline, Record a payment, next due, Savings goals. */
+@media(max-width:700px){
+  :root[data-workspace-brand="mola"] .capital-hero{grid-template-rows:auto auto 1fr}
+  :root[data-workspace-brand="mola"] .capital-hero .eyebrow{display:block;grid-column:1;grid-row:1;margin:2px 0 6px;font-size:.5rem;letter-spacing:.16em}
+  :root[data-workspace-brand="mola"] .capital-hero h2{grid-row:2;margin-top:0}
+  :root[data-workspace-brand="mola"] .hero-actions{grid-row:3}
+  :root[data-workspace-brand="mola"] .capital-total{grid-row:1/4}
+  :root[data-workspace-brand="mola"] .hero-goals-link{display:inline-flex;align-self:flex-start;font-size:.6875rem}
+}
+:root[data-workspace-brand="mola"] .hero-actions{row-gap:10px}
+
+/* Sidebar footer: who is signed in; opens My account (sign out lives there). */
+:root[data-workspace-brand="mola"] .nav-account{display:flex;align-items:center;gap:11px;width:100%;padding:10px 8px;border:0;border-radius:14px;background:transparent;color:#e5eadf;text-align:left;cursor:pointer;transition:background-color .2s ease}
+:root[data-workspace-brand="mola"] .nav-account:hover{background:#26583b}
+:root[data-workspace-brand="mola"] .nav-account>span:nth-child(2){display:grid;flex:1;min-width:0;font-size:.875rem;font-weight:600}
+:root[data-workspace-brand="mola"] .nav-account small{color:#b9cdbd;font-size:.75rem;font-weight:500}
+:root[data-workspace-brand="mola"] .nav-account .avatar{flex:none;background:#e1c27a;color:#17271b}
+:root[data-workspace-brand="mola"] .nav-account>svg{flex:none;color:#b9cdbd}
+.copy-instructions{display:inline-flex;align-items:center;gap:8px;margin-top:12px}
+@media(max-width:700px){:root[data-workspace-brand="mola"] .hero-actions>.hero-goals-link{align-self:flex-start;width:fit-content;justify-content:flex-start;margin-top:2px}}

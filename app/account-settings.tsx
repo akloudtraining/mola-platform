@@ -1,6 +1,6 @@
 'use client';
 import {useState,type FormEvent} from 'react';
-import {AccountIcon,MailIcon,SystemIcon,SunIcon,MoonIcon,AppearanceIcon,LanguageIcon,LockIcon,SignOutIcon} from './mola-icons';
+import {SetupIcon,AccountIcon,MailIcon,SystemIcon,SunIcon,MoonIcon,AppearanceIcon,LanguageIcon,LockIcon,SignOutIcon} from './mola-icons';
 import {THEME_KEY,LANGUAGE_KEY,themeChoice,languageChoice,savePreference,type ThemeChoice,type LanguageChoice} from './preferences';
 
 // Language names stay in their own language, so those options opt out of translation.
@@ -31,7 +31,7 @@ function ChangeEmail({email}:{email:string}){
  </div>;
 }
 
-export default function AccountSettings({name,email}:{name:string;email:string}){
+export default function AccountSettings({name,email,ownerTools}:{name:string;email:string;ownerTools?:{testWorkspace:boolean;blocked:()=>boolean}}){
  // This screen only renders after the workspace loads in the browser, so stored choices can be read directly.
  const [theme,setTheme]=useState<ThemeChoice>(()=>typeof window==='undefined'?'system':themeChoice()),[language,setLanguage]=useState<LanguageChoice>(()=>typeof window==='undefined'?'en':languageChoice());
  return <section className="settings-page"><div className="settings-grid">
@@ -49,6 +49,7 @@ export default function AccountSettings({name,email}:{name:string;email:string})
    <Choice label="Language" value={language} onChange={v=>{setLanguage(v);savePreference(LANGUAGE_KEY,v);}} fixedLabels options={[{value:'en',label:'English'},{value:'fr',label:'Français'},{value:'system',label:'Device language'}]}/>
    <p className="form-note">Names, notes and other details people type stay as entered. Emails from Mola are sent in English.</p>
   </div></section>
+  {ownerTools&&<section className="panel settings-card"><div className="panel-header"><h2>Owner tools</h2><SetupIcon size={22}/></div><div className="settings-body"><p>Only the workspace owner sees these.</p><div className="settings-actions">{ownerTools.testWorkspace&&<a className="secondary" href="/test" onClick={e=>{if(ownerTools.blocked())e.preventDefault();}}>Test workspace</a>}<a className="secondary" href="https://mola-buildroom.bokobal.chatgpt.site" target="_blank" rel="noreferrer">Development board</a></div></div></section>}
   <section className="panel settings-card"><div className="panel-header"><h2>Workspace access</h2><LockIcon size={22}/></div><div className="settings-body"><p>Your verified account can access organizations linked to your founder record. Owners manage member permissions on Founders.</p><p className="form-note">Keep full bank account numbers, credentials and identity documents out of company notes and payment screenshots.</p></div></section>
  </div></section>;
 }
