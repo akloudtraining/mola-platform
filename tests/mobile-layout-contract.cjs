@@ -67,12 +67,15 @@ if (missingTable.length) {
 const mobileContracts = [
   ['mobile section tabs expose direct workspace navigation', /mobile-section-tabs" aria-label="Main workspace sections"/],
   ['mobile section controls retain the compact labels and active state', /aria-current=\{view===id\?'page':undefined\} className=\{view===id\?'is-active':''\}/],
+  ['mobile navigation keeps the selected section in view', /mobile-section-tabs \.is-active'\);active\?\.scrollIntoView\(\{block:'nearest',inline:'nearest',behavior:'smooth'\}\)/],
 ].filter(([, pattern]) => !pattern.test(page));
 mobileContracts.push(...[
   ['mobile text controls stay at iOS zoom-safe readable size', /\[role="combobox"\]\{font-size:16px!important\}/],
   ['mobile dashboard metrics form an intentional swipe rail', /\.hub-metrics\{[^}]*grid-auto-flow:column;[^}]*overflow-x:auto;[^}]*scroll-snap-type:x mandatory/s],
   ['mobile drawer fits the dynamic viewport', /max-height:100dvh;[^}]*padding-bottom:env\(safe-area-inset-bottom\)/s],
   ['mobile navigation remains hidden at desktop widths', /\.mobile-section-tabs\{display:none\}/],
+  ['mobile dashboard makes the verified total visible sooner', /\.capital-hero-copy>p\{display:none\}/],
+  ['mobile verified total label stays on one line', /\.capital-total>span\{[^}]*white-space:nowrap/],
 ].filter(([, pattern]) => !pattern.test(css)));
 if (!/viewportFit: "cover"/.test(layout)) mobileContracts.push(['mobile viewport uses safe-area insets', /viewportFit: "cover"/]);
 if (mobileContracts.length) {
@@ -85,5 +88,5 @@ if (/:root\[data-workspace-brand="mola"\] body\{[^}]*overflow-x:\s*hidden/.test(
   process.exit(1);
 }
 
-console.log(`MOBILE UX CONTRACT PASS: ${contracts.length + tableContracts.length + 8} responsive safeguards present.`);
+console.log(`MOBILE UX CONTRACT PASS: ${contracts.length + tableContracts.length + 11} responsive safeguards present.`);
 console.log('This is a source-level regression guard; owner phone/browser acceptance remains pending.');
