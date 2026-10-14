@@ -211,3 +211,23 @@
   :root[data-workspace-brand="mola"] .capital-hero h2{font-size:1.75rem}
 }
 @media(prefers-reduced-motion:reduce){:root[data-workspace-brand="mola"] .mobile-section-tabs>button{transition:none}}
+
+/* Top bar retired: the old wrapper-site strip (org switcher, refresh, breadcrumb) is gone. */
+.workspace-status-row{display:flex;justify-content:flex-end;padding:16px 32px 0}
+@media(max-width:700px){
+  .workspace-status-row{padding:12px 14px 0}
+  :root[data-workspace-brand="mola"] .mobile-section-tabs{top:0}
+}
+
+/* Ask Mola: translucent launcher and panel so the workspace stays visible behind the chat. */
+:root[data-workspace-brand="mola"] .mola-assistant-launcher{background:rgba(23,61,43,.62);border-color:rgba(255,255,255,.22);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+:root[data-workspace-brand="mola"] .mola-assistant-launcher:hover{background:rgba(36,81,54,.82)}
+:root[data-workspace-brand="mola"] .mola-assistant[data-slot="dialog-content"]{background:rgba(255,255,255,.62);border-color:rgba(219,228,217,.75);-webkit-backdrop-filter:blur(3px) saturate(1.1);backdrop-filter:blur(3px) saturate(1.1)}
+:root[data-workspace-brand="mola"] .assistant-header[data-slot="dialog-header"]{background:rgba(23,61,43,.82)}
+:root[data-workspace-brand="mola"] .assistant-mode{background:transparent;border-bottom-color:rgba(214,224,208,.6)}
+:root[data-workspace-brand="mola"] .assistant-composer{background:rgba(251,252,250,.55);border-top-color:rgba(214,224,208,.6);box-shadow:none}
+:root[data-workspace-brand="mola"] .assistant-composer textarea{background:rgba(255,255,255,.85)}
+:root[data-workspace-brand="mola"] .assistant-question{background:rgba(234,240,227,.85)}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+  :root[data-workspace-brand="mola"] .mola-assistant[data-slot="dialog-content"]{background:rgba(255,255,255,.88)}
+}
