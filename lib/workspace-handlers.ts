@@ -43,7 +43,9 @@ async function GET(req:Request){try{
   ]);
  }
  const install=await db.prepare("SELECT owner FROM installation WHERE id='primary'").first<{owner:string}>();
- if(install?.owner===user.userId)await db.batch(templates.map(o=>{const org={...o,id:user.userId+':'+o.id};return db.prepare('INSERT OR IGNORE INTO organizations (id,owner,data,version) VALUES (?,?,?,1)').bind(org.id,user.userId,JSON.stringify(org));}));
+ // Seed the starter workspace only for a fresh install. A migrated owner's workspace keeps its
+ // legacy id, so seeding by id alone would recreate an empty duplicate on every load.
+ if(install?.owner===user.userId){const owned=await db.prepare('SELECT count(*) AS n FROM organizations WHERE owner=?').bind(user.userId).first<{n:number}>();if(!owned?.n)await db.batch(templates.map(o=>{const org={...o,id:user.userId+':'+o.id};return db.prepare('INSERT OR IGNORE INTO organizations (id,owner,data,version) VALUES (?,?,?,1)').bind(org.id,user.userId,JSON.stringify(org));}));}
  }
  const candidates=await db.prepare("SELECT id,owner,data,version FROM organizations WHERE json_extract(data,'$.mode')='Shared ownership' AND (owner=? OR EXISTS (SELECT 1 FROM json_each(organizations.data,'$.members') m WHERE json_extract(m.value,'$.access.enabled')=1 AND (json_extract(m.value,'$.access.userId')=? OR (json_extract(m.value,'$.access.email')=? AND (json_extract(m.value,'$.access.userId') IS NULL OR (?=1 AND json_extract(m.value,'$.access.userId') LIKE 'supabase:%')))))) ORDER BY id DESC").bind(user.userId,user.userId,normalizeEmail(user.email),user.emailVerified?1:0).all<{id:string;owner:string;data:string;version:number}>();
  const organizations:Org[]=[],entries:Entry[]=[],activity:ActivityEvent[]=[];const activityAsOf=new Date().toISOString();
