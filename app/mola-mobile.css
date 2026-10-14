@@ -325,6 +325,8 @@
 
   /* "More" sheet in the same light theme as the rest of the app. */
   :root[data-workspace-brand="mola"] [data-sidebar="sidebar"][data-mobile="true"] .nav-in-tabbar{display:none}
+  /* Account actions live under My account on phones; the sheet is destinations only. */
+  :root[data-workspace-brand="mola"] [data-sidebar="sidebar"][data-mobile="true"] .nav-footer{display:none}
   /* The sheet sizes to its content, so cap the inner column too; otherwise the list never scrolls and the footer is clipped. */
   :root[data-workspace-brand="mola"] [data-sidebar="sidebar"][data-mobile="true"]>div{height:auto;max-height:86dvh;min-height:0}
   :root[data-workspace-brand="mola"] [data-sidebar="sidebar"][data-mobile="true"] .nav-content{flex:1 1 auto;min-height:0;overflow-y:auto!important;overscroll-behavior:contain}
@@ -418,3 +420,6 @@
   :root[data-workspace-brand="mola"] .assistant-composer .primary{display:grid;place-items:center;width:42px;min-width:42px;height:42px;min-height:42px;padding:0;border-radius:999px}
   :root[data-workspace-brand="mola"] .assistant-composer .assistant-send-label{display:none}
 }
+
+.settings-actions{display:flex;flex-wrap:wrap;gap:10px}
+@media(max-width:700px){.settings-actions>a{flex:1 1 100%;justify-content:center;text-align:center}}
