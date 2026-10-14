@@ -12,6 +12,6 @@ const org={id:'fictional:mola',mode:'Shared ownership',members:[{id:'a',name:'Al
 const base={orgId:org.id,type:'contribution',title:'Weekly',memberId:'a',amountMinor:2500,currency:'USD',method:'Zelle (external)',date:'2026-10-14',reference:'',purpose:'',status:'Awaiting verification',created:'2026-10-14T09:00:00.000Z'};
 const events=activityFor(org,[{...base,id:'public',receipt:undefined,hasReceipt:true},{...base,id:'legacy'}],new Date('2026-10-15T00:00:00Z'));
 const text=id=>events.find(e=>e.entryId===id&&e.kind==='submission').description;
-assert(text('public').includes('Private screenshot attached'),'A public entry with a screenshot is not reported as legacy');
-assert(text('legacy').includes('Legacy record has no screenshot attached'),'Records without any screenshot keep the legacy wording');
+assert(text('public').endsWith('· screenshot attached'),'A public entry with a screenshot is not reported as legacy');
+assert(text('legacy').endsWith('· no screenshot (older record)'),'Records without any screenshot keep the legacy wording');
 console.log('ACTIVITY RECEIPTS PASS: submission events read the public screenshot flag.');
