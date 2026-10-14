@@ -436,3 +436,14 @@
   :root[data-workspace-brand="mola"] [data-sidebar="sidebar"][data-mobile="true"] .mola-brand-name strong{font-size:1.125rem;color:#1f3a28}
   :root[data-workspace-brand="mola"] [data-sidebar="sidebar"][data-mobile="true"] .mola-brand-name small{color:#a07f36}
 }
+
+/* Desktop sidebar uses the same forest green as the overview hero rather than near-black. */
+:root[data-workspace-brand="mola"] .navigation{background:linear-gradient(180deg,#1d4b31,#173f29)!important}
+:root[data-workspace-brand="mola"] .navigation .nav-header{background:linear-gradient(145deg,#173f29,#1d4b31)!important;border-bottom-color:#2f5c40}
+:root[data-workspace-brand="mola"] .navigation .nav-content{background:transparent}
+:root[data-workspace-brand="mola"] .navigation .nav-button{color:#d3e2d5}
+:root[data-workspace-brand="mola"] .navigation .nav-button:hover{background:#26583b!important}
+:root[data-workspace-brand="mola"] .navigation .nav-group-heading{color:#9dbba3}
+:root[data-workspace-brand="mola"] .navigation .nav-scope{background:#1f4a31;border-color:#3a6a4b}
+:root[data-workspace-brand="mola"] .navigation .nav-footer{background:#173f29;border-top-color:#2f5c40}
+:root[data-workspace-brand="mola"] .navigation .nav-footer>div{border-color:#2f5c40}
