@@ -6,10 +6,11 @@ function harness({owner=true,status='Authorized',rejectReload=false}={}){
   if(name==='react/jsx-runtime')return {jsx:(type,props)=>({type,props}),jsxs:(type,props)=>({type,props})};
   if(name==='@/lib/workspace-save')return {saveWorkspaceRecord:body=>{calls.push(body);return new Promise((yes,no)=>{resolve=yes;reject=no;});}};
   if(name==='./record-time')return {RecordTime:'RecordTime'};
+  if(name==='@/components/ui/dialog')return {Dialog:'Dialog',DialogContent:'DialogContent',DialogHeader:'DialogHeader',DialogTitle:'DialogTitle',DialogDescription:'DialogDescription'};
   return load(name.startsWith('@/')?name.slice(2)+'.ts':path.join(path.dirname(file),name+'.ts'));
  };const code=ts.transpileModule(fs.readFileSync(file,'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022,jsx:ts.JsxEmit.ReactJSX}}).outputText;vm.runInThisContext('(function(require,module,exports){'+code+'\n})')(req,module,module.exports);return module.exports;}
  const Component=load('app/external-payouts.tsx').default;
- const props={org:{id:'mola',permissions:{isOwner:owner}},request:{id:'request',requestRevision:1,amountMinor:100000,currency:'USD',reference:'Fictional recipient',funding:{status,token:'approval-snapshot'},payouts:[]},onBusy:b=>busy.push(b),onSaved:entry=>{saved.push(entry);props.request=entry;},reload:async()=>{reloads++;if(rejectReload)throw Error('offline');}};
+ const props={org:{id:'mola',permissions:{isOwner:owner}},request:{id:'request',requestRevision:1,amountMinor:100000,currency:'USD',reference:'Fictional recipient',funding:{status,token:'approval-snapshot'},canRecordPayout:owner,payouts:[]},onBusy:b=>busy.push(b),onSaved:entry=>{saved.push(entry);props.request=entry;},reload:async()=>{reloads++;if(rejectReload)throw Error('offline');}};
  return {render:()=>{cursor=0;return Component(props);},calls,busy,saved,states,latch,props,resolve:value=>resolve(value),reject:()=>reject(Error('The save could not be confirmed.')),reloads:()=>reloads};
 }
 function all(node,predicate,out=[]){if(Array.isArray(node))for(const n of node)all(n,predicate,out);else if(node&&typeof node==='object'){if(predicate(node))out.push(node);all(node.props?.children,predicate,out);}return out;}

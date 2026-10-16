@@ -5,3 +5,7 @@ export async function uploadReceipt(entry:Entry,file:File):Promise<Entry>{
  validateReceipt(file);
  const r=await fetch(receiptUrl(entry.orgId,entry.id),{method:'POST',headers:{'Content-Type':file.type},body:file});const d:any=await r.json();if(!r.ok)throw new Error(d.error||'Upload failed.');if(!d.entry)throw new Error('Upload could not be confirmed. Refresh before retrying.');return d.entry;
 }
+export async function uploadPayoutReceipt(request:Entry,payoutId:string,file:File):Promise<Entry>{
+ validateReceipt(file);
+ const r=await fetch(receiptUrl(request.orgId,request.id,payoutId),{method:'POST',headers:{'Content-Type':file.type},body:file});const d=await r.json().catch(()=>({})) as {error?:string;entry?:Entry};if(!r.ok)throw new Error(d.error||'Upload failed.');if(!d.entry)throw new Error('Upload could not be confirmed. Refresh before retrying.');return d.entry;
+}

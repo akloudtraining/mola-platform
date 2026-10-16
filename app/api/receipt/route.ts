@@ -7,6 +7,17 @@ import type {Org,Entry} from '@/lib/model';
 import {notifyPaymentEvent} from '@/lib/notifications';
 const fail=(error:string,status:number)=>Response.json({error},{status,headers:{'Cache-Control':'no-store'}});
 const limit=3*1024*1024;
+// Reads a PNG/JPEG upload of at most 3 MB, checking the file signature rather than the declared type.
+async function readImage(req:Request):Promise<{bytes:Uint8Array;mime:string;total:number}|{error:string;status:number}>{
+ if(Number(req.headers.get('content-length'))>limit)return {error:'Use a PNG or JPEG screenshot under 3 MB.',status:413};
+ const reader=req.body?.getReader();if(!reader)return {error:'Choose a screenshot.',status:400};let total=0;const chunks:Uint8Array[]=[];
+ while(true){const part=await reader.read();if(part.done)break;total+=part.value.length;if(total>limit){await reader.cancel();return {error:'Use a screenshot under 3 MB.',status:413};}chunks.push(part.value);}
+ const bytes=new Uint8Array(total);let offset=0;for(const part of chunks){bytes.set(part,offset);offset+=part.length;}
+ const png=[137,80,78,71,13,10,26,10].every((b,i)=>bytes[i]===b),jpeg=bytes[0]===255&&bytes[1]===216&&bytes[2]===255;
+ const mime=png?'image/png':jpeg?'image/jpeg':'';if(!mime||total<16)return {error:'Only PNG and JPEG screenshots are accepted.',status:400};
+ return {bytes,mime,total};
+}
+const imageHeaders=(mime:string,name:string)=>({'Content-Type':mime,'Content-Disposition':`inline; filename="${name}.${mime==='image/png'?'png':'jpg'}"`,'Cache-Control':'private, no-store','X-Content-Type-Options':'nosniff','Content-Security-Policy':"default-src 'none'; sandbox"});
 export async function GET(req:Request){return handle(req);}
 export async function POST(req:Request){return handle(req);}
 async function handle(req:Request){let orphan='';const bucket=(env as unknown as {BUCKET?:R2Bucket}).BUCKET;try{
@@ -24,22 +35,36 @@ async function handle(req:Request){let orphan='';const bucket=(env as unknown as
  const org:Org=JSON.parse(row.data),p=accessFor(org,row.owner,user);if(!p.isOwner&&!p.memberId)return fail('Receipt unavailable.',403);
  if(org.mode!=='Shared ownership')return fail('Receipt uploads are available for Mola only.',403);
  const previous=await db.prepare('SELECT data FROM entries WHERE id=? AND org_id=?').bind(entryId,orgId).first<{data:string}>();if(!previous)return fail('Receipt unavailable.',404);
- const entry:Entry=JSON.parse(previous.data);if(entry.type!=='contribution')return fail('Only contributions support receipts.',400);
+ const entry:Entry=JSON.parse(previous.data);
+ // Purchase receipts on payouts: every founder may view; the person who recorded the payout or the owner attaches it once.
+ const payoutId=url.searchParams.get('payoutId');
+ if(payoutId){
+  if(entry.type!=='request')return fail('Receipt unavailable.',404);
+  const payout=(entry.payouts||[]).find(x=>x.id===payoutId);if(!payout)return fail('Receipt unavailable.',404);
+  if(!bucket)return fail('Receipt storage unavailable. Please retry later.',503);
+  if(req.method==='GET'){if(!payout.receipt)return fail('No receipt attached.',404);const object=await bucket.get(payout.receipt.key);if(!object)return fail('Receipt unavailable.',404);return new Response(object.body,{headers:imageHeaders(payout.receipt.mime,'purchase-receipt')});}
+  if(!p.isOwner&&payout.recordedBy!==user.userId)return fail('Only the person who recorded this payout or the owner can attach its receipt.',403);
+  if(payout.void)return fail('This payout report was voided.',409);
+  if(payout.receipt)return fail('A receipt is already attached. Refresh to view it.',409);
+  const image=await readImage(req);if('error' in image)return fail(image.error,image.status);
+  orphan=`receipts/${session?'test/'+session:'live'}/payouts/${crypto.randomUUID()}`;
+  await bucket.put(orphan,image.bytes,{httpMetadata:{contentType:image.mime}});
+  const next:Entry={...entry,payouts:(entry.payouts||[]).map(x=>x.id===payoutId?{...x,receipt:{key:orphan,mime:image.mime,size:image.total,uploadedBy:user.userId,uploadedAt:new Date().toISOString()}}:x)};
+  const changed=await db.prepare('UPDATE entries SET data=? WHERE id=? AND org_id=? AND data=? AND EXISTS (SELECT 1 FROM organizations WHERE id=? AND version=?)').bind(JSON.stringify(next),entryId,orgId,previous.data,orgId,row.version).run();
+  if(!changed.meta.changes){await bucket.delete(orphan);orphan='';return fail('The payout or permissions changed. Refresh before attaching a receipt.',409);}
+  orphan='';return Response.json({entry:publicEntry(next,org,row.owner,user)},{headers:{'Cache-Control':'no-store'}});
+ }
+ if(entry.type!=='contribution')return fail('Only contributions support receipts.',400);
  if(!p.isOwner&&!p.canReview&&p.memberId!==entry.memberId)return fail('Only the contributor, owner and designated reviewers can see this receipt.',403);
  if(!bucket)return fail('Receipt storage unavailable. Please retry later.',503);
  if(req.method==='GET'){
   if(!entry.receipt)return fail('No receipt attached.',404);const object=await bucket.get(entry.receipt.key);if(!object)return fail('Receipt unavailable.',404);
-  return new Response(object.body,{headers:{'Content-Type':entry.receipt.mime,'Content-Disposition':'inline; filename="contribution-receipt.'+(entry.receipt.mime==='image/png'?'png':'jpg')+'"','Cache-Control':'private, no-store','X-Content-Type-Options':'nosniff','Content-Security-Policy':"default-src 'none'; sandbox"}});
+  return new Response(object.body,{headers:imageHeaders(entry.receipt.mime,'contribution-receipt')});
  }
  if(!p.isOwner&&p.memberId!==entry.memberId)return fail('Only the contributor or owner can attach this receipt.',403);
  if(entry.receipt)return fail('A receipt is already attached. Refresh to view it.',409);
  if(!['Screenshot required','Awaiting verification'].includes(entry.status))return fail('Screenshots can only be attached before payment review.',409);
- if(Number(req.headers.get('content-length'))>limit)return fail('Use a PNG or JPEG screenshot under 3 MB.',413);
- const reader=req.body?.getReader();if(!reader)return fail('Choose a screenshot.',400);let total=0;const chunks:Uint8Array[]=[];
- while(true){const part=await reader.read();if(part.done)break;total+=part.value.length;if(total>limit){await reader.cancel();return fail('Use a screenshot under 3 MB.',413);}chunks.push(part.value);}
- const bytes=new Uint8Array(total);let offset=0;for(const part of chunks){bytes.set(part,offset);offset+=part.length;}
- const png=[137,80,78,71,13,10,26,10].every((b,i)=>bytes[i]===b),jpeg=bytes[0]===255&&bytes[1]===216&&bytes[2]===255;
- const mime=png?'image/png':jpeg?'image/jpeg':'';if(!mime||total<16)return fail('Only PNG and JPEG screenshots are accepted.',400);
+ const image=await readImage(req);if('error' in image)return fail(image.error,image.status);const {bytes,mime,total}=image;
  orphan=`receipts/${session?'test/'+session:'live'}/${crypto.randomUUID()}`;
  await bucket.put(orphan,bytes,{httpMetadata:{contentType:mime}});
  const uploadedAt=new Date().toISOString();

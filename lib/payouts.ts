@@ -5,6 +5,8 @@ export type ExternalPayout={
  recordedAt:string;recordedBy:string;recordedName:string;requestToken:string;
  authorization:{revision:number;title:string;amountMinor:number;currency:string;recipient:string;purpose:string;required:number;approvals:Approval[]};
  void?:{at:string;actor:string;actorName:string;reason:string};
+ // Purchase receipt screenshot (private R2 key; never sent to browsers, which get hasReceipt).
+ receipt?:{key:string;mime:string;size:number;uploadedBy:string;uploadedAt:string};hasReceipt?:boolean;canAttachReceipt?:boolean;
 };
 export function payoutTotals(entry:Entry){
  const active=(entry.payouts||[]).filter(p=>!p.void);
@@ -23,4 +25,4 @@ export function payoutInput(body:Record<string,unknown>,currency:string){
  return {amountMinor,feeMinor,currency,date,reference,referenceKey:reference.normalize('NFKC').toLocaleLowerCase('en-US'),method,evidence,sentBy};
 }
 export function samePayout(p:ExternalPayout,input:ReturnType<typeof payoutInput>,requestToken:string){return p.requestToken===requestToken&&(['amountMinor','feeMinor','currency','date','reference','method','evidence','sentBy'] as const).every(k=>p[k]===input[k]);}
-export function publicPayout(p:ExternalPayout):ExternalPayout{return {...p,recordedBy:'',authorization:{...p.authorization,approvals:p.authorization.approvals.map(a=>({...a,actor:''}))},void:p.void?{...p.void,actor:''}:undefined};}
+export function publicPayout(p:ExternalPayout):ExternalPayout{return {...p,receipt:undefined,hasReceipt:!!p.receipt,recordedBy:'',authorization:{...p.authorization,approvals:p.authorization.approvals.map(a=>({...a,actor:''}))},void:p.void?{...p.void,actor:''}:undefined};}

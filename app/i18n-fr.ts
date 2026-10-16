@@ -1,6 +1,18 @@
 // French interface catalogue, keyed by the exact English text the components render.
 // Edit entries here directly; anything missing falls back to English.
 export const fr:Record<string,string>={
+ "Receipt screenshot · PNG or JPEG, up to 3 MB":"Capture du reçu · PNG ou JPEG, jusqu’à 3 Mo",
+ "Upload the purchase receipt, invoice or bank confirmation. Every founder can view it.":"Téléversez le reçu d’achat, la facture ou la confirmation bancaire. Chaque fondateur peut le voir.",
+ "View receipt":"Voir le reçu",
+ "Add receipt screenshot":"Ajouter la capture du reçu",
+ "Add receipt":"Ajouter le reçu",
+ "Purchase receipt":"Reçu d’achat",
+ "Private to the founders of this workspace.":"Réservé aux fondateurs de cet espace.",
+ "Record payouts already sent outside this app, with the receipt. Reports are founder-provided evidence, not independent bank or recipient confirmation.":"Enregistrez les versements déjà effectués en dehors de cette application, avec le reçu. Les déclarations sont des preuves fournies par les fondateurs, pas une confirmation indépendante de la banque ou du bénéficiaire.",
+ "Only the owner, the founder who requested this funding, or an officer can record its payout.":"Seuls le propriétaire, le fondateur qui a demandé ce financement ou un responsable peuvent enregistrer son versement.",
+ "Only the workspace owner can correct a payout report.":"Seul le propriétaire de l’espace peut corriger une déclaration de versement.",
+ "Only the person who recorded this payout or the owner can attach its receipt.":"Seuls la personne qui a enregistré ce versement ou le propriétaire peuvent joindre son reçu.",
+ "This payout report was voided.":"Cette déclaration de versement a été annulée.",
  "Operating agreement ·":"Accord d’exploitation ·",
  "Published operating agreement":"Accord d’exploitation publié",
  "Review the operating agreement":"Examiner l’accord d’exploitation",

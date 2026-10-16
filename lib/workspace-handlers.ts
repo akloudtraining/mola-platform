@@ -12,7 +12,7 @@ import {validDate,previewWeeks} from '@/lib/schedule';
 import {captureDeadline,deadlineRule} from '@/lib/deadlines';
 import {workspaceIdentity} from '@/lib/workspace-identity';
 import {database as liveDatabase} from '@/lib/database';
-import {accessFor,normalizeEmail,publicOrg,publicEntry,canIndependentlyReview,canOwnerReconcile} from '@/lib/access';
+import {accessFor,normalizeEmail,publicOrg,publicEntry,canIndependentlyReview,canOwnerReconcile,canRecordPayout} from '@/lib/access';
 import {templates,parseMoney,Org,Entry} from '@/lib/model';
 import {env} from 'cloudflare:workers';
 
@@ -104,12 +104,12 @@ async function POST(req:Request){try{
   return resultOrg(next);
  }
  if(x.action==='recordPayout'||x.action==='voidPayout'){
-  if(!permissions.isOwner)return fail('Only the workspace owner can record or correct an external payment report.',403);
   if(org.mode!=='Shared ownership')return fail('External payment reporting is being piloted with Mola first.',400);
   if(typeof x.entryId!=='string'||typeof x.token!=='string'||typeof x.payoutToken!=='string')return fail('Open the current funding request first.',400);
   const previous=await db.prepare('SELECT data FROM entries WHERE id=? AND org_id=?').bind(x.entryId,org.id).first<{data:string}>();
   if(!previous)return fail('Funding request unavailable.',404);
   const request=JSON.parse(previous.data) as Entry;if(request.type!=='request')return fail('Only funding requests support external payment reports.',400);
+  if(x.action==='voidPayout'?!permissions.isOwner:!canRecordPayout(permissions,request,row.owner,user.userId))return fail(x.action==='voidPayout'?'Only the workspace owner can correct a payout report.':'Only the owner, the founder who requested this funding, or an officer can record its payout.',403);
   const state=fundingState(request,org,row.owner,user.userId),actorName=org.members.find(m=>m.id===permissions.memberId)?.name||'Workspace owner',at=new Date().toISOString();
   let next:Entry,referenceKey='';
   if(x.action==='recordPayout'){
