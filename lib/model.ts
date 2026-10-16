@@ -1,6 +1,8 @@
 import {rateOn,type WeeklySchedule} from './schedule';
 import {obligationPastDue,type Deadline,type DeadlineChange} from './deadlines';
-export type Member={id:string;name:string;role:string;access?:{email:string;enabled:boolean;canReview:boolean;userId?:string;claimed?:boolean}};
+export type Member={id:string;name:string;role:string;access?:{email:string;enabled:boolean;canReview:boolean;userId?:string;claimed?:boolean};
+ // Founder-edited profile. photo holds the private R2 key; browsers only receive photoAt.
+ profile?:{bio?:string;location?:string;photo?:{key:string;mime:string;updatedAt:string};photoAt?:string}};
 export type Org={savingsGoals?:import("./founder-hub").SavingsGoal[];cashCheckpoints?:import("./founder-hub").CashCheckpoint[];collectionInstructions?:import('./collection-instructions').CollectionInstructions;activeAgreementId?:string;approvalPolicy?:import('./approval-policy').ApprovalPolicy;weeklySchedule?:WeeklySchedule;permissions?:{isOwner:boolean;memberId:string;canManage:boolean;canPublishAgreement?:boolean;canReview:boolean;role:string};accessHistory?:{at:string;actor:string;memberId:string;summary:string}[];weeklyMinimumMinor?:number;weeklyMinimumHistory?:{previousMinor:number;amountMinor:number;at:string;actor:string}[];id:string;name:string;currency:string;mode:string;members:Member[];accountLabel:string;accountHolder:string;accountLast4:string;recipientLabel:string;recipientCountry:string;recipientCurrency:string;recipientLast4:string;agreement:string;version:number};
 export type Review={bankReference?:string;actorName?:string;outcome:string;evidence:string;actor:string;at:string;obligationId:string;creditMinor:number};
 export type Approval={actor:string;actorName:string;at:string;memberId?:string};

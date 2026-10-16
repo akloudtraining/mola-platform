@@ -857,6 +857,10 @@
   :root[data-theme="dark"][data-workspace-brand="mola"] [data-sidebar="sidebar"][data-mobile="true"] .nav-account-icon .mola-icon .mi-accent{fill:#dabe81}
 }
 :root[data-theme="dark"][data-workspace-brand="mola"] .capital-total-foot b.not-set{color:#c4d8c5}
+:root[data-theme="dark"] .has-photo{background:#2d342a!important}
+:root[data-theme="dark"] .settings-photo small{color:#aebab2}
+:root[data-theme="dark"] .field-count{color:#a8b3ac}
+:root[data-theme="dark"][data-workspace-brand="mola"] .nav-account-icon.has-photo{box-shadow:0 0 0 2px #000000}
 
 /* hand tuning */
 /* Hand-tuned dark theme surfaces, appended after the generated rules. */

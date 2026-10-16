@@ -1,6 +1,16 @@
 // French interface catalogue, keyed by the exact English text the components render.
 // Edit entries here directly; anything missing falls back to English.
 export const fr:Record<string,string>={
+'Every founder in your group can see your photo and profile.':'Tous les fondateurs de votre groupe voient votre photo et votre profil.',
+'About you':'À propos de vous',
+'City, country':'Ville, pays',
+'What you do, what you bring to Mola':'Ce que vous faites, ce que vous apportez à Mola',
+'Add a photo':'Ajouter une photo',
+'Change photo':'Changer la photo',
+'Save profile':'Enregistrer le profil',
+'Profile saved':'Profil enregistré',
+'Profile photo updated':'Photo de profil mise à jour',
+'Photos are available in the live workspace.':'Les photos sont disponibles dans l’espace réel.',
  "Receipt screenshot · PNG or JPEG, up to 3 MB":"Capture du reçu · PNG ou JPEG, jusqu’à 3 Mo",
  "Upload the purchase receipt, invoice or bank confirmation. Every founder can view it.":"Téléversez le reçu d’achat, la facture ou la confirmation bancaire. Chaque fondateur peut le voir.",
  "View receipt":"Voir le reçu",

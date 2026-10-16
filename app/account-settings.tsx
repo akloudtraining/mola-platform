@@ -1,5 +1,10 @@
 'use client';
-import {useState,type FormEvent} from 'react';
+import {useRef,useState,type FormEvent} from 'react';
+import {toast} from 'sonner';
+import type {Org} from '@/lib/model';
+import {uploadAvatar} from '@/lib/avatar';
+import {saveWorkspaceRecord} from '@/lib/workspace-save';
+import MemberAvatar from './member-avatar';
 import {SetupIcon,AccountIcon,MailIcon,SystemIcon,SunIcon,MoonIcon,AppearanceIcon,LanguageIcon,LockIcon,SignOutIcon} from './mola-icons';
 import {THEME_KEY,LANGUAGE_KEY,themeChoice,languageChoice,savePreference,type ThemeChoice,type LanguageChoice} from './preferences';
 
@@ -31,12 +36,29 @@ function ChangeEmail({email}:{email:string}){
  </div>;
 }
 
-export default function AccountSettings({name,email,ownerTools}:{name:string;email:string;ownerTools?:{testWorkspace:boolean;blocked:()=>boolean}}){
+// Photo, a short introduction and a location, edited by the founder only. Photos are live-workspace only.
+function FounderProfile({org,onOrg,photos,name,email}:{org:Org;onOrg:(next:Org)=>void;photos:boolean;name:string;email:string}){
+ const me=org.members.find(m=>m.id===org.permissions?.memberId)!,[bio,setBio]=useState(me.profile?.bio||''),[location,setLocation]=useState(me.profile?.location||''),[busy,setBusy]=useState(''),file=useRef<HTMLInputElement>(null);
+ const changed=bio.trim()!==(me.profile?.bio||'')||location.trim()!==(me.profile?.location||'');
+ async function photo(f?:File){if(!f||busy)return;setBusy('photo');try{onOrg(await uploadAvatar(org.id,f));toast.success('Profile photo updated');}catch(e){toast.error((e as Error).message);}finally{setBusy('');if(file.current)file.current.value='';}}
+ async function save(e:FormEvent){e.preventDefault();if(busy||!changed)return;setBusy('text');try{const d=await saveWorkspaceRecord({action:'updateProfile',orgId:org.id,version:org.version,bio,location});onOrg(d.organization);toast.success('Profile saved');}catch(err){toast.error((err as Error).message);}finally{setBusy('');}}
+ return <form className="settings-profile" onSubmit={save}>
+  <div className="settings-photo"><MemberAvatar orgId={org.id} member={me} className="avatar light profile-photo"/><div><strong>{me.name||name}</strong><small translate="no">{email||'Email unavailable'}</small>{photos?<><button type="button" className="secondary" disabled={!!busy} onClick={()=>file.current?.click()}>{busy==='photo'?'Uploading…':me.profile?.photoAt?'Change photo':'Add a photo'}</button><input ref={file} type="file" accept="image/png,image/jpeg" hidden onChange={e=>photo(e.target.files?.[0])}/></>:<small>Photos are available in the live workspace.</small>}</div></div>
+  <label className="field">About you<textarea rows={3} maxLength={300} value={bio} onChange={e=>setBio(e.target.value)} placeholder="What you do, what you bring to Mola"/><small className="field-count">{bio.length}/300</small></label>
+  <label className="field">Location<input maxLength={80} value={location} onChange={e=>setLocation(e.target.value)} placeholder="City, country"/></label>
+  <p className="form-note">Every founder in your group can see your photo and profile.</p>
+  {changed&&<div className="form-actions"><button type="submit" className="primary" disabled={!!busy}>{busy==='text'?'Saving…':'Save profile'}</button></div>}
+ </form>;
+}
+
+export default function AccountSettings({name,email,ownerTools,org,onOrg,photos=true}:{name:string;email:string;ownerTools?:{testWorkspace:boolean;blocked:()=>boolean};org?:Org;onOrg?:(next:Org)=>void;photos?:boolean}){
+ const me=org?.members.find(m=>m.id===org.permissions?.memberId);
  // This screen only renders after the workspace loads in the browser, so stored choices can be read directly.
  const [theme,setTheme]=useState<ThemeChoice>(()=>typeof window==='undefined'?'system':themeChoice()),[language,setLanguage]=useState<LanguageChoice>(()=>typeof window==='undefined'?'en':languageChoice());
  return <section className="settings-page"><div className="settings-grid">
   <section className="panel settings-card"><div className="panel-header"><h2>My profile</h2><AccountIcon size={22}/></div><div className="settings-body">
-   <div className="settings-identity"><span className="avatar light">{name.slice(0,1).toUpperCase()||'—'}</span><div><strong>{name||'Signed-in user'}</strong><small translate="no">{email||'Email unavailable'}</small></div></div>
+   {!(org&&me&&onOrg)&&<div className="settings-identity"><MemberAvatar orgId={org?.id} member={me} fallback={name.slice(0,1).toUpperCase()||'—'}/><div><strong>{name||'Signed-in user'}</strong><small translate="no">{email||'Email unavailable'}</small></div></div>}
+   {org&&me&&onOrg&&<FounderProfile key={org.id+me.id} org={org} onOrg={onOrg} photos={photos} name={name} email={email}/>}
    <ChangeEmail email={email}/>
    <div className="settings-actions"><a className="secondary" href="/auth?mode=recover"><LockIcon size={18}/>Reset my password</a><a className="secondary" href="/auth?logout=1" target="_top"><SignOutIcon size={18}/>Sign out</a></div>
   </div></section>

@@ -588,3 +588,16 @@
   :root[data-workspace-brand="mola"] [data-sidebar="sidebar"][data-mobile="true"] .nav-account-icon .mola-icon .mi-accent{fill:#d6aa4a}
 }
 :root[data-workspace-brand="mola"] .capital-total-foot b.not-set{color:#c4d8c5;font-weight:600;font-style:italic}
+/* Founder profile photos */
+.has-photo{overflow:hidden;padding:0!important;background:#dfe7dc!important}
+.has-photo img{width:100%;height:100%;object-fit:cover;display:block}
+.settings-profile{display:grid;gap:14px;padding-bottom:4px}
+.settings-photo{display:flex;align-items:center;gap:16px;min-width:0}
+.settings-photo>div{min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:3px}
+.settings-photo strong{font-size:1rem;overflow-wrap:anywhere}
+.settings-photo small{font-size:.75rem;color:#6a7c71;overflow-wrap:anywhere}
+.settings-photo button{margin-top:8px;padding:8px 13px!important;font-size:.8125rem!important}
+.avatar.profile-photo{width:72px;height:72px;border-radius:50%;font-size:1.5rem}
+.field-count{align-self:flex-end;font-weight:400;font-size:.75rem;color:#7a8b80}
+.member-bio{max-width:340px;white-space:normal;line-height:1.45;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+:root[data-workspace-brand="mola"] .nav-account-icon.has-photo{border-radius:50%;box-shadow:0 0 0 2px #e1c27a}

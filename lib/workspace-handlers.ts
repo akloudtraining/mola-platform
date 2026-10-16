@@ -261,6 +261,13 @@ if(['scheduleSetup','scheduleRate','schedulePreview','scheduleGenerate'].include
  if(x.token!==token)return fail('The preview is out of date. Preview again before generating.',409);
  const created=new Date().toISOString();if(preview.records.length){const batchId=crypto.randomUUID();const reserve=db.prepare("UPDATE organizations SET data=json_set(data,'$.lastDuesBatch',?),version=version+1 WHERE id=? AND version=?").bind(batchId,org.id,row.version);const batch=preview.records.map(e=>{const entry={...e,created,submittedBy:user.userId,submittedName:'Workspace owner'};return db.prepare("INSERT OR IGNORE INTO entries (id,org_id,data,created) SELECT ?,?,?,? WHERE EXISTS (SELECT 1 FROM organizations WHERE id=? AND version=? AND json_extract(data,'$.lastDuesBatch')=?) AND NOT EXISTS (SELECT 1 FROM entries WHERE org_id=? AND json_extract(data,'$.type')='obligation' AND json_extract(data,'$.memberId')=? AND json_extract(data,'$.currency')=? AND json_extract(data,'$.date')=?)").bind(entry.id,org.id,JSON.stringify(entry),created,org.id,row.version+1,batchId,org.id,entry.memberId,entry.currency,entry.date);});const results=await db.batch([reserve,...batch]);if(!results[0].meta.changes)return fail('Schedule changed. Preview again.',409);return Response.json({generated:results.slice(1).reduce((n,r)=>n+(r.meta.changes||0),0)});}return Response.json({generated:0});
 }
+// Each linked founder edits only their own profile text; photos go through /api/avatar.
+if(x.action==='updateProfile'){
+ const memberId=permissions.memberId;if(!memberId)return fail('Link your founder account before editing your profile.',403);
+ if(!Number.isInteger(x.version)||typeof x.bio!=='string'||typeof x.location!=='string'||x.bio.length>300||x.location.length>80)return fail('Keep “About you” under 300 characters and the location under 80.',400);
+ const next={...org,version:row.version+1,members:org.members.map(m=>m.id===memberId?{...m,profile:{...m.profile,bio:x.bio.trim(),location:x.location.trim()}}:m)};
+ const result=await db.prepare('UPDATE organizations SET data=?,version=? WHERE id=? AND version=?').bind(JSON.stringify(next),next.version,x.orgId,x.version).run();if(!result.meta.changes)return fail('This organization changed. Refresh before saving again.',409);return resultOrg(next);
+}
 if(x.action==='weeklyMinimum'){
 if(org.weeklySchedule)return fail('Use the schedule’s effective-dated rate changes to update this minimum.',409);
 if(org.mode!=='Shared ownership')return fail('Weekly settings do not apply to this organization.',400);
