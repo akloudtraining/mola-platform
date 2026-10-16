@@ -1,6 +1,28 @@
 // French interface catalogue, keyed by the exact English text the components render.
 // Edit entries here directly; anything missing falls back to English.
 export const fr:Record<string,string>={
+ "An inaccurate payout report was excluded from reported spending. Its history remains. This does not reverse a bank transaction or record a refund.":"Une déclaration de versement inexacte a été exclue des dépenses déclarées. Son historique est conservé. Cela n’annule pas une opération bancaire et n’enregistre pas de remboursement.",
+ "As Alex, try agreement publishing and payout reporting using fictional details only.":"En tant qu’Alex, essayez la publication d’un accord et la déclaration d’un versement avec des données fictives uniquement.",
+ "Contributions, receipt reviews and payout reports will appear here.":"Les contributions, vérifications de reçus et déclarations de versements apparaîtront ici.",
+ "Current loaded statuses, not a historical closing balance. Dates select contribution payments, reported payouts and obligation due dates. Credits from any payment date reduce selected dues. Currencies stay separate.":"Statuts chargés actuellement, pas un solde de clôture historique. Les dates sélectionnent les paiements de contribution, les versements déclarés et les échéances des obligations. Les crédits de toute date de paiement réduisent les cotisations sélectionnées. Les devises restent séparées.",
+ "Payout reports":"Déclarations de versements",
+ "Payout reports ·":"Déclarations de versements ·",
+ "For a contribution, ask an authorized reviewer to record a correction with its reason. For an inaccurate payout report, the owner can void the report while preserving the original. A reporting correction never reverses money at the bank.":"Pour une contribution, demandez à un vérificateur autorisé d’enregistrer une correction avec son motif. Pour une déclaration de versement inexacte, le propriétaire peut annuler la déclaration tout en conservant l’original. Une correction de déclaration n’annule jamais un mouvement d’argent à la banque.",
+ "Keep the form open and read its message. An uncertain save may already have reached the server. Check the register or refresh the workspace before creating a new report. Retrying the same payment or payout report preserves its submission identity; starting a new report does not.":"Gardez le formulaire ouvert et lisez son message. Un enregistrement incertain a peut-être déjà atteint le serveur. Vérifiez le registre ou actualisez l’espace avant de créer une nouvelle déclaration. Réessayer la même contribution ou déclaration de versement conserve son identité de soumission ; commencer une nouvelle déclaration ne la conserve pas.",
+ "No payout reports in this range.":"Aucune déclaration de versement sur cette période.",
+ "No payouts have been reported for this request.":"Aucun versement n’a été déclaré pour cette demande.",
+ "No payouts reported":"Aucun versement déclaré",
+ "No. It compares the records currently in the app. It does not include an opening bank balance, unrecorded transfers or current investment values. Pending and provisional contributions stay separate, and payouts are owner reports. Reconcile against the bank statement before relying on available funds.":"Non. Il compare les enregistrements actuellement dans l’application. Il n’inclut ni solde bancaire d’ouverture, ni virements non enregistrés, ni valeurs actuelles des investissements. Les contributions en attente et provisoires restent séparées, et les versements sont des déclarations du propriétaire. Faites le rapprochement avec le relevé bancaire avant de vous fier aux fonds disponibles.",
+ "Record payments, dues or payouts to see them here.":"Enregistrez des contributions, des obligations ou des versements pour les voir ici.",
+ "Record a payment for this due":"Enregistrer un paiement pour cette échéance",
+ "Submit payment":"Soumettre le paiement",
+ "Record your payment":"Enregistrez votre paiement",
+ "Open Contributions and choose Record a payment. For a specific due, open it from your dues on Home.":"Ouvrez Contributions et choisissez Enregistrer un paiement. Pour une échéance précise, ouvrez-la depuis vos cotisations sur l’Accueil.",
+ "Send through your bank, then use Record a payment above to attach your screenshot.":"Envoyez par votre banque, puis utilisez Enregistrer un paiement ci-dessus pour joindre votre capture d’écran.",
+ "Record a payout":"Enregistrer un versement",
+ "Save payout":"Enregistrer le versement",
+ "Reported payouts":"Versements déclarés",
+ "Record payouts already sent outside this app. Reports are owner-provided evidence, not independent bank or recipient confirmation.":"Enregistrez les versements déjà effectués en dehors de cette application. Les déclarations sont des preuves fournies par le propriétaire, pas une confirmation indépendante de la banque ou du bénéficiaire.",
  "Not set yet":"Pas encore défini",
  "No weekly contribution amount has been set yet. The workspace owner sets it in Workspace setup, under weekly dues and cutoff, once the group agrees it.":"Aucun montant de contribution hebdomadaire n’a encore été défini. Le propriétaire de l’espace le définit dans Configuration de l’espace, sous cotisations hebdomadaires et heure limite, une fois que le groupe l’a convenu.",
  "Sign out":"Se déconnecter",
@@ -1778,7 +1800,7 @@ export const fr:Record<string,string>={
 };
 
 const pending=(n:string,verb:string)=>`${n} ${verb==='payment is'?'paiement en attente est admissible':'paiements en attente sont admissibles'} à votre vérification indépendante. Les restrictions concernant les contributeurs et les déclarants s’appliquent toujours.`;
-const activity:Record<string,string>={'contribution recorded':'contribution enregistrée','external payment reported':'paiement externe déclaré','overdue obligation':'obligation en retard','payment report voided':'déclaration de paiement annulée','rejected payment audited':'paiement refusé audité','contribution instructions updated':'instructions de contribution mises à jour','payment verified':'paiement vérifié','payment rejected':'paiement refusé','audited payment verified':'paiement audité vérifié','returned to pending review':'renvoyé en attente de vérification','owner reconciliation':'rapprochement par le propriétaire'};
+const activity:Record<string,string>={'contribution recorded':'contribution enregistrée','payout reported':'versement déclaré','overdue obligation':'obligation en retard','payment report voided':'déclaration de paiement annulée','rejected payment audited':'paiement refusé audité','contribution instructions updated':'instructions de contribution mises à jour','payment verified':'paiement vérifié','payment rejected':'paiement refusé','audited payment verified':'paiement audité vérifié','returned to pending review':'renvoyé en attente de vérification','owner reconciliation':'rapprochement par le propriétaire'};
 // Text that carries live values (counts, names, amounts, dates). The value groups are kept as they are.
 export const frPatterns:[RegExp,string|((...parts:string[])=>string)][]=[
  // Placeholder founder names in a new workspace.
@@ -1808,7 +1830,7 @@ export const frPatterns:[RegExp,string|((...parts:string[])=>string)][]=[
  [/^Version (\S+) · Internal approval only · Bank execution external$/,'Version $1 · Approbation interne uniquement · Exécution bancaire externe'],
  [/^Version (\S+) · (\d+) of (\d+) founders accepted$/,'Version $1 · $2 fondateurs sur $3 ont accepté'],
  [/^Version (\S+) published · (\d+) of (\d+) founders accepted\. Each founder accepts for themselves\.$/,'Version $1 publiée · $2 fondateurs sur $3 ont accepté. Chaque fondateur accepte pour lui-même.'],
- [/^(.+) · (contribution recorded|external payment reported|overdue obligation|payment report voided|rejected payment audited|contribution instructions updated|payment verified|payment rejected|audited payment verified|returned to pending review|owner reconciliation)$/,(who,what)=>`${who} · ${activity[what]}`],
+ [/^(.+) · (contribution recorded|payout reported|overdue obligation|payment report voided|rejected payment audited|contribution instructions updated|payment verified|payment rejected|audited payment verified|returned to pending review|owner reconciliation)$/,(who,what)=>`${who} · ${activity[what]}`],
  [/^(\d+) pending (payment is|payments are) eligible for your independent review\. Contributor and submitter restrictions still apply\.$/,pending],
  [/^(\d+) accounts linked · (\d+) active reviewers$/,'$1 comptes liés · $2 vérificateurs actifs'],
  [/^(\d+) approvals required · (\d+) designated founders$/,'$1 approbations requises · $2 fondateurs désignés'],

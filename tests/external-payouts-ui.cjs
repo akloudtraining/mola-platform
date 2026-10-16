@@ -16,9 +16,9 @@ function all(node,predicate,out=[]){if(Array.isArray(node))for(const n of node)a
 const text=n=>typeof n==='string'||typeof n==='number'?String(n):Array.isArray(n)?n.map(text).join(''):n?.props?text(n.props.children):'';
 const button=(tree,label)=>all(tree,n=>n.type==='button'&&text(n)===label)[0];const tick=()=>new Promise(r=>setImmediate(r));
 function setField(h,label,value){const node=all(h.render(),n=>n.type==='label'&&text(n).startsWith(label))[0];assert(node,label);const input=all(node,n=>['input','textarea'].includes(n.type))[0];input.props.onChange({target:{value,checked:value}});}
-function fill(h){button(h.render(),'Record external payment').props.onClick();setField(h,'Amount paid','600');setField(h,'Fees charged','5');setField(h,'Name of person','Alex Example');setField(h,'Unique transfer','Receipt test 100');setField(h,'Evidence reference','Fictional evidence reference');setField(h,'I confirm',true);}
+function fill(h){button(h.render(),'Record a payout').props.onClick();setField(h,'Amount paid','600');setField(h,'Fees charged','5');setField(h,'Name of person','Alex Example');setField(h,'Unique transfer','Receipt test 100');setField(h,'Evidence reference','Fictional evidence reference');setField(h,'I confirm',true);}
 (async()=>{
- assert(!button(harness({owner:false}).render(),'Record external payment'));assert(!button(harness({status:'Draft'}).render(),'Record external payment'));
+ assert(!button(harness({owner:false}).render(),'Record a payout'));assert(!button(harness({status:'Draft'}).render(),'Record a payout'));
  let h=harness();fill(h);let tree=h.render();assert(text(tree).includes('$605.00'));assert(text(tree).includes('$395.00'));
  const submit=all(tree,n=>n.type==='form')[0].props.onSubmit;submit({preventDefault(){}});submit({preventDefault(){}});assert.equal(h.calls.length,1);assert.deepEqual(h.busy,[true]);assert.equal(h.calls[0].token,'approval-snapshot');assert.equal(h.calls[0].orgId,'mola');const firstId=h.calls[0].submissionId;assert(firstId);
  button(tree,'Cancel').props.onClick();assert(h.states[0]);assert.equal(all(h.render(),n=>n.type==='fieldset')[0].props.disabled,true);h.reject();await tick();assert(h.states[0]);assert(text(h.render()).includes('could not be confirmed'));assert.deepEqual(h.busy,[true,false]);

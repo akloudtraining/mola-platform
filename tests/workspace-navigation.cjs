@@ -29,7 +29,7 @@ const all=(node,predicate,out=[])=>{if(Array.isArray(node)){node.forEach(child=>
  let tree=h.render();await h.find(tree,n=>n.type==='button'&&n.props['aria-label']==='Refresh workspace').props.onClick();tree=h.render();
  const visit=label=>{h.find(tree,n=>n.type==='SidebarMenuButton'&&h.text(n)===label).props.onClick();tree=h.render();};
  for(const label of ['Founder Hub','Contributions','Founders','Statements','Activity','Savings & planning','Contribution schedule','Opportunities','Funding requests','Company decisions','Accounts & recipients','Agreements & notes','Help & guides','Workspace setup']){
-  visit(label);assert.equal(h.find(tree,n=>n.type==='SidebarMenuButton'&&h.text(n)==='Ask Mola'),null,'Assistant is outside sidebar navigation');assert(h.find(tree,n=>n.type==='ask-mola'),'Floating assistant is available on every Mola page');const recordButtons=all(tree,n=>n.type==='button'&&h.text(n)==='Record contribution');
+  visit(label);assert.equal(h.find(tree,n=>n.type==='SidebarMenuButton'&&h.text(n)==='Ask Mola'),null,'Assistant is outside sidebar navigation');assert(h.find(tree,n=>n.type==='ask-mola'),'Floating assistant is available on every Mola page');const recordButtons=all(tree,n=>n.type==='button'&&h.text(n)==='Record a payment');
   assert.equal(recordButtons.length,label==='Contributions'?1:0,`Contribution action scope: ${label}`);
   const heading=h.find(tree,n=>n.props?.className==='page-heading');
   assert.equal(all(heading,n=>n.type==='button').length,['Contributions','Funding requests'].includes(label)?1:0,`Unrelated heading actions: ${label}`);
