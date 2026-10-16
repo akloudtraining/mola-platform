@@ -1,6 +1,8 @@
 // French interface catalogue, keyed by the exact English text the components render.
 // Edit entries here directly; anything missing falls back to English.
 export const fr:Record<string,string>={
+ "Edit draft":"Modifier le brouillon",
+ "Create draft":"Créer le brouillon",
  "An inaccurate payout report was excluded from reported spending. Its history remains. This does not reverse a bank transaction or record a refund.":"Une déclaration de versement inexacte a été exclue des dépenses déclarées. Son historique est conservé. Cela n’annule pas une opération bancaire et n’enregistre pas de remboursement.",
  "As Alex, try agreement publishing and payout reporting using fictional details only.":"En tant qu’Alex, essayez la publication d’un accord et la déclaration d’un versement avec des données fictives uniquement.",
  "Contributions, receipt reviews and payout reports will appear here.":"Les contributions, vérifications de reçus et déclarations de versements apparaîtront ici.",
