@@ -1,6 +1,16 @@
 // French interface catalogue, keyed by the exact English text the components render.
 // Edit entries here directly; anything missing falls back to English.
 export const fr:Record<string,string>={
+'Founder profiles, sign-in access and permissions.':'Profils des fondateurs, accès et autorisations.',
+'Get to know the people building Mola.':'Découvrez les personnes qui bâtissent Mola.',
+'A little about you and what you bring to Mola':'Un peu sur vous et ce que vous apportez à Mola',
+'Behind on dues':'En retard de cotisation',
+'Weekly contribution due':'Cotisation hebdomadaire due',
+'See dues':'Voir les cotisations',
+'View schedule':'Voir le calendrier',
+'No profile details yet.':'Pas encore de détails de profil.',
+'Add your photo and a few details':'Ajoutez votre photo et quelques détails',
+'Edit my profile':'Modifier mon profil',
 'Paid':'Payé',
 'Still owed':'Reste dû',
 'On track':'En bonne voie',

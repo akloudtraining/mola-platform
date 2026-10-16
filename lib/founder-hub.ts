@@ -1,4 +1,4 @@
-import {type Org,type Entry,money,configuredWeekly} from './model';
+import {type Org,type Entry,money,configuredWeekly,obligationStanding} from './model';
 import {treasuryStatement} from './treasury-statement';
 import {memberStatement} from './statements';
 
@@ -60,4 +60,14 @@ export function answerCompanyQuestion(org:Org,entries:Entry[],question:string,as
   answer=`Verified contributions: ${facts.verifiedContributions}. Pending: ${facts.pendingContributions}. Provisional owner reconciliation: ${facts.provisionalContributions}. Reported external spending: ${facts.reportedSpending}. These amounts are distinct from a bank balance.`;sources=[{label:'Group treasury statement',view:'statements'}];
  }else {answer='I can answer questions about your contributions, group totals, savings goals, the weekly schedule, bank checkpoints and adopted decisions. Broader company questions need the optional AI connection. Internet opportunity research is a separate planned feature.';sources=[{label:'Founder Hub',view:'overview'}];}
  return {answer,sources,asOf,mode:'records' as string};
+}
+
+// Group-wide dues signals for the Founder Hub: who has overdue dues, and the next due date within a week that isn't fully paid.
+export function duesAlerts(org:Org,entries:Entry[],now=new Date()){
+ const dues=entries.filter(e=>e.orgId===org.id&&e.type==='obligation'&&e.currency===org.currency).map(e=>({e,s:obligationStanding(e,entries,now.toISOString())}));
+ const behind=org.members.map(m=>({memberId:m.id,name:m.name,remaining:dues.filter(x=>x.e.memberId===m.id&&x.s.status==='Behind').reduce((t,x)=>t+x.s.remaining,0)})).filter(x=>x.remaining>0);
+ const today=now.toISOString().slice(0,10),week=new Date(now.getTime()+7*86400000).toISOString().slice(0,10);
+ const date=dues.filter(x=>x.s.status!=='Behind'&&x.s.status!=='Covered'&&x.e.date>=today&&x.e.date<=week).map(x=>x.e.date).sort()[0];
+ const cycle=date?dues.filter(x=>x.e.date===date):[];
+ return {behind,behindMinor:behind.reduce((t,x)=>t+x.remaining,0),next:date?{date,paid:cycle.filter(x=>x.s.status==='Covered').length,total:cycle.length,remainingMinor:cycle.reduce((t,x)=>t+x.s.remaining,0)}:null};
 }

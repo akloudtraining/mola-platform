@@ -615,3 +615,25 @@
 @media(max-width:700px){.dues-weeks{padding:0 14px 16px}}
 .dues-week>summary .badge{flex:none;white-space:nowrap}
 .dues-cutoff{display:flex;flex-direction:column;align-items:flex-start;gap:4px}
+/* Founder Hub: dues cards, and a rotating strip once there are more than three cards on wider screens */
+:root[data-workspace-brand="mola"] .hub-metric.metric-behind::before{background:#c2412d}
+:root[data-workspace-brand="mola"] .hub-metric.metric-behind>svg{background:#fbece8;color:#a3361f}
+:root[data-workspace-brand="mola"] .hub-metric.metric-due::before{background:#d7b86e}
+:root[data-workspace-brand="mola"] .hub-metric.metric-due>svg{background:#fbf3e1;color:#7a5d22}
+@media(min-width:701px){
+  :root[data-workspace-brand="mola"] .hub-metrics.hub-metrics-more{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:calc((100% - 2*18px)/3);overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;padding-bottom:2px}
+  :root[data-workspace-brand="mola"] .hub-metrics.hub-metrics-more::-webkit-scrollbar{display:none}
+  :root[data-workspace-brand="mola"] .hub-metrics.hub-metrics-more>.hub-metric{scroll-snap-align:start}
+}
+/* Founder directory (non-owner view of Founders) */
+.directory-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;padding:20px 22px 22px}
+.directory-card{display:flex;gap:14px;align-items:flex-start;padding:18px;border:1px solid #e1e7dd;border-radius:16px;background:#fff;min-width:0}
+.directory-card>div{min-width:0;flex:1}
+.avatar.directory-photo{width:56px;height:56px;border-radius:50%;font-size:1.2rem;flex:none}
+.directory-card h3{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:2px 0 4px;font-size:1rem;font-weight:650;overflow-wrap:anywhere}
+.directory-card h3 .badge{font-size:.6875rem;padding:2px 7px}
+.directory-line{margin:0;font-size:.8125rem;font-weight:600;color:#3d5a45}
+.directory-meta{margin:3px 0 0;font-size:.75rem;color:#6a7c71}
+.directory-bio{margin:8px 0 0;font-size:.8125rem;line-height:1.5;color:#4e6255;overflow-wrap:anywhere}
+.directory-card .text-button{margin-top:10px;font-size:.8125rem}
+@media(max-width:700px){.directory-grid{grid-template-columns:minmax(0,1fr);padding:14px}.directory-card{padding:16px}}

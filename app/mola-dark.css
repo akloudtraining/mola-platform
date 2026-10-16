@@ -865,9 +865,20 @@
 :root[data-theme="dark"] .dues-week>summary small{color:#aebab2}
 :root[data-theme="dark"] .dues-week>summary::after{border-right:2px solid #646b66;border-bottom:2px solid #646b66}
 :root[data-theme="dark"] .dues-week[open]>summary{border-bottom:1px solid #343832}
+:root[data-theme="dark"][data-workspace-brand="mola"] .hub-metric.metric-behind::before{background:#c2412d}
+:root[data-theme="dark"][data-workspace-brand="mola"] .hub-metric.metric-behind>svg{background:#2e1a14;color:#e1a598}
+:root[data-theme="dark"][data-workspace-brand="mola"] .hub-metric.metric-due::before{background:#d7b86e}
+:root[data-theme="dark"][data-workspace-brand="mola"] .hub-metric.metric-due>svg{background:#332a15;color:#e5d1a7}
+:root[data-theme="dark"] .directory-card{border:1px solid #3a4037;background:#161616}
+:root[data-theme="dark"] .directory-line{color:#bdd2c3}
+:root[data-theme="dark"] .directory-meta{color:#aebab2}
+:root[data-theme="dark"] .directory-bio{color:#bac8bf}
 
 /* hand tuning */
 /* Hand-tuned dark theme surfaces, appended after the generated rules. */
 :root[data-theme="dark"]{--mola-dark-page:#0e1511;--mola-dark-card:#151f19;--mola-dark-raised:#1b271f;--mola-dark-line:#26352b;--mola-dark-text:#e4ece5;--mola-dark-muted:#9fb2a4}
 :root[data-theme="dark"] body,:root[data-theme="dark"][data-workspace-brand="mola"] body{background:var(--mola-dark-page);color:var(--mola-dark-text)}
 :root[data-theme="dark"][data-workspace-brand="mola"] .is-clamped::after{background:#26352b url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4.5 6.5 8 10l3.5-3.5' fill='none' stroke='%23cfe3d2' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/12px no-repeat}
+
+:root[data-theme="dark"][data-workspace-brand="mola"] .hub-metric.metric-behind>svg{background:#3a1d17;color:#f0b3a5}
+:root[data-theme="dark"][data-workspace-brand="mola"] .hub-metric.metric-due>svg{background:#332a15;color:#e5d1a7}

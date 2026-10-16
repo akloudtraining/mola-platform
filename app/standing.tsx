@@ -2,26 +2,9 @@
 import {Org,Entry,money,obligationStanding} from '@/lib/model';
 import ObligationDeadline from './obligation-deadline';
 import {RecordTime} from './record-time';
-import MemberAvatar from './member-avatar';
 import {Table,TableHeader,TableHead,TableBody,TableRow,TableCell} from '@/components/ui/table';
 const CURRENCIES=['USD','CAD','XAF'];
 const dueLabel=(date:string)=>new Date(date+'T12:00:00Z').toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:date.slice(0,4)===String(new Date().getFullYear())?undefined:'numeric',timeZone:'UTC'});
-const sumBy=(rows:Entry[],c:string)=>rows.filter(e=>e.currency===c).reduce((s,e)=>s+e.amountMinor,0);
-const amounts=(rows:Entry[])=>CURRENCIES.map(c=>sumBy(rows,c)?`${money(sumBy(rows,c),c)} ${c}`:'').filter(Boolean).join(' · ');
-
-// One row per founder: who they are, what has been paid and reviewed, what they still owe, and whether anything is overdue.
-export function FounderRoster({org,entries}:{org:Org;entries:Entry[]}){
- const dues=entries.filter(e=>e.type==='obligation'),payments=entries.filter(e=>e.type==='contribution');
- return <section className="panel founder-roster"><div className="panel-header"><h2>{org.members.length} founders</h2></div><div className="table-wrap"><Table><TableHeader><TableRow><TableHead>Founder</TableHead><TableHead>Paid</TableHead><TableHead>Still owed</TableHead><TableHead>Standing</TableHead></TableRow></TableHeader><TableBody>{org.members.map(m=>{
-  const mine=payments.filter(e=>e.memberId===m.id),verified=mine.filter(e=>e.status==='Verified'),owner=mine.filter(e=>e.status==='Owner reconciled'),waiting=mine.filter(e=>['Awaiting verification','Screenshot required'].includes(e.status));
-  const rows=dues.filter(e=>e.memberId===m.id),late=rows.filter(e=>obligationStanding(e,entries).status==='Behind').length;
-  const owed=CURRENCIES.map(c=>{const n=rows.filter(e=>e.currency===c).reduce((s,e)=>s+obligationStanding(e,entries).remaining,0);return n?`${money(n,c)} ${c}`:'';}).filter(Boolean).join(' · ');
-  return <TableRow key={m.id}><TableCell><div className="member-name"><MemberAvatar orgId={org.id} member={m}/><span><strong>{m.name}</strong><small>{[m.role,m.profile?.location].filter(Boolean).join(' · ')}</small>{m.profile?.bio&&<small className="member-bio">{m.profile.bio}</small>}</span></div></TableCell>
-   <TableCell><span><strong>{amounts(verified)||'None verified'}</strong>{owner.length>0&&<small>Owner reconciled: {amounts(owner)}</small>}{waiting.length>0&&<small>Awaiting review: {amounts(waiting)}</small>}</span></TableCell>
-   <TableCell>{owed||'None'}</TableCell>
-   <TableCell><span className={'badge '+(late?'danger':rows.length?'green':'neutral')}>{late?`${late} overdue`:!rows.length?'No dues yet':owed?'On track':'Paid up'}</span></TableCell></TableRow>;
- })}</TableBody></Table></div></section>;
-}
 
 // Every recorded due, grouped by due date so a weekly cycle reads as one line. Opens the earliest week that still has money owed.
 export default function DuesLedger({org,entries,onAdd,reload,onBusy}:{org:Org;entries:Entry[];onAdd:()=>void;reload:()=>Promise<void>;onBusy?:(busy:boolean)=>void}){
