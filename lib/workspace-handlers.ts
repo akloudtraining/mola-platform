@@ -150,7 +150,7 @@ async function POST(req:Request){try{
    const revision=1+Math.max(0,...versions.results.map(r=>Number(JSON.parse(r.data).agreement?.revision)||0));
    if(!Number.isSafeInteger(revision))return fail('Agreement history needs review before another publication.',409);
    const at=new Date().toISOString(),actorName=org.members.find(m=>m.id===permissions.memberId)?.name||'Workspace owner';
-   const entry:Entry={id,orgId:org.id,type:'agreement',title,memberId:permissions.memberId||'',amountMinor:0,currency:org.currency,method:'Membership agreement',date:at.slice(0,10),reference:decisionReference,purpose:'Published membership agreement',status:'Published',created:at,submittedBy:user.userId,submittedName:actorName,agreement:{revision,body:x.body,decisionReference,digest,publishedAt:at,publishedBy:user.userId,publishedName:actorName,acceptances:[]}};
+   const entry:Entry={id,orgId:org.id,type:'agreement',title,memberId:permissions.memberId||'',amountMinor:0,currency:org.currency,method:'Operating agreement',date:at.slice(0,10),reference:decisionReference,purpose:'Published operating agreement',status:'Published',created:at,submittedBy:user.userId,submittedName:actorName,agreement:{revision,body:x.body,decisionReference,digest,publishedAt:at,publishedBy:user.userId,publishedName:actorName,acceptances:[]}};
    const next={...org,activeAgreementId:id,version:row.version+1};const nextData=JSON.stringify(next);
    const update=db.prepare('UPDATE organizations SET data=?,version=? WHERE id=? AND owner=? AND version=?').bind(nextData,next.version,org.id,user.userId,x.version);
    // The exact new organization snapshot prevents insertion after a lost version race.

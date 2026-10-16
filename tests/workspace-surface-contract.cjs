@@ -20,7 +20,8 @@ const sections = [
   ['Funding requests', "['requests','Funding requests'"],
   ['Governance', "['governance','Company decisions'"],
   ['Accounts & recipients', "['accounts','Accounts & recipients'"],
-  ['Agreements & notes', "['agreements','Agreements & notes'"],
+  ['Agreements', "['agreements','Agreements'"],
+  ['Notes', "['notes','Notes'"],
 ];
 
 const flows = [

@@ -183,3 +183,11 @@ export const SignOutIcon=icon('SignOutIcon',<>
   <path d="M11 4H6.5A1.5 1.5 0 0 0 5 5.5v13A1.5 1.5 0 0 0 6.5 20H11"/>
   <path className="mi-accent-stroke" strokeWidth={2} d="M10 12h9.5M16 8.5l3.5 3.5-3.5 3.5"/>
 </>);
+
+export const NotesIcon=icon('NotesIcon',<>
+  <rect className="mi-soft" x="5" y="4" width="14" height="16.5" rx="2.5"/>
+  <rect x="5" y="4" width="14" height="16.5" rx="2.5"/>
+  <path d="M8.5 10h7M8.5 13.5h7M8.5 17h4"/>
+  <circle className="mi-accent" cx="9" cy="4" r="1.6"/>
+  <circle className="mi-accent" cx="15" cy="4" r="1.6"/>
+</>);

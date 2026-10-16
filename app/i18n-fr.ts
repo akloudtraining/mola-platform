@@ -1,6 +1,14 @@
 // French interface catalogue, keyed by the exact English text the components render.
 // Edit entries here directly; anything missing falls back to English.
 export const fr:Record<string,string>={
+ "Operating agreement ·":"Accord d’exploitation ·",
+ "Published operating agreement":"Accord d’exploitation publié",
+ "Review the operating agreement":"Examiner l’accord d’exploitation",
+ "Agreements":"Accords",
+ "Operating agreement":"Accord d’exploitation",
+ "The rules every founder accepts, one published version at a time.":"Les règles que chaque fondateur accepte, une version publiée à la fois.",
+ "What each meeting discussed. Adopted decisions go in Company decisions.":"Ce qui a été discuté à chaque réunion. Les décisions adoptées vont dans Décisions de l’entreprise.",
+ "Notes":"Notes",
  "Edit draft":"Modifier le brouillon",
  "Create draft":"Créer le brouillon",
  "An inaccurate payout report was excluded from reported spending. Its history remains. This does not reverse a bank transaction or record a refund.":"Une déclaration de versement inexacte a été exclue des dépenses déclarées. Son historique est conservé. Cela n’annule pas une opération bancaire et n’enregistre pas de remboursement.",

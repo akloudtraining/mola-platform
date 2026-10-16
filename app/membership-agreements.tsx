@@ -14,7 +14,7 @@ export default function MembershipAgreements({org,entries,editDraft,onSaved,onBu
  const pending=useRef(false),current=currentAgreement(org,entries),owner=org.permissions?.canManage,publisher=owner||org.permissions?.canPublishAgreement;
  const versions=entries.filter(e=>e.orgId===org.id&&e.type==='agreement'&&e.agreement).sort((a,b)=>b.agreement!.revision-a.agreement!.revision);
  const member=org.members.find(m=>m.id===org.permissions?.memberId);
- const startPublish=()=>{setError('');setMessage('');setDraft({action:'publishAgreement',orgId:org.id,version:org.version,submissionId:crypto.randomUUID(),title:'Membership agreement · '+org.name,body:org.agreement,decisionReference:'',typedName:'',acknowledged:false});};
+ const startPublish=()=>{setError('');setMessage('');setDraft({action:'publishAgreement',orgId:org.id,version:org.version,submissionId:crypto.randomUUID(),title:'Operating agreement · '+org.name,body:org.agreement,decisionReference:'',typedName:'',acknowledged:false});};
  const startAcceptance=()=>{if(!current?.agreement?.canAccept)return;setError('');setMessage('');setDraft({action:'acceptAgreement',orgId:org.id,version:org.version,entryId:current.id,digest:current.agreement.digest,title:current.title,body:current.agreement.body,decisionReference:current.agreement.decisionReference,typedName:'',acknowledged:false});};
  const submit=async(e:FormEvent)=>{
   e.preventDefault();if(!draft||pending.current)return;pending.current=true;setBusy(true);onBusy(true);setError('');
@@ -26,7 +26,7 @@ export default function MembershipAgreements({org,entries,editDraft,onSaved,onBu
   }catch(e){setError((e as Error).message);}finally{pending.current=false;setBusy(false);onBusy(false);}
  };
  return <>
-  <section className="panel agreement-panel"><div className="panel-header"><h2>Membership agreement</h2><span className="badge neutral">{current?'Version '+current.agreement!.revision:'No published version'}</span></div>
+  <section className="panel agreement-panel"><div className="panel-header"><h2>Operating agreement</h2><span className="badge neutral">{current?'Version '+current.agreement!.revision:'No published version'}</span></div>
    <div className="agreement-body">
     {message&&<p className="agreement-confirmation" role="status">{message}</p>}
     {current?<><h3>{current.title}</h3><p className="muted">Published <RecordTime at={current.agreement!.publishedAt}/> · {current.agreement!.decisionReference}</p><div className="agreement-document">{current.agreement!.body}</div>

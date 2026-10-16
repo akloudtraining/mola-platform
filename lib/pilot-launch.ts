@@ -18,7 +18,7 @@ export function pilotLaunchSteps(org:Org,entries:Entry[]):PilotStep[]{
   {id:'goal',action:"Set the target and date",title:'Savings goal',prepared:!!row('goal')?.recorded,detail:(row('goal')?.recorded?row('goal')!.detail+'. ':'')+'The goal sets the weekly pace founders see. Use that pace when you record weekly dues next.'},
   {id:'schedule',action:"Set weekly dues & cutoff",title:'Weekly dues & cutoff',prepared:!!row('schedule')?.recorded,detail:row('schedule')?.detail||'Record the agreed weekly cycle.'},
   {id:'account',action:"Add account label & holder",title:'Collection account',prepared:!!row('account')?.recorded,detail:row('account')?.detail||'Record the agreed collection account.'},
-  {id:'agreement',action:"Publish the member agreement",title:'Membership agreement',prepared:!!agreement,detail:agreement?`Version ${agreement.agreement!.revision} published · ${accepted.size} of ${org.members.length} founders accepted. Each founder accepts for themselves.`:'Publish the group’s actual agreement and decision reference.'},
+  {id:'agreement',action:"Publish the member agreement",title:'Operating agreement',prepared:!!agreement,detail:agreement?`Version ${agreement.agreement!.revision} published · ${accepted.size} of ${org.members.length} founders accepted. Each founder accepts for themselves.`:'Publish the group’s actual agreement and decision reference.'},
   {id:'funding',action:"Set approvers & approval count",title:'Funding approvers',prepared:!!row('funding')?.recorded,detail:row('funding')?.detail||'Record the agreed internal approval rule.'}
  ];
 }

@@ -11,7 +11,8 @@ export const assistantPages=[
  {view:'requests',label:'Funding requests',aliases:['funding','withdrawals']},
  {view:'governance',label:'Company decisions',aliases:['decisions','governance','votes']},
  {view:'accounts',label:'Accounts & recipients',aliases:['accounts','bank details','payment instructions','recipients']},
- {view:'agreements',label:'Agreements & notes',aliases:['agreements','notes','meeting notes']},
+ {view:'agreements',label:'Operating agreement',aliases:['agreements','agreement','operating agreement']},
+ {view:'notes',label:'Meeting notes',aliases:['notes','meeting notes','minutes']},
  {view:'help',label:'Help & guides',aliases:['help','guides']},
  {view:'pilotsetup',label:'Workspace setup',aliases:['setup','diagnostics'],ownerOnly:true},
  {view:'settings',label:'My account',aliases:['settings','profile','my account']},
@@ -22,7 +23,7 @@ export function navigationIntent(question:string,isOwner=false){
  return assistantPages.find(p=>(!p.ownerOnly||isOwner)&&[p.label,...p.aliases].some(a=>normalize(a)===q))?.view||null;
 }
 export type AssistantResult={key:string;kind:'page'|'record'|'founder'|'goal';label:string;detail:string;view:string;entryId?:string};
-const views:Record<string,string>={contribution:'contributions',obligation:'members',request:'requests',note:'agreements',agreement:'agreements',decision:'governance',opportunity:'opportunities'};
+const views:Record<string,string>={contribution:'contributions',obligation:'members',request:'requests',note:'notes',agreement:'agreements',decision:'governance',opportunity:'opportunities'};
 // Input is the permission-filtered workspace response. Explicitly index display
 // fields; do not index sign-in emails, receipts, actor IDs or banking references.
 export function searchWorkspace(org:Org,entries:Entry[],query:string):AssistantResult[]{
