@@ -601,3 +601,17 @@
 .field-count{align-self:flex-end;font-weight:400;font-size:.75rem;color:#7a8b80}
 .member-bio{max-width:340px;white-space:normal;line-height:1.45;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 :root[data-workspace-brand="mola"] .nav-account-icon.has-photo{border-radius:50%;box-shadow:0 0 0 2px #e1c27a}
+/* Dues grouped by week (Contribution schedule) */
+.dues-weeks{display:grid;gap:10px;padding:0 22px 22px}
+.dues-week{border:1px solid #e1e7dd;border-radius:12px;overflow:hidden;background:#fff}
+.dues-week>summary{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;cursor:pointer;list-style:none}
+.dues-week>summary::-webkit-details-marker{display:none}
+.dues-week>summary strong{display:block;font-size:.9375rem}
+.dues-week>summary small{display:block;font-size:.75rem;color:#6a7c71;margin-top:4px;line-height:1.4}
+.dues-week>summary::after{content:"";flex:none;width:8px;height:8px;border-right:2px solid #8a9a8f;border-bottom:2px solid #8a9a8f;transform:rotate(45deg);margin-left:4px}
+.dues-week[open]>summary::after{transform:rotate(-135deg)}
+.dues-week>summary .badge{margin-left:auto}
+.dues-week[open]>summary{border-bottom:1px solid #edf0eb}
+@media(max-width:700px){.dues-weeks{padding:0 14px 16px}}
+.dues-week>summary .badge{flex:none;white-space:nowrap}
+.dues-cutoff{display:flex;flex-direction:column;align-items:flex-start;gap:4px}

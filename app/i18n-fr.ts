@@ -1,6 +1,16 @@
 // French interface catalogue, keyed by the exact English text the components render.
 // Edit entries here directly; anything missing falls back to English.
 export const fr:Record<string,string>={
+'Paid':'Payé',
+'Still owed':'Reste dû',
+'On track':'En bonne voie',
+'Paid up':'À jour',
+'No dues yet':'Aucune cotisation',
+'None verified':'Rien de vérifié',
+'Dues & balances':'Cotisations et soldes',
+'Submission cutoff':'Heure limite de soumission',
+'Create weekly dues above, or add a one-off amount and due date for a founder.':'Créez les cotisations hebdomadaires ci-dessus, ou ajoutez un montant ponctuel et une échéance pour un fondateur.',
+'Extra payments don’t cover future dues automatically. Record a one-off amount only if it isn’t already part of the weekly schedule.':'Les paiements supplémentaires ne couvrent pas automatiquement les cotisations futures. N’enregistrez un montant ponctuel que s’il ne fait pas déjà partie du calendrier hebdomadaire.',
 'Every founder in your group can see your photo and profile.':'Tous les fondateurs de votre groupe voient votre photo et votre profil.',
 'About you':'À propos de vous',
 'City, country':'Ville, pays',

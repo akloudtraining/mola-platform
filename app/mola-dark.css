@@ -861,6 +861,10 @@
 :root[data-theme="dark"] .settings-photo small{color:#aebab2}
 :root[data-theme="dark"] .field-count{color:#a8b3ac}
 :root[data-theme="dark"][data-workspace-brand="mola"] .nav-account-icon.has-photo{box-shadow:0 0 0 2px #000000}
+:root[data-theme="dark"] .dues-week{border:1px solid #3a4037;background:#161616}
+:root[data-theme="dark"] .dues-week>summary small{color:#aebab2}
+:root[data-theme="dark"] .dues-week>summary::after{border-right:2px solid #646b66;border-bottom:2px solid #646b66}
+:root[data-theme="dark"] .dues-week[open]>summary{border-bottom:1px solid #343832}
 
 /* hand tuning */
 /* Hand-tuned dark theme surfaces, appended after the generated rules. */
