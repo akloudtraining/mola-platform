@@ -1,0 +1,9 @@
+/* Graphite style: near-black page with a soft teal/blue glow, charcoal cards, white headings, mint accent. */
+:root[data-palette="ink"]{--mola-dark-page:#0b0d0f;--mola-dark-card:#15181b;--mola-dark-raised:#1c2024;--mola-dark-line:#272c31;--mola-dark-text:#eef1f3;--mola-dark-muted:#9aa3aa;--ink-mint:#5fdc8f}
+:root[data-palette="ink"] body,:root[data-palette="ink"][data-workspace-brand="mola"] body{background:radial-gradient(1100px 620px at 8% -8%,#1f3b3d66,transparent 62%),radial-gradient(900px 560px at 100% 0%,#2a334a55,transparent 60%),#0b0d0f fixed;color:var(--mola-dark-text)}
+:root[data-palette="ink"] h1,:root[data-palette="ink"] h2,:root[data-palette="ink"] h3{color:#f4f6f7}
+:root[data-palette="ink"][data-workspace-brand="mola"] .capital-hero{background:linear-gradient(135deg,#1a1e22 0%,#14171a 55%,#182326 100%)!important;border:1px solid #2a3035}
+:root[data-palette="ink"][data-workspace-brand="mola"] .capital-hero h2{color:#f4f6f7}
+:root[data-palette="ink"][data-workspace-brand="mola"] .capital-total>strong{color:var(--ink-mint)}
+:root[data-palette="ink"][data-workspace-brand="mola"] :is(.primary,.hero-record){background:#d9dde0!important;border-color:#d9dde0!important;color:#0f1214!important}
+:root[data-palette="ink"][data-workspace-brand="mola"] .is-clamped::after{background-color:#272c31}

@@ -6,7 +6,7 @@ import {uploadAvatar} from '@/lib/avatar';
 import {saveWorkspaceRecord} from '@/lib/workspace-save';
 import MemberAvatar from './member-avatar';
 import {SetupIcon,AccountIcon,MailIcon,SystemIcon,SunIcon,MoonIcon,AppearanceIcon,LanguageIcon,LockIcon,SignOutIcon} from './mola-icons';
-import {THEME_KEY,LANGUAGE_KEY,themeChoice,languageChoice,savePreference,type ThemeChoice,type LanguageChoice} from './preferences';
+import {THEME_KEY,LANGUAGE_KEY,PALETTE_KEY,themeChoice,languageChoice,paletteChoice,savePreference,type ThemeChoice,type LanguageChoice,type PaletteChoice} from './preferences';
 
 // Language names stay in their own language, so those options opt out of translation.
 function Choice<T extends string>({label,value,options,onChange,fixedLabels=false}:{label:string;value:T;options:{value:T;label:string;icon?:React.ReactNode}[];onChange:(value:T)=>void;fixedLabels?:boolean}){
@@ -54,7 +54,7 @@ function FounderProfile({org,onOrg,photos,name,email}:{org:Org;onOrg:(next:Org)=
 export default function AccountSettings({name,email,ownerTools,org,onOrg,photos=true}:{name:string;email:string;ownerTools?:{testWorkspace:boolean;blocked:()=>boolean};org?:Org;onOrg?:(next:Org)=>void;photos?:boolean}){
  const me=org?.members.find(m=>m.id===org.permissions?.memberId);
  // This screen only renders after the workspace loads in the browser, so stored choices can be read directly.
- const [theme,setTheme]=useState<ThemeChoice>(()=>typeof window==='undefined'?'system':themeChoice()),[language,setLanguage]=useState<LanguageChoice>(()=>typeof window==='undefined'?'en':languageChoice());
+ const [theme,setTheme]=useState<ThemeChoice>(()=>typeof window==='undefined'?'system':themeChoice()),[language,setLanguage]=useState<LanguageChoice>(()=>typeof window==='undefined'?'en':languageChoice()),[palette,setPalette]=useState<PaletteChoice>(()=>typeof window==='undefined'?'mola':paletteChoice());
  return <section className="settings-page"><div className="settings-grid">
   <section className="panel settings-card"><div className="panel-header"><h2>My profile</h2><AccountIcon size={22}/></div><div className="settings-body">
    {!(org&&me&&onOrg)&&<div className="settings-identity"><MemberAvatar orgId={org?.id} member={me} fallback={name.slice(0,1).toUpperCase()||'—'}/><div><strong>{name||'Signed-in user'}</strong><small translate="no">{email||'Email unavailable'}</small></div></div>}
@@ -63,8 +63,9 @@ export default function AccountSettings({name,email,ownerTools,org,onOrg,photos=
    <div className="settings-actions"><a className="secondary" href="/auth?mode=recover"><LockIcon size={18}/>Reset my password</a><a className="secondary" href="/auth?logout=1" target="_top"><SignOutIcon size={18}/>Sign out</a></div>
   </div></section>
   <section className="panel settings-card"><div className="panel-header"><h2>Appearance</h2><AppearanceIcon size={22}/></div><div className="settings-body">
-   <p>Choose a theme for this device. System follows your phone or computer setting.</p>
-   <Choice label="Theme" value={theme} onChange={v=>{setTheme(v);savePreference(THEME_KEY,v);}} options={[{value:'system',label:'System',icon:<SystemIcon size={18}/>},{value:'light',label:'Light',icon:<SunIcon size={18}/>},{value:'dark',label:'Dark',icon:<MoonIcon size={18}/>}]}/>
+   <p>Choose a style and theme for this device. System follows your phone or computer setting.</p>
+   <Choice label="Style" value={palette} onChange={v=>{setPalette(v);savePreference(PALETTE_KEY,v);}} options={[{value:'mola',label:'Mola green'},{value:'ink',label:'Graphite'}]}/>
+   {palette==='ink'?<p className="form-note">Graphite is a dark style, so it ignores the theme setting. It only changes this device.</p>:<Choice label="Theme" value={theme} onChange={v=>{setTheme(v);savePreference(THEME_KEY,v);}} options={[{value:'system',label:'System',icon:<SystemIcon size={18}/>},{value:'light',label:'Light',icon:<SunIcon size={18}/>},{value:'dark',label:'Dark',icon:<MoonIcon size={18}/>}]}/>}
   </div></section>
   <section className="panel settings-card"><div className="panel-header"><h2>Language</h2><LanguageIcon size={22}/></div><div className="settings-body">
    <p>English is the default. Device language uses French when your device is set to French.</p>

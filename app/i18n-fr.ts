@@ -1,6 +1,10 @@
 // French interface catalogue, keyed by the exact English text the components render.
 // Edit entries here directly; anything missing falls back to English.
 export const fr:Record<string,string>={
+'Mola green':'Vert Mola',
+'Graphite':'Graphite',
+'Graphite is a dark style, so it ignores the theme setting. It only changes this device.':'Graphite est un style sombre : il ignore le réglage du thème. Il ne change que cet appareil.',
+'Choose a style and theme for this device. System follows your phone or computer setting.':'Choisissez un style et un thème pour cet appareil. Système suit le réglage de votre téléphone ou ordinateur.',
 'Founder profiles, sign-in access and permissions.':'Profils des fondateurs, accès et autorisations.',
 'Get to know the people building Mola.':'Découvrez les personnes qui bâtissent Mola.',
 'A little about you and what you bring to Mola':'Un peu sur vous et ce que vous apportez à Mola',
