@@ -22,28 +22,31 @@ function harness(){
 const button=(h,tree,text)=>h.find(tree,n=>n.type==='button'&&n.props.children===text);
 function prepare(h){let tree=h.render();button(h,tree,'Link my founder account').props.onClick();tree=h.render();assert.equal(h.state[0].memberId,'','No founder slot is selected automatically');assert.equal(h.all(tree,n=>n.type==='SelectItem').length,1,'Assigned or already linked founder accounts cannot be chosen');h.find(tree,n=>n.type==='Select').props.onValueChange('founder-1');tree=h.render();h.find(tree,n=>n.type==='input').props.onChange({target:{value:'Fictional Owner'}});tree=h.render();h.find(tree,n=>n.type==='Checkbox').props.onCheckedChange(true);return h.render();}
 async function checkWorkspaceGuard(){
- const state=[],refs=[];let cursor=0,refCursor=0;
+ const state=[],refs=[];let cursor=0,refCursor=0,workspaceLoad,backgroundRefresh,reads=0;
  const org={id:'fictional-org',name:'Fictional Mola',mode:'Shared ownership',currency:'USD',members:[{id:'founder-1',name:'Founder 1',role:'Name pending'}],permissions:{isOwner:true,canManage:true,memberId:''}};
  const mod={exports:{}};
  const req=name=>{
-  if(name==='react')return {useState:initial=>{const i=cursor++;if(!(i in state))state[i]=initial;return [state[i],value=>state[i]=typeof value==='function'?value(state[i]):value];},useRef:initial=>{const i=refCursor++;return refs[i]||(refs[i]={current:initial});},useCallback:fn=>fn,useEffect(){}};
+  if(name==='react')return {useState:initial=>{const i=cursor++;if(!(i in state))state[i]=initial;return [state[i],value=>state[i]=typeof value==='function'?value(state[i]):value];},useRef:initial=>{const i=refCursor++;return refs[i]||(refs[i]={current:initial});},useCallback:fn=>fn,useEffect:(fn,deps)=>{if(deps?.length===1&&typeof deps[0]==='function')workspaceLoad=deps[0];if(deps?.length===3&&deps[0]===workspaceLoad)backgroundRefresh=fn;}};
   if(name==='react/jsx-runtime')return {jsx:(type,props)=>({type,props}),jsxs:(type,props)=>({type,props})};
-  if(name==='@/lib/workspace-load')return {readWorkspace:async()=>({organizations:[org,{...org,id:'second-org',name:'Fictional Second'}],entries:[],name:'Fictional Owner',email:'owner@example.test'}),WorkspaceLoadError:class extends Error{}};
+  if(name==='@/lib/workspace-load')return {readWorkspace:async()=>(reads++,{organizations:[org,{...org,id:'second-org',name:'Fictional Second'}],entries:[],name:'Fictional Owner',email:'owner@example.test'}),WorkspaceLoadError:class extends Error{}};
   if(name==='@/lib/model')return {money:n=>String(n),weeklyMinimum:()=>10000};
   if(name.startsWith('./'))return {default:name==='./member-access'?'MemberAccess':name==='./governance'?'Governance':name==='./owner-founder-link'?'OwnerFounderLink':'Child'};
   return new Proxy({},{get:(_,key)=>String(key)});
  };
+ global.window={location:{search:'',pathname:'/'},history:{replaceState(){}}};
  vm.runInThisContext('(function(require,module,exports){'+compile('app/page.tsx')+'\n})')(req,mod,mod.exports);
  const find=harness().find;
+ // The header refresh button and organization picker were removed. The page loads on mount and refreshes on a 30-second timer, which is the remaining way the selected organization can change.
+ const tickRefresh=()=>{let timer;const realInterval=global.setInterval;global.document={visibilityState:'visible'};global.setInterval=fn=>{timer=fn;return 0;};try{backgroundRefresh();}finally{global.setInterval=realInterval;}timer();};
  const render=()=>{cursor=0;refCursor=0;return mod.exports.default();};
  const text=node=>typeof node==='string'?node:Array.isArray(node)?node.map(text).join(''):node?.props?text(node.props.children):'';
  const nav=(tree,label)=>find(tree,n=>n.type==='SidebarMenuButton'&&text(n).includes(label));
- let tree=render();await find(tree,n=>n.type==='button'&&n.props['aria-label']==='Refresh workspace').props.onClick();tree=render();nav(tree,'Founders').props.onClick();tree=render();
+ let tree=render();await workspaceLoad();tree=render();nav(tree,'Founders').props.onClick();tree=render();
  const ownerSetup=find(tree,n=>n.type==='MemberAccess').props.ownerSetup;assert.equal(ownerSetup.type,'OwnerFounderLink');assert.equal(ownerSetup.props.email,'owner@example.test');
  ownerSetup.props.onBusy(true);tree=render();nav(tree,'Company decisions').props.onClick();tree=render();assert(find(tree,n=>n.type==='MemberAccess'),'Pending linking cannot unmount the member setup view');assert.equal(find(tree,n=>n.type==='Governance'),null);
- const selector=find(tree,n=>n.props?.label==='Organization');selector.props.onChange('second-org');tree=render();assert.equal(find(tree,n=>n.type==='MemberAccess').props.org.id,'fictional-org','Pending save cannot change the organization');
- assert.equal(find(tree,n=>n.type==='button'&&n.props['aria-label']==='Refresh workspace').props.disabled,true);
- ownerSetup.props.onBusy(false);tree=render();nav(tree,'Company decisions').props.onClick();tree=render();assert(find(tree,n=>n.type==='Governance'),'Navigation resumes after save completion');
+ const before=reads;tickRefresh();tree=render();assert.equal(find(tree,n=>n.type==='MemberAccess').props.org.id,'fictional-org','Pending save cannot change the organization');
+ assert.equal(reads,before,'Background refresh is paused while the link is saving');
+ ownerSetup.props.onBusy(false);tree=render();tickRefresh();assert.equal(reads,before+1,'Background refresh resumes after save completion');nav(tree,'Company decisions').props.onClick();tree=render();assert(find(tree,n=>n.type==='Governance'),'Navigation resumes after save completion');
 }
 (async()=>{
  let h=harness(),tree=prepare(h);h.update({org:{...h.props().org,version:8,members:[{id:'founder-1',name:'Changed elsewhere',role:'Member'}]},email:'different@example.test'});tree=h.render();assert.equal(h.state[0].email,'owner@example.test');

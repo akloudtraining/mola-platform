@@ -2,13 +2,13 @@
 const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm'),assert=require('node:assert/strict'),ts=require('typescript');
 const root=path.resolve(__dirname,'..'),originalFetch=global.fetch;
 function harness(){
- const state=[],refs=[],calls=[],receiptCalls=[],messages=[],cache=new Map();let cursor=0,refCursor=0,resolve,reject,records=[],lastSaved;
+ const state=[],refs=[],calls=[],receiptCalls=[],messages=[],cache=new Map();let cursor=0,refCursor=0,resolve,reject,records=[],lastSaved,workspaceLoad;
  const org={id:'fictional-org',name:'Fictional Mola',mode:'Shared ownership',currency:'USD',members:[{id:'alice',name:'Fictional Alice',role:'Member'},{id:'bob',name:'Fictional Bob',role:'Member'}],permissions:{isOwner:false,canManage:false,memberId:'alice'}};
  const compile=file=>ts.transpileModule(fs.readFileSync(path.join(root,file),'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022,jsx:ts.JsxEmit.ReactJSX}}).outputText;
  global.fetch=async(url,init)=>{if(String(url).startsWith('/api/receipt?')){assert.equal(init.method,'POST');receiptCalls.push(String(url));return Response.json({entry:{...lastSaved,status:'Awaiting verification',hasReceipt:true,canViewReceipt:true,canUploadReceipt:false}});}assert.equal(url,'/api/workspace');assert.equal(init.method,'POST');calls.push(JSON.parse(init.body));return new Promise((yes,no)=>{resolve=yes;reject=no;});};
  function load(file){if(cache.has(file))return cache.get(file).exports;const mod={exports:{}};cache.set(file,mod);vm.runInThisContext('(function(require,module,exports){'+compile(file)+'\n})',{filename:file})(reqFor(file),mod,mod.exports);return mod.exports;}
  function reqFor(file){return name=>{
-  if(name==='react')return {useState:initial=>{const i=cursor++;if(!(i in state))state[i]=initial;return [state[i],v=>state[i]=typeof v==='function'?v(state[i]):v];},useRef:initial=>{const i=refCursor++;return refs[i]||(refs[i]={current:initial});},useCallback:fn=>fn,useEffect(){}};
+  if(name==='react')return {useState:initial=>{const i=cursor++;if(!(i in state))state[i]=initial;return [state[i],v=>state[i]=typeof v==='function'?v(state[i]):v];},useRef:initial=>{const i=refCursor++;return refs[i]||(refs[i]={current:initial});},useCallback:fn=>fn,useEffect:(fn,deps)=>{if(file==='app/page.tsx'&&deps?.length===1&&typeof deps[0]==='function')workspaceLoad=deps[0];}};
   if(name==='react/jsx-runtime')return {jsx:(type,props)=>({type,props}),jsxs:(type,props)=>({type,props})};
   if(name==='@/lib/workspace-load')return {readWorkspace:async()=>({organizations:[org],entries:records,name:'Fictional Alice',email:'alice@example.test'}),WorkspaceLoadError:class extends Error{}};
   if(name==='sonner')return {Toaster:'Toaster',toast:{success:s=>messages.push(s),error:s=>messages.push(s)}};
@@ -18,15 +18,17 @@ function harness(){
  };}
  const text=node=>typeof node==='string'?node:Array.isArray(node)?node.map(text).join(''):node?.props?text(node.props.children):'';
  function find(node,predicate){if(Array.isArray(node)){for(const child of node){const hit=find(child,predicate);if(hit)return hit;}return null;}if(!node||typeof node!=='object')return null;if(predicate(node))return node;return find(node.props?.children,predicate);}
+ global.window={location:{search:'',pathname:'/'},history:{replaceState(){}}};
  const Page=load('app/page.tsx').default,render=()=>{cursor=0;refCursor=0;return Page();};
  const button=(tree,label)=>find(tree,n=>n.type==='button'&&text(n).trim()===label);
  const field=(tree,label)=>find(find(tree,n=>n.type==='label'&&text(n).startsWith(label)),n=>n.type==='input'||n.type==='textarea');
- return {org,calls,receiptCalls,messages,text,render,button,field,find,respond:(status,data)=>{if(data.entry)lastSaved=data.entry;resolve(Response.json(data,{status}));},fail:()=>reject(new Error('Fictional interrupted connection')),setRecords:next=>records=next};
+ return {org,load:()=>workspaceLoad(),calls,receiptCalls,messages,text,render,button,field,find,respond:(status,data)=>{if(data.entry)lastSaved=data.entry;resolve(Response.json(data,{status}));},fail:()=>reject(new Error('Fictional interrupted connection')),setRecords:next=>records=next};
 }
 const all=(node,predicate,out=[])=>{if(Array.isArray(node)){node.forEach(child=>all(child,predicate,out));return out;}if(!node||typeof node!=='object')return out;if(predicate(node))out.push(node);all(node.props?.children,predicate,out);return out;};
 (async()=>{
  const h=harness();h.org.permissions.isOwner=true;h.org.permissions.canManage=true;
- let tree=h.render();await h.find(tree,n=>n.type==='button'&&n.props['aria-label']==='Refresh workspace').props.onClick();tree=h.render();
+ // The page loads the workspace from its mount effect; the header refresh button no longer exists.
+ let tree=h.render();await h.load();tree=h.render();
  const visit=label=>{h.find(tree,n=>n.type==='SidebarMenuButton'&&h.text(n)===label).props.onClick();tree=h.render();};
  for(const label of ['Founder Hub','Contributions','Founders','Statements','Activity','Savings & planning','Contribution schedule','Opportunities','Funding requests','Company decisions','Accounts & recipients','Agreements','Notes','Help & guides','Workspace setup']){
   visit(label);assert.equal(h.find(tree,n=>n.type==='SidebarMenuButton'&&h.text(n)==='Ask Mola'),null,'Assistant is outside sidebar navigation');assert(h.find(tree,n=>n.type==='ask-mola'),'Floating assistant is available on every Mola page');const recordButtons=all(tree,n=>n.type==='button'&&h.text(n)==='Record a payment');

@@ -3,7 +3,7 @@ const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm'),asse
 const root=path.resolve(__dirname,'..');
 const compile=file=>ts.transpileModule(fs.readFileSync(path.join(root,file),'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022,jsx:ts.JsxEmit.ReactJSX}}).outputText;
 function harness(){
- const state=[],refs=[],calls=[],cache=new Map(),messages=[];let cursor=0,refCursor=0,resolve,reject;
+ const state=[],refs=[],calls=[],cache=new Map(),messages=[];let cursor=0,refCursor=0,resolve,reject,workspaceLoad;
  const org={id:'fictional-org',name:'Fictional Mola',mode:'Shared ownership',currency:'USD',members:[{id:'alice',name:'Fictional Alice',role:'Member'},{id:'bob',name:'Fictional Bob',role:'Member'}],permissions:{isOwner:false,canManage:false,memberId:'bob'}};
  const due={id:'jan',orgId:org.id,type:'obligation',memberId:'alice',title:'Fictional first due',date:'2026-11-01',currency:'USD',amountMinor:10000,created:'2026-10-04T00:00:00Z'};
  const nextDue={...due,id:'feb',title:'Fictional next due',date:'2026-11-08',amountMinor:5000};
@@ -12,7 +12,7 @@ function harness(){
  let records=[due,nextDue,payment];
  function load(file){if(cache.has(file))return cache.get(file).exports;const mod={exports:{}};cache.set(file,mod);vm.runInThisContext('(function(require,module,exports){'+compile(file)+'\n})',{filename:file})(reqFor(file),mod,mod.exports);return mod.exports;}
  function reqFor(file){return name=>{
-  if(name==='react')return {useState:initial=>{const i=cursor++;if(!(i in state))state[i]=initial;return [state[i],value=>state[i]=typeof value==='function'?value(state[i]):value];},useRef:initial=>{const i=refCursor++;return refs[i]||(refs[i]={current:initial});},useCallback:fn=>fn,useEffect(){}};
+  if(name==='react')return {useState:initial=>{const i=cursor++;if(!(i in state))state[i]=initial;return [state[i],value=>state[i]=typeof value==='function'?value(state[i]):value];},useRef:initial=>{const i=refCursor++;return refs[i]||(refs[i]={current:initial});},useCallback:fn=>fn,useEffect:(fn,deps)=>{if(file==='app/page.tsx'&&deps?.length===1&&typeof deps[0]==='function')workspaceLoad=deps[0];}};
   if(name==='react/jsx-runtime')return {jsx:(type,props)=>({type,props}),jsxs:(type,props)=>({type,props})};
   if(name==='@/lib/workspace-load')return {readWorkspace:async()=>({organizations:[org],entries:records,name:'Fictional Bob',email:'bob@example.test'}),WorkspaceLoadError:class extends Error{}};
   if(name==='@/lib/workspace-save')return {saveWorkspaceRecord:body=>{calls.push(body);return new Promise((yes,no)=>{resolve=yes;reject=no;});}};
@@ -23,13 +23,16 @@ function harness(){
  };}
  function find(node,predicate){if(Array.isArray(node)){for(const child of node){const r=find(child,predicate);if(r)return r;}return null;}if(!node||typeof node!=='object')return null;if(typeof node.type==='function'&&node.type.name==='ContributionReviewFields')return find(node.type(node.props),predicate);if(predicate(node))return node;return find(node.props?.children,predicate);}
  const text=node=>typeof node==='string'?node:Array.isArray(node)?node.map(text).join(''):node?.props?text(node.props.children):'';
+ global.window={location:{search:'',pathname:'/'},history:{replaceState(){}}};
  const Page=load('app/page.tsx').default;
  const render=()=>{cursor=0;refCursor=0;return Page();};
  const button=(tree,label)=>find(tree,n=>n.type==='button'&&text(n).trim()===label);
  const field=(tree,label)=>{const parent=find(tree,n=>n.type==='label'&&text(n).startsWith(label));return find(parent,n=>n.type==='input'||n.type==='textarea');};
  const choice=(tree,label)=>{const parent=find(tree,n=>n.type==='label'&&text(n).startsWith(label));return find(parent,n=>n.type==='Select');};
- async function open(){let tree=render();await find(tree,n=>n.type==='button'&&n.props['aria-label']==='Refresh workspace').props.onClick();tree=render();find(tree,n=>n.type==='founder-hub').props.onOpen(payment);tree=render();button(tree,'Verify / review payment').props.onClick();return render();}
- return {render,find,text,button,field,choice,open,calls,payment,records:()=>records,updateRecords:next=>records=next,complete:data=>resolve(data),fail:message=>reject(new Error(message)),messages};
+ // The page loads the workspace from its mount effect; the header refresh button no longer exists.
+ const reload=()=>workspaceLoad();
+ async function open(){let tree=render();await reload();tree=render();find(tree,n=>n.type==='founder-hub').props.onOpen(payment);tree=render();button(tree,'Verify / review payment').props.onClick();return render();}
+ return {render,reload,find,text,button,field,choice,open,calls,payment,records:()=>records,updateRecords:next=>records=next,complete:data=>resolve(data),fail:message=>reject(new Error(message)),messages};
 }
 (async()=>{
  let h=harness(),tree=await h.open();
@@ -37,7 +40,7 @@ function harness(){
  assert.match(h.text(h.find(tree,n=>n.props?.className==='review-impact')),/Remaining before.*\$60\.00.*Remaining after.*\$60\.00/);
  h.field(tree,'Evidence reference').props.onChange({target:{value:'Updated receiving-account evidence'}});tree=h.render();
  // A refresh between opening and saving cannot substitute a newer review or allocation.
- h.updateRecords(h.records().map(e=>e.id===h.payment.id?{...e,status:'Rejected',reviews:[...e.reviews,{outcome:'Rejected',creditMinor:0,obligationId:''}]}:e));await h.find(tree,n=>n.type==='button'&&n.props['aria-label']==='Refresh workspace').props.onClick();tree=h.render();
+ h.updateRecords(h.records().map(e=>e.id===h.payment.id?{...e,status:'Rejected',reviews:[...e.reviews,{outcome:'Rejected',creditMinor:0,obligationId:''}]}:e));await h.reload();tree=h.render();
  assert.equal(h.field(tree,'Amount to credit').props.value,'40.00');
  const form=h.find(tree,n=>n.type==='form'),first=form.props.onSubmit({preventDefault(){}}),second=form.props.onSubmit({preventDefault(){}});assert.equal(h.calls.length,1);assert.equal(h.calls[0].credit,'40.00');assert.equal(h.calls[0].obligationId,'jan');assert.equal(h.calls[0].reviewCount,1);assert.equal(h.calls[0].reviewSnapshot,undefined);
  tree=h.render();assert.equal(h.find(tree,n=>n.type==='fieldset').props.disabled,true);h.find(tree,n=>n.type==='Dialog'&&n.props.open).props.onOpenChange(false);assert(h.find(h.render(),n=>n.type==='form'),'Pending save cannot discard the review');
