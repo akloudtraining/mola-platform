@@ -48,22 +48,26 @@ assert.equal(document.title,'Collective — Investment Workspace');
 assert.equal(icons[0].getAttribute('href'),'/favicon.svg');assert.equal(icons[0].getAttribute('type'),'image/svg+xml');
 assert.equal(icons[1].getAttribute('href'),'/favicon.svg');assert.equal(icons[1].getAttribute('type'),null);
 async function checkSelectedWorkspace(){
- const state=[],refs=[];let cursor=0,refCursor=0;
+ const state=[],refs=[];let cursor=0,refCursor=0,workspaceLoad;
  const common={version:1,members:[{id:'founder-1',name:'Fictional Member',role:'Member'}],permissions:{isOwner:true,canManage:true,memberId:''},accountLabel:'',accountHolder:'',accountLast4:'',recipientLabel:'',recipientCountry:'',recipientLast4:'',agreement:''};
  const mola={...common,id:'fictional-account:mola',name:'Mola Holdings',currency:'USD',recipientCurrency:'USD',mode:'Shared ownership'};
  const land={...common,id:'fictional-account:cameroon',name:'Cameroon land group',currency:'XAF',recipientCurrency:'XAF',mode:'Individual land allocations'};
+ // The header organization picker was removed; an emailed record link (?record=) is how the page now selects another organization.
+ const records=[{id:'mola-record',orgId:mola.id,type:'contribution',memberId:'founder-1',title:'Fictional payment',date:'2026-10-03',currency:'USD',amountMinor:10000,created:'2026-10-04T00:00:00Z',status:'Verified'},{id:'land-record',orgId:land.id,type:'contribution',memberId:'founder-1',title:'Fictional payment',date:'2026-10-03',currency:'XAF',amountMinor:10000,created:'2026-10-04T00:00:00Z',status:'Verified'}];
+ global.window={location:{search:'',pathname:'/'},history:{replaceState(){window.location.search='';}}};
  const page={exports:{}};
  const pageReq=name=>{
-  if(name==='react')return {useState:initial=>{const i=cursor++;if(!(i in state))state[i]=initial;return [state[i],value=>state[i]=typeof value==='function'?value(state[i]):value];},useRef:initial=>{const i=refCursor++;return refs[i]||(refs[i]={current:initial});},useCallback:fn=>fn,useEffect(){}};
+  if(name==='react')return {useState:initial=>{const i=cursor++;if(!(i in state))state[i]=initial;return [state[i],value=>state[i]=typeof value==='function'?value(state[i]):value];},useRef:initial=>{const i=refCursor++;return refs[i]||(refs[i]={current:initial});},useCallback:fn=>fn,useEffect:(fn,deps)=>{if(deps?.length===1&&typeof deps[0]==='function')workspaceLoad=deps[0];}};
   if(name==='react/jsx-runtime')return req(name);
   if(name==='./workspace-brand')return mod.exports;
-  if(name==='@/lib/workspace-load')return {readWorkspace:async()=>({organizations:[mola,land],entries:[],name:'Fictional Owner',email:'owner@example.test'}),WorkspaceLoadError:class extends Error{}};
+  if(name==='@/lib/workspace-load')return {readWorkspace:async()=>({organizations:[mola,land],entries:records,name:'Fictional Owner',email:'owner@example.test'}),WorkspaceLoadError:class extends Error{}};
   if(name==='@/lib/model')return {money:n=>String(n),weeklyMinimum:()=>10000};
   if(name.startsWith('./'))return {default:'Child'};
   return new Proxy({},{get:(_,key)=>String(key)});
  };
  vm.runInThisContext('(function(require,module,exports){'+compile('app/page.tsx')+'\n})')(pageReq,page,page.exports);
  const render=()=>{cursor=0;refCursor=0;return page.exports.default();};
+ const open=async record=>{window.location.search=record?'?record='+record:'';await workspaceLoad();return render();};
  const check=(tree,org,molaSelected)=>{
   const brand=find(tree,node=>node.type===mod.exports.default);
   const header=find(tree,node=>node.type==='SidebarHeader');
@@ -74,10 +78,10 @@ async function checkSelectedWorkspace(){
   assert.equal(find(header,node=>node.type===mod.exports.default),null,'Theme remains mounted outside the mobile drawer');
   if(molaSelected)assertMola(mark.props);else assertNeutral(mark.props);
  };
- let tree=render();await find(tree,node=>node.type==='button'&&node.props['aria-label']==='Refresh workspace').props.onClick();tree=render();check(tree,mola,true);
- find(tree,node=>node.props?.label==='Organization').props.onChange(land.id);tree=render();check(tree,land,false);
- await find(tree,node=>node.type==='button'&&node.props['aria-label']==='Refresh workspace').props.onClick();tree=render();check(tree,land,false);
- find(tree,node=>node.props?.label==='Organization').props.onChange(mola.id);tree=render();check(tree,mola,true);
+ let tree=render();tree=await open();check(tree,mola,true);
+ tree=await open(records[1].id);check(tree,land,false);
+ tree=await open();check(tree,land,false);
+ tree=await open(records[0].id);check(tree,mola,true);
  cleanup();cleanup=undefined;assert.equal(root.getAttribute('data-workspace-brand'),null);
 }
 checkSelectedWorkspace().then(()=>console.log('WORKSPACE BRAND PASS: actual page selection and refresh, persisted and email-prefixed Mola IDs, supplied sidebar logo, title/icon switching, neutral land group, stable identity across name changes, mobile drawer independence and unmount cleanup.')).catch(error=>{console.error(error);process.exitCode=1;});

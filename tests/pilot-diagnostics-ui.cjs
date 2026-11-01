@@ -16,24 +16,26 @@ function harness(){const state=[],refs=[],calls=[],effects=[],opened=[];let curs
 const result=orgId=>({organizationId:orgId,organizationVersion:1,checkedAt:'2026-10-04T20:00:00Z',setup:[{id:'owner',title:'Link your founder',recorded:false,detail:'Choose your slot',view:'members'}],provider:[{id:'confirmation',title:'Email confirmation required',status:'pass',detail:'Confirmed setting'}],acceptance:[{id:'delivery',title:'Email delivery',status:'unverified',detail:'Needs inbox testing'}],callbacks:{confirmation:'https://test.example/auth?mode=confirmed',recovery:'https://test.example/auth?mode=reset'}});
 const tick=()=>new Promise(setImmediate);
 async function checkOwnerVisibility(){
- const state=[],refs=[];let cursor=0,refCursor=0;
+ const state=[],refs=[];let cursor=0,refCursor=0,workspaceLoad;
  const org={id:'fictional:mola',version:1,name:'Fictional Mola',mode:'Shared ownership',currency:'USD',members:[{id:'founder-1',name:'Fictional Member',role:'Member'}],permissions:{isOwner:true,canManage:true,memberId:''}};
  let organizations=[org,{...org,id:'fictional:cameroon',name:'Cameroon land group',mode:'Individual land allocations'}];
  const module={exports:{}};
  const req=name=>{
-  if(name==='react')return {useState:initial=>{const i=cursor++;if(!(i in state))state[i]=initial;return [state[i],value=>state[i]=typeof value==='function'?value(state[i]):value];},useRef:initial=>{const i=refCursor++;return refs[i]||(refs[i]={current:initial});},useCallback:fn=>fn,useEffect(){}};
+  if(name==='react')return {useState:initial=>{const i=cursor++;if(!(i in state))state[i]=initial;return [state[i],value=>state[i]=typeof value==='function'?value(state[i]):value];},useRef:initial=>{const i=refCursor++;return refs[i]||(refs[i]={current:initial});},useCallback:fn=>fn,useEffect:(fn,deps)=>{if(deps?.length===1&&typeof deps[0]==='function')workspaceLoad=deps[0];}};
   if(name==='react/jsx-runtime')return {jsx:(type,props)=>({type,props}),jsxs:(type,props)=>({type,props})};
   if(name==='@/lib/workspace-load')return {readWorkspace:async()=>({organizations,entries:[],name:'Fictional',email:'fictional@example.test'}),WorkspaceLoadError:class extends Error{}};
   if(name==='@/lib/model')return {money:n=>String(n),weeklyMinimum:()=>10000};
   if(name.startsWith('./'))return {default:name==='./pilot-diagnostics'?'PilotDiagnostics':'Child'};
   return new Proxy({},{get:(_,key)=>String(key)});
  };
+ global.window={location:{search:'',pathname:'/'},history:{replaceState(){}}};
  vm.runInThisContext('(function(require,module,exports){'+compile('app/page.tsx')+'\n})')(req,module,module.exports);
  const render=()=>{cursor=0;refCursor=0;return module.exports.default();};
- let tree=render();await find(tree,node=>node.type==='button'&&node.props['aria-label']==='Refresh workspace').props.onClick();tree=render();
+ // The header refresh button and organization picker were removed; a refresh selects the first organization when the current one is no longer returned.
+ let tree=render();await workspaceLoad();tree=render();
  const members=find(tree,node=>node.type==='SidebarMenuButton'&&find(node,child=>child.type==='span'&&child.props.children==='Workspace setup'));members.props.onClick();tree=render();assert(find(tree,node=>node.type==='PilotDiagnostics'),'Mola owner has the onboarding checks');
- find(tree,node=>node.props?.label==='Organization').props.onChange('fictional:cameroon');tree=render();assert.equal(find(tree,node=>node.type==='PilotDiagnostics'),null,'Land group does not inherit Mola onboarding');
- find(tree,node=>node.props?.label==='Organization').props.onChange(org.id);organizations=[{...org,permissions:{isOwner:false,canManage:false,memberId:'founder-1'}}];tree=render();await find(tree,node=>node.type==='button'&&node.props['aria-label']==='Refresh workspace').props.onClick();tree=render();assert.equal(find(tree,node=>node.type==='PilotDiagnostics'),null,'Ordinary members cannot see owner diagnostics');
+ const cameroon=organizations[1];organizations=[cameroon];await workspaceLoad();tree=render();assert.equal(find(tree,node=>node.props?.organizationId)?.props.organizationId,cameroon.id);assert.equal(find(tree,node=>node.type==='h1').props.children,'Workspace setup','Still on the setup page');assert.equal(find(tree,node=>node.type==='PilotDiagnostics'),null,'Land group does not inherit Mola onboarding');
+ organizations=[{...org,permissions:{isOwner:false,canManage:false,memberId:'founder-1'}}];await workspaceLoad();tree=render();assert.equal(find(tree,node=>node.props?.organizationId)?.props.organizationId,org.id);assert.equal(find(tree,node=>node.type==='h1').props.children,'Workspace setup','Still on the setup page');assert.equal(find(tree,node=>node.type==='PilotDiagnostics'),null,'Ordinary members cannot see owner diagnostics');
 }
 (async()=>{
  const h=harness();let tree=h.render();const cleanup=h.mount();tree=h.render();assert.equal(h.calls.length,1);assert.equal(h.calls[0].url,'/api/pilot/readiness?orgId=fictional%3Amola');assert.equal(find(tree,node=>node.type==='button'&&node.props.onClick).props.disabled,true);
