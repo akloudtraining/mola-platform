@@ -614,6 +614,9 @@
 :root[data-palette="ink"] .assistant-question{background:#24282c}
 :root[data-palette="ink"] .assistant-answer>span{color:#b4bac0}
 :root[data-palette="ink"] .assistant-answer>small{color:#abb2b9}
+:root[data-palette="ink"] .assistant-notice{color:#a6edc7;background:#183023}
+:root[data-palette="ink"] .assistant-records{border:1px solid #383e43;border-left:3px solid #27744a;background:#1b1e20}
+:root[data-palette="ink"] .assistant-records>span{color:#bec3c8}
 :root[data-palette="ink"] .assistant-sources button{border:1px solid #383e43;color:#c9cdd2;background:#161616}
 :root[data-palette="ink"] .assistant-composer{border-top:1px solid #353a3f;background:#171a1c}
 :root[data-palette="ink"] .assistant-composer textarea{border:1px solid #3b4147;background:#161616;color:#d3d7da;caret-color:#d3d7da;-webkit-text-fill-color:#d3d7da;outline:none}

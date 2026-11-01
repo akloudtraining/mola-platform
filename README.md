@@ -15,7 +15,7 @@ The app uses Vinext/React, Better Auth with verified-email member linking, Resen
 
 The existing D1 resource identifier, database name, R2 bucket and binding names in `vite.config.ts` are preserved. Do not rename or recreate those resources as part of interface changes. `keep_vars: true` preserves dashboard variables during deployments; configure secrets in Cloudflare, never in committed files.
 
-Authentication requires `MOLA_AUTH_SECRET`, `MOLA_APP_URL`, `MOLA_OWNER_EMAIL`, `MOLA_EMAIL_FROM` and the configured email provider credentials (`RESEND_API_KEY` for Resend). Optional Ask Mola integration uses `OPENAI_API_KEY` and `MOLA_AI_MODEL`; without them company-record answers still work. See `docs/FOUNDER-HUB-ROADMAP.md` for scope and validation limits.
+Authentication requires `MOLA_AUTH_SECRET`, `MOLA_APP_URL`, `MOLA_OWNER_EMAIL`, `MOLA_EMAIL_FROM` and the configured email provider credentials (`RESEND_API_KEY` for Resend). Ask Mola answers with open-weight models on Cloudflare Workers AI through the Worker's `AI` binding (no API key; founders' data stays in the Cloudflare account). Optional variables: `MOLA_AI_MODEL` and `MOLA_AI_FALLBACK` pick models from the allow-list in `lib/assistant-ai.ts` (default `gpt-oss-120b`, then `llama-4-scout`); `MOLA_AI_PROVIDER=off` turns AI answers off, leaving record answers. See `docs/ROADMAP.md` for the plan and release process.
 
 ## Local development and verification
 
@@ -29,7 +29,9 @@ npm run build
 npm run dev
 ```
 
-Local development uses local Cloudflare storage. Preview/runtime helper scripts only configure the local execution environment; they do not publish a ChatGPT Site or supply a production identity. HTTP preview authentication is an explicit development-only option. Keep environment files, local databases and receipt bytes out of Git.
+Use Node 24: the behavioral suites need `node:sqlite` (`npx --yes node@24 scripts/check-pilot.mjs` works without changing your default Node).
+
+Local development uses local Cloudflare storage. Sign in with the local test owner described in `.dev.vars`. Ask Mola calls real Workers AI models even in local dev (needs `npx wrangler login`; uses your account's Workers AI allowance). To test offline, add `MOLA_AI_PROVIDER=mock` to `.dev.vars`: the assistant then returns a canned test answer without calling a model. Preview/runtime helper scripts only configure the local execution environment; they do not publish a ChatGPT Site or supply a production identity. HTTP preview authentication is an explicit development-only option. Keep environment files, local databases and receipt bytes out of Git.
 
 ## Interface ownership
 

@@ -7,5 +7,9 @@ declare namespace Cloudflare {
     MOLA_APP_URL?: string;
     MOLA_EMAIL_FROM?: string;
     MOLA_OWNER_EMAIL?: string;
+    AI?: Ai;
+    MOLA_AI_PROVIDER?: 'workers-ai'|'mock'|'off';
+    MOLA_AI_MODEL?: string;
+    MOLA_AI_FALLBACK?: string;
   }
 }

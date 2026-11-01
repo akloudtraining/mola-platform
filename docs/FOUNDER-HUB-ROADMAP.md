@@ -31,6 +31,8 @@ Eight founders' existing logins and payment flows stay operational. Financial va
 TypeScript, production build and behavioral/component checks are used. Browser visual acceptance remains pending because supported browser control is unavailable in this session. Optional AI responses are tested with a mocked provider; no live AI credential has been configured. No production financial records are created by this work.
 
 ## Optional AI setup
+> Superseded November 1, 2026: Ask Mola now uses open-weight models on Cloudflare Workers AI (`AI` binding), not OpenAI. See `docs/ROADMAP.md`, chunk 1.
+
 On the existing Cloudflare Worker, configure `OPENAI_API_KEY` as a secret and `MOLA_AI_MODEL` as the chosen enabled model ID. No key is stored in source or the browser. Until configured, Ask Mola remains in record-answer mode. Broad AI explanations require an explicit per-session opt-in; financial questions retain deterministic record calculations. Provider request uses `store: false`, bounded output and a 30-second per-user cooldown within each Worker isolate. Provider-level spend limits should also be configured before enabling; the isolate cooldown is not a durable global quota.
 
 ## Interface cleanup — October 10, 2026

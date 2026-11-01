@@ -48,6 +48,9 @@ const localBindingConfig = {
       ]
     : [],
   send_email: [{ name: "EMAIL" }],
+  // Ask Mola's open-weight models (lib/assistant-ai.ts). Workers AI always runs remotely, even in local dev;
+  // set MOLA_AI_PROVIDER=mock in .dev.vars to test the assistant offline without calling a model.
+  ai: { binding: "AI", remote: true },
 };
 
 export default defineConfig(async ({command,mode}) => {
