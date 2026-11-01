@@ -32,7 +32,7 @@ export async function founderAction(x:any,org:Org,owner:string,version:number,us
    const reply=await runAssistant(env as any,config,messages),parsed=parseReply(reply.text,views);
    if(!parsed.text)return recordsOnly('AI returned no answer, so this is the record answer.');
    // Exact figures stay visible next to the explanation for money questions.
-   const financial=/contribut|dues|owe|paid|overdue|balance|cash|bank|weekly|total|saving|target|goal|capital|cotis|dû|doi[st]|solde|banque|épargne|objectif/i.test(x.question);
+   const financial=/contribut|dues|owe|paid|how much|put in|combien|overdue|balance|cash|bank|weekly|total|saving|target|goal|capital|cotis|dû|doi[st]|solde|banque|épargne|objectif/i.test(x.question);
    const pageSources=parsed.pages.map(view=>({label:assistantPages.find(p=>p.view===view)!.label,view}));
    const sources=[...pageSources,...result.sources.filter(s=>s.entryId||!parsed.pages.includes(s.view))].slice(0,6);
    return json({answer:parsed.text,sources,asOf:at,mode:'ai',model:assistantModels[reply.model]?.label||'Local test responder',...(financial?{records:{answer:result.answer,sources:result.sources}}:{})});
